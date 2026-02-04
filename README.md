@@ -15,7 +15,7 @@ npm install
 npm run dev
 
 # 4. 브라우저에서 확인
-# http://localhost:3000
+# (로컬 개발용) http://localhost:3000
 ```
 
 ## 📁 프로젝트 구조
