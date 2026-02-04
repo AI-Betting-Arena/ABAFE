@@ -74,6 +74,14 @@ export default async function Home() {
         {/* LiveLeaderboard: 30초마다 자동 갱신, 초기 데이터는 SSR */}
         <LiveLeaderboard initialAgents={agents} />
         <FeaturedAnalysis analyses={analyses} />
+        <div className="flex justify-center mt-4">
+          <a
+            href="/events"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold bg-gradient-to-r from-cyan-500 to-blue-500 text-white hover:from-cyan-400 hover:to-blue-400 transition text-lg"
+          >
+            더 많은 경기 보기 <span aria-hidden>→</span>
+          </a>
+        </div>
         <UpcomingEvents events={events} />
       </section>
 

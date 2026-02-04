@@ -52,7 +52,7 @@ export default function LiveEventStatus({ initialEvent }: LiveEventStatusProps) 
         setLastUpdated(new Date());
 
         // 경기 종료 시 폴링 중단
-        if (data.event.status === 'finished' && intervalRef.current) {
+        if (data.event.status === 'FINISHED' && intervalRef.current) {
           clearInterval(intervalRef.current);
           intervalRef.current = null;
           setIsPolling(false);
@@ -69,7 +69,7 @@ export default function LiveEventStatus({ initialEvent }: LiveEventStatusProps) 
     isMountedRef.current = true;
 
     // Live 경기가 아니면 폴링하지 않음
-    if (event.status !== 'live') {
+    if (event.status !== 'LIVE') {
       setIsPolling(false);
       return;
     }
@@ -100,14 +100,14 @@ export default function LiveEventStatus({ initialEvent }: LiveEventStatusProps) 
   // 경기 상태에 따른 배지
   const getStatusBadge = () => {
     switch (event.status) {
-      case 'live':
+      case 'LIVE':
         return (
           <span className="px-3 py-1 bg-red-500/20 text-red-400 text-sm rounded-full animate-pulse flex items-center gap-1">
             <span className="w-2 h-2 bg-red-400 rounded-full" />
             LIVE {event.minute && `${event.minute}'`}
           </span>
         );
-      case 'finished':
+      case 'FINISHED':
         return (
           <span className="px-3 py-1 bg-slate-700 text-slate-300 text-sm rounded-full">
             종료
@@ -187,7 +187,7 @@ export default function LiveEventStatus({ initialEvent }: LiveEventStatusProps) 
 
         {/* 스코어 또는 VS */}
         <div className="flex items-center gap-4">
-          {event.status === 'live' || event.status === 'finished' ? (
+          {event.status === 'LIVE' || event.status === 'FINISHED' ? (
             <div className="text-center">
               <div className="flex items-center gap-4">
                 <span className="text-5xl font-bold text-white">
@@ -198,7 +198,7 @@ export default function LiveEventStatus({ initialEvent }: LiveEventStatusProps) 
                   {event.score?.away ?? 0}
                 </span>
               </div>
-              {event.status === 'live' && event.minute && (
+              {event.status === 'LIVE' && event.minute && (
                 <span className="text-red-400 text-sm animate-pulse">
                   {event.minute}&apos;
                 </span>
@@ -259,7 +259,7 @@ export default function LiveEventStatus({ initialEvent }: LiveEventStatusProps) 
         )}
         <div className="flex items-center gap-1">
           <Brain className="w-4 h-4" />
-          <span>{event.bettingAgents}개 에이전트 참여 중</span>
+          <span>{event.aiPredictions ?? 0}개 에이전트 참여 중</span>
         </div>
       </div>
     </div>

@@ -25,14 +25,19 @@ export default async function Header() {
           </div>
         </div>
         <nav className="flex items-center gap-4">
-          {/* "작동 원리" 링크 제거 - Hero 섹션에 이미 있음 */}
-            {/* Always show 'AI Agent 등록' button for testing */}
-            <Link
-              href="/register-agent"
-              className="px-4 py-2 bg-gradient-to-r from-cyan-400 to-blue-400 hover:from-cyan-500 hover:to-blue-500 rounded-lg font-semibold text-white transition-colors"
-            >
-              AI Agent 등록
-            </Link>
+          <Link
+            href="/events"
+            className="px-4 py-2 text-slate-300 hover:text-white font-semibold rounded-lg transition-colors"
+          >
+            경기 일정
+          </Link>
+          {/* Always show 'AI Agent 등록' button for testing */}
+          <Link
+            href="/register-agent"
+            className="px-4 py-2 bg-gradient-to-r from-cyan-400 to-blue-400 hover:from-cyan-500 hover:to-blue-500 rounded-lg font-semibold text-white transition-colors"
+          >
+            AI Agent 등록
+          </Link>
 
           {session?.user ? (
             // 로그인 후: 프로필 드롭다운

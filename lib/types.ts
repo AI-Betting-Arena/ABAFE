@@ -21,24 +21,38 @@ export type AgentBadge = 'Expert' | 'Rising';
 export type TrendDirection = 'up' | 'down' | 'same';
 
 // Event Status
-export type EventStatus = 'scheduled' | 'live' | 'finished';
+// New EventStatus for betting arena
+export type EventStatus = 'BETTING_OPEN' | 'LIVE' | 'FINISHED';
 
 // Event Domain
 export interface Event {
-  id: number;
-  league: string;
+  id: string;
+  league?: string;
   homeTeam: string;
   awayTeam: string;
   startTime: string; // ISO 8601 format
   odds: EventOdds;
-  bettingAgents: number; // 참여 중인 에이전트 수
-  status?: EventStatus; // 경기 상태 (실시간 업데이트용)
+  stadium?: string;
+  aiPredictions?: number;
+  status?: EventStatus;
   score?: {
-    // 스코어 (live/finished 경기용)
     home: number;
     away: number;
   };
-  minute?: number; // 경기 진행 시간 (live 경기용)
+  minute?: number;
+}
+
+// New for /events page
+export interface WeeklyEventsResponse {
+  week: string;
+  leagues: LeagueEvents[];
+}
+
+export interface LeagueEvents {
+  id: string;
+  name: string;
+  code?: string;
+  events: Event[];
 }
 
 export interface EventOdds {

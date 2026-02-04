@@ -44,9 +44,9 @@ export default function UpcomingEvents({ events }: UpcomingEventsProps) {
   // 상태별 필터링
   const statusFiltered = filtered.filter(e => {
     if (!e.status) return false;
-    if (tab === 'live') return e.status === 'live';
-    if (tab === 'finished') return e.status === 'finished';
-    return e.status === 'scheduled';
+    if (tab === 'live') return e.status === 'LIVE';
+    if (tab === 'finished') return e.status === 'FINISHED';
+    return e.status === 'BETTING_OPEN';
   });
   // 리그 필터
   const leagueFiltered = leagueFilter === 'All' ? statusFiltered : statusFiltered.filter(e => e.league === leagueFilter);
@@ -157,7 +157,7 @@ export default function UpcomingEvents({ events }: UpcomingEventsProps) {
                 <div className="flex items-center gap-2 mt-2">
                   <Brain className="w-4 h-4 text-cyan-400" />
                   <span className="text-slate-400 text-sm">
-                    {event.bettingAgents}개 에이전트 참여 중
+                    {event.aiPredictions ?? 0}개 에이전트 참여 중
                   </span>
                 </div>
               </div>

@@ -4,13 +4,13 @@ import type { EventDetail, EventDetailResponse } from '@/lib/types';
 // Mock 경기 데이터
 const mockEvents: Record<string, EventDetail> = {
   '1': {
-    id: 1,
+    id: '1',
     league: 'EPL',
     homeTeam: '맨체스터 시티',
     awayTeam: '리버풀',
     startTime: '2024-02-04 00:30',
     odds: { home: 1.75, draw: 3.8, away: 4.2 },
-    bettingAgents: 12,
+    aiPredictions: 12,
     description:
       '시즌 가장 주목받는 EPL 빅매치. 리그 선두 경쟁의 향방을 가를 중요한 경기입니다.',
     venue: '에티하드 스타디움',
@@ -138,13 +138,13 @@ const mockEvents: Record<string, EventDetail> = {
     ],
   },
   '2': {
-    id: 2,
+    id: '2',
     league: 'EPL',
     homeTeam: '아스날',
     awayTeam: '첼시',
     startTime: '2024-02-04 21:00',
     odds: { home: 1.85, draw: 3.6, away: 4.0 },
-    bettingAgents: 8,
+    aiPredictions: 8,
     description: '런던 더비. 아스날의 홈 경기에서 첼시와의 치열한 대결이 예상됩니다.',
     venue: '에미레이츠 스타디움',
     referee: '안소니 테일러',
@@ -226,13 +226,13 @@ const mockEvents: Record<string, EventDetail> = {
     ],
   },
   '3': {
-    id: 3,
+    id: '3',
     league: 'La Liga',
     homeTeam: '레알 마드리드',
     awayTeam: '바르셀로나',
     startTime: '2024-02-05 04:00',
     odds: { home: 2.1, draw: 3.4, away: 3.2 },
-    bettingAgents: 15,
+    aiPredictions: 15,
     description: '세계 최대의 더비, 엘클라시코. 역사적인 라이벌전이 펼쳐집니다.',
     venue: '산티아고 베르나베우',
     referee: '헤수스 힐 만사노',
@@ -343,13 +343,13 @@ export async function GET(
     // ID로 찾지 못하면 기본 경기 생성
     if (!event) {
       event = {
-        id: parseInt(id) || 999,
+        id: id,
         league: 'Unknown',
         homeTeam: '홈팀',
         awayTeam: '원정팀',
         startTime: new Date().toISOString(),
         odds: { home: 2.0, draw: 3.5, away: 3.0 },
-        bettingAgents: 0,
+        aiPredictions: 0,
         description: '경기 정보를 불러올 수 없습니다.',
         venue: '-',
         referee: '-',
