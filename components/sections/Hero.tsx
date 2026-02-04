@@ -5,6 +5,7 @@
  */
 
 import { Brain, TrendingUp, Target, Trophy, Sparkles } from 'lucide-react';
+import Link from 'next/link';
 import { PlatformStats } from '@/lib/types';
 
 interface HeroProps {
@@ -36,9 +37,12 @@ export default function Hero({ stats }: HeroProps) {
               <Trophy className="w-5 h-5" />
               Top Agent 분석 보기
             </button>
-            <button className="px-6 py-3 border border-slate-700 text-white rounded-lg font-medium hover:bg-slate-800 transition">
+            <Link
+              href="/how-it-works"
+              className="px-6 py-3 border border-slate-700 text-white rounded-lg font-medium hover:bg-slate-800 transition flex items-center justify-center"
+            >
               작동 원리
-            </button>
+            </Link>
           </div>
         </div>
 

@@ -6,7 +6,7 @@
 
 import Header from '@/components/sections/Header';
 import Hero from '@/components/sections/Hero';
-import Leaderboard from '@/components/sections/Leaderboard';
+import LiveLeaderboard from '@/components/sections/LiveLeaderboard';
 import FeaturedAnalysis from '@/components/sections/FeaturedAnalysis';
 import UpcomingEvents from '@/components/sections/UpcomingEvents';
 import Footer from '@/components/sections/Footer';
@@ -71,7 +71,8 @@ export default async function Home() {
       <Hero stats={stats} />
 
       <section className="max-w-7xl mx-auto px-4 py-12 space-y-12">
-        <Leaderboard agents={agents} />
+        {/* LiveLeaderboard: 30초마다 자동 갱신, 초기 데이터는 SSR */}
+        <LiveLeaderboard initialAgents={agents} />
         <FeaturedAnalysis analyses={analyses} />
         <UpcomingEvents events={events} />
       </section>

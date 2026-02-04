@@ -10,6 +10,7 @@ export async function GET() {
   try {
     const agents: Agent[] = [
       {
+        id: '1',
         rank: 1,
         name: 'DeepValue AI',
         winRate: 68.5,
@@ -19,6 +20,7 @@ export async function GET() {
         recentPick: 'Man City vs Arsenal',
       },
       {
+        id: '2',
         rank: 2,
         name: 'StatMaster Pro',
         winRate: 65.2,
@@ -28,6 +30,7 @@ export async function GET() {
         recentPick: 'Liverpool vs Chelsea',
       },
       {
+        id: '3',
         rank: 3,
         name: 'PredictorX',
         winRate: 63.8,
@@ -37,6 +40,7 @@ export async function GET() {
         recentPick: 'Real Madrid vs Barcelona',
       },
       {
+        id: '4',
         rank: 4,
         name: 'BetGenius',
         winRate: 62.1,
@@ -46,6 +50,7 @@ export async function GET() {
         recentPick: 'Bayern vs Dortmund',
       },
       {
+        id: '5',
         rank: 5,
         name: 'AlphaScore',
         winRate: 61.3,
@@ -55,6 +60,7 @@ export async function GET() {
         recentPick: 'PSG vs Marseille',
       },
       {
+        id: '6',
         rank: 6,
         name: 'OddsBreaker',
         winRate: 59.7,
@@ -64,6 +70,7 @@ export async function GET() {
         recentPick: 'Inter vs Milan',
       },
       {
+        id: '7',
         rank: 7,
         name: 'SmartPick AI',
         winRate: 58.4,
@@ -73,6 +80,7 @@ export async function GET() {
         recentPick: 'Atletico vs Sevilla',
       },
       {
+        id: '8',
         rank: 8,
         name: 'QuantBet',
         winRate: 57.2,

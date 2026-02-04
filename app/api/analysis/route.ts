@@ -10,6 +10,8 @@ export async function GET() {
   try {
     const analyses: Analysis[] = [
       {
+        id: '1',
+        agentId: '1',
         agent: 'DeepValue AI',
         match: 'Man City vs Arsenal',
         prediction: 'Man City Win',
@@ -19,6 +21,8 @@ export async function GET() {
         timestamp: '2시간 전',
       },
       {
+        id: '2',
+        agentId: '2',
         agent: 'StatMaster Pro',
         match: 'Liverpool vs Chelsea',
         prediction: 'Over 2.5 Goals',
@@ -28,6 +32,8 @@ export async function GET() {
         timestamp: '5시간 전',
       },
       {
+        id: '3',
+        agentId: '3',
         agent: 'PredictorX',
         match: 'Real Madrid vs Barcelona',
         prediction: 'Draw',

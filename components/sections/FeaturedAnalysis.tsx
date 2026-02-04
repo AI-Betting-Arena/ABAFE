@@ -1,63 +1,48 @@
-/**
- * Featured Analysis Component
- * SRP: 에이전트 분석 콘텐츠 표시 책임
- * DRY: 카드 스타일 재사용 (향후 AnalysisCard 컴포넌트로 분리 가능)
- */
-
-import { Sparkles, Brain, ArrowUpRight } from 'lucide-react';
-import { Analysis } from '@/lib/types';
+"use client";
+import Link from 'next/link';
+import { Brain } from 'lucide-react';
+import type { Analysis } from '@/lib/types';
+import { useI18n } from '@/lib/i18n';
 
 interface FeaturedAnalysisProps {
   analyses: Analysis[];
 }
 
 export default function FeaturedAnalysis({ analyses }: FeaturedAnalysisProps) {
+  const { t } = useI18n();
   return (
-    <div className="space-y-4">
-      <div className="flex items-center gap-3">
-        <Sparkles className="w-6 h-6 text-purple-500" />
-        <h3 className="text-2xl font-bold text-white">Featured Analysis</h3>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {analyses.map((analysis, idx) => (
-          <div
-            key={idx}
-            className="bg-slate-900/50 backdrop-blur border border-slate-800 rounded-lg p-6 hover:border-cyan-500/50 transition cursor-pointer group"
+    <section className="space-y-4" aria-label={t('featuredAnalysis')}>
+      <h2 className="text-xl font-bold text-white mb-4">{t('featuredAnalysis')}</h2>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {analyses.map((analysis) => (
+          <Link
+            key={analysis.id}
+            href={`/analysis/${analysis.id}`}
+            className="bg-slate-900/50 backdrop-blur border border-slate-800 rounded-lg p-6 hover:border-cyan-500/50 transition flex flex-col gap-2"
+            aria-label={analysis.match}
           >
-            <div className="flex items-start justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-full flex items-center justify-center">
-                  <Brain className="w-4 h-4 text-white" />
-                </div>
-                <span className="text-white font-medium text-sm">{analysis.agent}</span>
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-8 h-8 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-full flex items-center justify-center">
+                <Brain className="w-4 h-4 text-white" />
               </div>
-              <span className="text-xs text-slate-500">{analysis.timestamp}</span>
+              <span className="text-white text-sm font-medium">{analysis.agent}</span>
+              <span className="text-slate-500 text-xs">{analysis.timestamp}</span>
             </div>
-
-            <h4 className="text-white font-semibold mb-2 group-hover:text-cyan-400 transition">
-              {analysis.match}
-            </h4>
-            <div className="flex items-center gap-2 mb-3">
-              <span className="text-cyan-400 text-sm font-medium">{analysis.prediction}</span>
-              <div className="flex-1 bg-slate-800 rounded-full h-2 overflow-hidden">
-                <div
-                  className="bg-gradient-to-r from-cyan-500 to-blue-600 h-full rounded-full"
-                  style={{ width: `${analysis.confidence}%` }}
-                ></div>
-              </div>
-              <span className="text-slate-400 text-sm">{analysis.confidence}%</span>
+            <h3 className="text-white font-medium mb-1">{analysis.match}</h3>
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-cyan-400 text-sm">{analysis.prediction}</span>
+              <span className="text-slate-500 text-sm">확신도 {analysis.confidence}%</span>
             </div>
-
-            <p className="text-slate-400 text-sm line-clamp-3">{analysis.excerpt}</p>
-
-            <button className="mt-4 text-cyan-400 text-sm flex items-center gap-1 hover:gap-2 transition-all">
-              전체 분석 보기
-              <ArrowUpRight className="w-4 h-4" />
-            </button>
-          </div>
+            <p className="text-slate-400 text-sm line-clamp-2">{analysis.excerpt}</p>
+            <span className="mt-auto text-cyan-400 text-xs font-bold">{t('viewDetail')}</span>
+          </Link>
         ))}
       </div>
-    </div>
+      <div className="flex justify-end pt-2">
+        <Link href="/analysis" className="text-cyan-400 hover:underline text-sm font-medium" aria-label={t('viewAllAnalysis')}>
+          {t('viewAllAnalysis')}
+        </Link>
+      </div>
+    </section>
   );
 }
