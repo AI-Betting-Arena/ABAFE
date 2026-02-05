@@ -1,7 +1,7 @@
 /**
  * Event Detail Page
- * SRP: 경기 상세 정보 표시 책임
- * async Server Component로 SSR 지원
+ * SRP: Responsible for displaying event detail information
+ * async Server Component with SSR support
  */
 
 import { notFound } from 'next/navigation';
@@ -59,7 +59,7 @@ export async function generateMetadata({
 
   if (!event) {
     return {
-      title: '경기를 찾을 수 없습니다 - AI Betting Arena',
+      title: 'Event Not Found - AI Betting Arena',
     };
   }
 
@@ -69,7 +69,7 @@ export async function generateMetadata({
   };
 }
 
-// 팀 통계 카드 컴포넌트
+// Team stats card component
 function TeamStatsCard({
   stats,
   isHome,
@@ -77,7 +77,7 @@ function TeamStatsCard({
   stats: TeamStats;
   isHome: boolean;
 }) {
-  // 폼 문자열을 배열로 변환
+  // Convert form string to array
   const formArray = stats.form.split('-');
 
   return (
@@ -91,13 +91,13 @@ function TeamStatsCard({
               : 'bg-slate-700 text-slate-300'
           }`}
         >
-          {isHome ? '홈' : '원정'}
+          {isHome ? 'Home' : 'Away'}
         </span>
       </div>
 
-      {/* 최근 폼 */}
+      {/* Recent form */}
       <div className="mb-4">
-        <p className="text-sm text-slate-500 mb-2">최근 5경기</p>
+        <p className="text-sm text-slate-500 mb-2">Last 5 Matches</p>
         <div className="flex gap-1">
           {formArray.map((result, idx) => (
             <span
@@ -118,22 +118,22 @@ function TeamStatsCard({
         </div>
       </div>
 
-      {/* 통계 */}
+      {/* Stats */}
       <div className="space-y-3">
         <div className="flex justify-between">
-          <span className="text-slate-400">리그 순위</span>
-          <span className="text-white font-medium">{stats.position}위</span>
+          <span className="text-slate-400">League Position</span>
+          <span className="text-white font-medium">#{stats.position}</span>
         </div>
         <div className="flex justify-between">
-          <span className="text-slate-400">득점</span>
+          <span className="text-slate-400">Goals Scored</span>
           <span className="text-green-400 font-medium">{stats.goalsScored}</span>
         </div>
         <div className="flex justify-between">
-          <span className="text-slate-400">실점</span>
+          <span className="text-slate-400">Goals Conceded</span>
           <span className="text-red-400 font-medium">{stats.goalsConceded}</span>
         </div>
         <div className="flex justify-between">
-          <span className="text-slate-400">무실점 경기</span>
+          <span className="text-slate-400">Clean Sheets</span>
           <span className="text-white font-medium">{stats.cleanSheets}</span>
         </div>
       </div>
@@ -141,7 +141,7 @@ function TeamStatsCard({
   );
 }
 
-// H2H 기록 행 컴포넌트
+// H2H record row component
 function H2HRow({ match }: { match: H2HMatch }) {
   return (
     <div className="flex items-center justify-between py-3 border-b border-slate-800 last:border-0">
@@ -159,7 +159,7 @@ function H2HRow({ match }: { match: H2HMatch }) {
   );
 }
 
-// 에이전트 예측 행 컴포넌트
+// Agent prediction row component
 function AgentPredictionRow({ prediction }: { prediction: AgentPrediction }) {
   return (
     <Link
@@ -190,13 +190,13 @@ function AgentPredictionRow({ prediction }: { prediction: AgentPrediction }) {
       </div>
       <div className="text-right">
         <p className="text-white font-medium">{prediction.confidence}%</p>
-        <p className="text-slate-500 text-sm">확신도</p>
+        <p className="text-slate-500 text-sm">Confidence</p>
       </div>
     </Link>
   );
 }
 
-// 뉴스 카드 컴포넌트
+// News card component
 function NewsCard({ news }: { news: NewsItem }) {
   return (
     <a
@@ -213,7 +213,7 @@ function NewsCard({ news }: { news: NewsItem }) {
           <div className="flex items-center gap-2 text-sm text-slate-500">
             <span>{news.source}</span>
             <span>•</span>
-            <span>{new Date(news.publishedAt).toLocaleDateString('ko-KR')}</span>
+            <span>{new Date(news.publishedAt).toLocaleDateString('en-US')}</span>
           </div>
         </div>
         <ExternalLink className="w-4 h-4 text-slate-500 shrink-0" />
@@ -236,26 +236,26 @@ export default async function EventPage({
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
-      {/* 뒤로가기 네비게이션 */}
+      {/* Back navigation */}
       <div className="max-w-7xl mx-auto px-4 pt-8">
         <Link
           href="/"
           className="inline-flex items-center gap-2 text-slate-400 hover:text-cyan-400 transition"
         >
           <ArrowLeft className="w-4 h-4" />
-          홈으로 돌아가기
+          Back to Home
         </Link>
       </div>
 
-      {/* 경기 헤더: Server Component에서 초기 데이터 제공, Client Component에서 폴링 */}
+      {/* Event header: Server Component provides initial data, Client Component handles polling */}
       <section className="max-w-7xl mx-auto px-4 py-8">
         <LiveEventStatus initialEvent={event} />
       </section>
 
-      {/* 팀 통계 비교 */}
+      {/* Team stats comparison */}
       <section className="max-w-7xl mx-auto px-4 py-4">
         <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
-          <TrendingUp className="w-6 h-6 text-cyan-400" />팀 통계 비교
+          <TrendingUp className="w-6 h-6 text-cyan-400" />Team Stats Comparison
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
           <TeamStatsCard stats={event.teamStats.home} isHome={true} />
@@ -263,12 +263,12 @@ export default async function EventPage({
         </div>
       </section>
 
-      {/* 맞대결 기록 */}
+      {/* Head-to-head record */}
       {event.h2hHistory.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 py-4">
           <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
             <Swords className="w-6 h-6 text-cyan-400" />
-            최근 맞대결 (H2H)
+            Recent Head-to-Head (H2H)
           </h2>
           <div className="bg-slate-900/50 backdrop-blur border border-slate-800 rounded-lg p-6">
             {event.h2hHistory.map((match, idx) => (
@@ -278,12 +278,12 @@ export default async function EventPage({
         </section>
       )}
 
-      {/* 에이전트 예측 현황 */}
+      {/* Agent predictions */}
       {event.agentPredictions.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 py-4">
           <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
             <Brain className="w-6 h-6 text-cyan-400" />
-            AI 에이전트 예측 현황
+            AI Agent Predictions
           </h2>
           <div className="space-y-3">
             {event.agentPredictions.map((prediction) => (
@@ -293,12 +293,12 @@ export default async function EventPage({
         </section>
       )}
 
-      {/* 관련 뉴스 */}
+      {/* Related news */}
       {event.news.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 py-4 pb-12">
           <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
             <Newspaper className="w-6 h-6 text-cyan-400" />
-            관련 뉴스
+            Related News
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {event.news.map((news) => (
@@ -308,7 +308,7 @@ export default async function EventPage({
         </section>
       )}
 
-      {/* 하단 여백 */}
+      {/* Bottom spacing */}
       {event.news.length === 0 && <div className="pb-12" />}
     </div>
   );

@@ -1,6 +1,6 @@
 /**
  * Analysis Page Loading Skeleton
- * Suspense 기반 로딩 UI
+ * Suspense-based loading UI
  */
 
 import { Skeleton } from '@/components/ui/skeleton';
@@ -10,30 +10,30 @@ export default function AnalysisLoading() {
     <div
       className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"
       role="status"
-      aria-label="분석글 로딩 중"
+      aria-label="Loading analysis"
     >
-      {/* 뒤로가기 네비게이션 */}
+      {/* Back Navigation */}
       <div className="max-w-4xl mx-auto px-4 pt-8">
         <Skeleton className="h-5 w-36" />
       </div>
 
-      {/* 분석 헤더 스켈레톤 */}
+      {/* Analysis Header Skeleton */}
       <section className="max-w-4xl mx-auto px-4 py-8">
         <div className="bg-slate-900/50 backdrop-blur border border-slate-800 rounded-lg p-6 md:p-8">
-          {/* 에이전트 정보 */}
+          {/* Agent Info */}
           <div className="flex items-center gap-3 mb-4">
             <Skeleton className="w-10 h-10 rounded-full" />
             <Skeleton className="h-5 w-32" />
             <Skeleton className="h-4 w-20" />
           </div>
 
-          {/* 경기 및 예측 */}
+          {/* Match and Prediction */}
           <Skeleton className="h-9 w-80 mb-4" />
           <div className="flex items-center gap-4 mb-6">
             <Skeleton className="h-7 w-48" />
           </div>
 
-          {/* 확신도 바 */}
+          {/* Confidence Bar */}
           <div className="mb-6">
             <div className="flex items-center justify-between mb-2">
               <Skeleton className="h-4 w-24" />
@@ -42,13 +42,13 @@ export default function AnalysisLoading() {
             <Skeleton className="h-3 w-full rounded-full" />
           </div>
 
-          {/* 요약 */}
+          {/* Summary */}
           <Skeleton className="h-4 w-full" />
           <Skeleton className="h-4 w-3/4 mt-2" />
         </div>
       </section>
 
-      {/* 핵심 포인트 스켈레톤 */}
+      {/* Key Points Skeleton */}
       <section className="max-w-4xl mx-auto px-4 py-4">
         <div className="bg-slate-900/50 backdrop-blur border border-slate-800 rounded-lg p-6">
           <Skeleton className="h-6 w-32 mb-4" />
@@ -63,7 +63,7 @@ export default function AnalysisLoading() {
         </div>
       </section>
 
-      {/* 통계 스켈레톤 */}
+      {/* Statistics Skeleton */}
       <section className="max-w-4xl mx-auto px-4 py-4">
         <div className="bg-slate-900/50 backdrop-blur border border-slate-800 rounded-lg p-6">
           <Skeleton className="h-6 w-28 mb-4" />
@@ -81,7 +81,7 @@ export default function AnalysisLoading() {
         </div>
       </section>
 
-      {/* 전체 분석 내용 스켈레톤 */}
+      {/* Full Analysis Content Skeleton */}
       <section className="max-w-4xl mx-auto px-4 py-4">
         <div className="bg-slate-900/50 backdrop-blur border border-slate-800 rounded-lg p-6 md:p-8">
           <Skeleton className="h-6 w-28 mb-6" />
@@ -101,7 +101,7 @@ export default function AnalysisLoading() {
         </div>
       </section>
 
-      {/* 관련 분석 스켈레톤 */}
+      {/* Related Analysis Skeleton */}
       <section className="max-w-4xl mx-auto px-4 py-4 pb-12">
         <Skeleton className="h-6 w-28 mb-4" />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

@@ -1,6 +1,6 @@
 /**
  * Event Page Loading Skeleton
- * Suspense 기반 로딩 UI
+ * Suspense-based loading UI
  */
 
 import { Skeleton } from '@/components/ui/skeleton';
@@ -10,24 +10,24 @@ export default function EventLoading() {
     <div
       className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"
       role="status"
-      aria-label="경기 정보 로딩 중"
+      aria-label="Loading match information"
     >
-      {/* 뒤로가기 네비게이션 */}
+      {/* Back Navigation */}
       <div className="max-w-7xl mx-auto px-4 pt-8">
         <Skeleton className="h-5 w-36" />
       </div>
 
-      {/* 경기 헤더 스켈레톤 */}
+      {/* Match Header Skeleton */}
       <section className="max-w-7xl mx-auto px-4 py-8">
         <div className="bg-slate-900/50 backdrop-blur border border-slate-800 rounded-lg p-6 md:p-8">
-          {/* 리그 및 시간 정보 */}
+          {/* League and Time Info */}
           <div className="flex flex-wrap items-center gap-3 mb-6">
             <Skeleton className="h-7 w-16 rounded" />
             <Skeleton className="h-5 w-32" />
             <Skeleton className="h-5 w-40" />
           </div>
 
-          {/* 대진 */}
+          {/* Matchup */}
           <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12 mb-8">
             <div className="text-center">
               <Skeleton className="w-20 h-20 rounded-full mx-auto mb-3" />
@@ -44,7 +44,7 @@ export default function EventLoading() {
             </div>
           </div>
 
-          {/* 배당률 */}
+          {/* Odds */}
           <div className="flex justify-center gap-4 mb-6">
             {[1, 2, 3].map((i) => (
               <div key={i} className="bg-slate-800/50 px-6 py-3 rounded-lg text-center">
@@ -54,7 +54,7 @@ export default function EventLoading() {
             ))}
           </div>
 
-          {/* 추가 정보 */}
+          {/* Additional Info */}
           <div className="flex flex-wrap justify-center gap-4">
             <Skeleton className="h-5 w-28" />
             <Skeleton className="h-5 w-24" />
@@ -63,7 +63,7 @@ export default function EventLoading() {
         </div>
       </section>
 
-      {/* 팀 통계 비교 스켈레톤 */}
+      {/* Team Stats Comparison Skeleton */}
       <section className="max-w-7xl mx-auto px-4 py-4">
         <Skeleton className="h-8 w-40 mb-4" />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
@@ -97,7 +97,7 @@ export default function EventLoading() {
         </div>
       </section>
 
-      {/* 맞대결 기록 스켈레톤 */}
+      {/* Head-to-Head Record Skeleton */}
       <section className="max-w-7xl mx-auto px-4 py-4">
         <Skeleton className="h-8 w-40 mb-4" />
         <div className="bg-slate-900/50 backdrop-blur border border-slate-800 rounded-lg p-6">
@@ -117,7 +117,7 @@ export default function EventLoading() {
         </div>
       </section>
 
-      {/* 에이전트 예측 현황 스켈레톤 */}
+      {/* Agent Prediction Status Skeleton */}
       <section className="max-w-7xl mx-auto px-4 py-4">
         <Skeleton className="h-8 w-48 mb-4" />
         <div className="space-y-3">
@@ -142,7 +142,7 @@ export default function EventLoading() {
         </div>
       </section>
 
-      {/* 관련 뉴스 스켈레톤 */}
+      {/* Related News Skeleton */}
       <section className="max-w-7xl mx-auto px-4 py-4 pb-12">
         <Skeleton className="h-8 w-32 mb-4" />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

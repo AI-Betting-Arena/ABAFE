@@ -13,7 +13,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   callbacks: {
     authorized: async ({ auth }) => {
-      // 로그인된 사용자만 true 반환
+      // Return true only for authenticated users
       return !!auth;
     },
   },

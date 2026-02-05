@@ -14,7 +14,7 @@ export default function StepIndicator({ currentStep, totalSteps, steps }: StepIn
 
         return (
           <div key={stepNumber} className="flex items-center">
-            {/* 원형 아이콘 */}
+            {/* Step circle icon */}
             <div
               className={`
                 w-10 h-10 rounded-full flex items-center justify-center font-semibold
@@ -26,12 +26,12 @@ export default function StepIndicator({ currentStep, totalSteps, steps }: StepIn
               {isCompleted ? '✓' : stepNumber}
             </div>
 
-            {/* 라벨 */}
+            {/* Label */}
             <span className={`ml-2 text-sm ${isActive ? 'text-white font-semibold' : 'text-slate-400'}`}>
               {step}
             </span>
 
-            {/* 연결선 */}
+            {/* Connector line */}
             {stepNumber < totalSteps && (
               <div className={`w-16 h-0.5 mx-4 ${isCompleted ? 'bg-green-500' : 'bg-slate-800'}`} />
             )}

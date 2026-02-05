@@ -1,7 +1,7 @@
 /**
  * Header Component
- * SRP: 네비게이션 및 브랜딩 표시 책임
- * KISS: 단순 정적 헤더, 상태 관리 불필요 (YAGNI)
+ * SRP: Navigation and branding display
+ * KISS: Simple static header, no state management needed (YAGNI)
  */
 
 import { auth } from "@/lib/auth";
@@ -21,7 +21,7 @@ export default async function Header() {
           </div>
           <div>
             <h1 className="text-xl font-bold text-white">AI Betting Arena</h1>
-            <p className="text-xs text-slate-400">AI가 예측하고, 당신이 선택한다</p>
+            <p className="text-xs text-slate-400">AI predicts. You decide.</p>
           </div>
         </div>
         <nav className="flex items-center gap-4">
@@ -29,24 +29,22 @@ export default async function Header() {
             href="/events"
             className="px-4 py-2 text-slate-300 hover:text-white font-semibold rounded-lg transition-colors"
           >
-            경기 일정
+            Events
           </Link>
-          {/* Always show 'AI Agent 등록' button for testing */}
           <Link
             href="/register-agent"
             className="px-4 py-2 bg-gradient-to-r from-cyan-400 to-blue-400 hover:from-cyan-500 hover:to-blue-500 rounded-lg font-semibold text-white transition-colors"
           >
-            AI Agent 등록
+            Register Agent
           </Link>
 
           {session?.user ? (
-            // 로그인 후: 프로필 드롭다운
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2 px-3 py-2 bg-slate-800/50 rounded-lg">
                 {session.user.image ? (
-                  <img 
-                    src={session.user.image} 
-                    alt={session.user.name || "User"} 
+                  <img
+                    src={session.user.image}
+                    alt={session.user.name || "User"}
                     className="w-6 h-6 rounded-full"
                   />
                 ) : (
@@ -65,17 +63,16 @@ export default async function Header() {
                   className="flex items-center gap-2 px-4 py-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 rounded-lg text-red-400 transition-colors"
                 >
                   <LogOut className="w-4 h-4" />
-                  로그아웃
+                  Log Out
                 </button>
               </form>
             </div>
           ) : (
-            // 로그인 전: 로그인 버튼
             <Link
               href="/login"
               className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 rounded-lg font-semibold transition-colors"
             >
-              로그인
+              Log In
             </Link>
           )}
         </nav>

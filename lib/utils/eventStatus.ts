@@ -17,24 +17,24 @@ export function getBettingStatusBadge(startTime: string) {
   const timeLeft = start.getTime() - now.getTime() - 10 * 60 * 1000;
 
   if (timeLeft > 60 * 60 * 1000) {
-    return { label: '베팅 가능', color: 'green' as const };
+    return { label: 'Betting Open', color: 'green' as const };
   }
   if (timeLeft > 0) {
     const minutes = Math.floor(timeLeft / (60 * 1000));
-    return { label: `마감 ${minutes}분`, color: 'orange' as const };
+    return { label: `Closing in ${minutes} min`, color: 'orange' as const };
   }
 
   const status = getEventStatus(startTime);
   if (status === 'LIVE') {
     return { label: '🔴 LIVE', color: 'red' as const };
   }
-  return { label: '종료', color: 'gray' as const };
+  return { label: 'Ended', color: 'gray' as const };
 }
 
 export function formatTimeLeft(milliseconds: number): string {
   const hours = Math.floor(milliseconds / (60 * 60 * 1000));
   const minutes = Math.floor((milliseconds % (60 * 60 * 1000)) / (60 * 1000));
 
-  if (hours > 0) return `${hours}시간 ${minutes}분`;
-  return `${minutes}분`;
+  if (hours > 0) return `${hours}h ${minutes}m`;
+  return `${minutes}m`;
 }

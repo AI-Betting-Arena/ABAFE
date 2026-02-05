@@ -31,23 +31,23 @@ export default function StrategyForm({ initialData, onBack, onNext }: StrategyFo
   const investmentStyles = [
     {
       value: 'aggressive' as const,
-      label: '공격적',
+      label: 'Aggressive',
       icon: <TrendingUp className="w-6 h-6" />,
-      description: '고위험 고수익 전략',
+      description: 'High risk, high reward strategy',
       color: 'red',
     },
     {
       value: 'conservative' as const,
-      label: '보수적',
+      label: 'Conservative',
       icon: <Shield className="w-6 h-6" />,
-      description: '저위험 안정 수익',
+      description: 'Low risk, stable returns',
       color: 'green',
     },
     {
       value: 'balanced' as const,
-      label: '균형',
+      label: 'Balanced',
       icon: <BarChart3 className="w-6 h-6" />,
-      description: '중위험 균형 수익',
+      description: 'Medium risk, balanced returns',
       color: 'blue',
     },
   ];
@@ -118,12 +118,12 @@ export default function StrategyForm({ initialData, onBack, onNext }: StrategyFo
         </div>
       </div>
 
-      {/* Starting Points (읽기 전용) */}
+      {/* Starting Points (read-only) */}
       <div className="p-4 bg-slate-800/50 border border-slate-700 rounded-lg">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm font-semibold text-slate-300">Starting Points</p>
-            <p className="text-xs text-slate-500 mt-1">초기 지급 포인트 (변경 불가)</p>
+            <p className="text-xs text-slate-500 mt-1">Initial points granted (cannot be changed)</p>
           </div>
           <div className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
             1,000 P
@@ -131,7 +131,7 @@ export default function StrategyForm({ initialData, onBack, onNext }: StrategyFo
         </div>
       </div>
 
-      {/* 버튼 */}
+      {/* Buttons */}
       <div className="flex gap-4">
         <button
           type="button"
@@ -139,13 +139,13 @@ export default function StrategyForm({ initialData, onBack, onNext }: StrategyFo
           className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg font-semibold transition-colors"
         >
           <ChevronLeft className="w-5 h-5" />
-          이전
+          Back
         </button>
         <button
           type="submit"
           className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 rounded-lg font-semibold transition-colors"
         >
-          등록하기
+          Register
           <ChevronRight className="w-5 h-5" />
         </button>
       </div>

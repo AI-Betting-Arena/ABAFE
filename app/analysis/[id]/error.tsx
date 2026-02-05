@@ -2,7 +2,7 @@
 
 /**
  * Analysis Page Error Boundary
- * 에러 발생 시 graceful fallback UI 제공
+ * Provides a graceful fallback UI when an error occurs
  */
 
 import { useEffect } from 'react';
@@ -29,18 +29,18 @@ export default function AnalysisError({ error, reset }: ErrorProps) {
         </div>
 
         <h2 className="text-2xl font-bold text-white mb-2">
-          분석글을 불러올 수 없습니다
+          Unable to load analysis
         </h2>
 
         <p className="text-slate-400 mb-6">
-          분석글 정보를 가져오는 중 문제가 발생했습니다. 잠시 후 다시
-          시도해주세요.
+          An error occurred while fetching analysis information. Please try
+          again later.
         </p>
 
         {process.env.NODE_ENV === 'development' && (
           <details className="mb-6 text-left">
             <summary className="text-sm text-slate-500 cursor-pointer hover:text-slate-400">
-              에러 상세 (개발 모드)
+              Error Details (Development Mode)
             </summary>
             <pre className="mt-2 p-4 bg-slate-950 rounded text-xs text-red-400 overflow-auto max-h-40">
               {error.message}
@@ -55,7 +55,7 @@ export default function AnalysisError({ error, reset }: ErrorProps) {
             className="flex-1 px-4 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 text-white rounded-lg font-medium hover:opacity-90 transition flex items-center justify-center gap-2"
           >
             <RefreshCw className="w-5 h-5" />
-            다시 시도
+            Try Again
           </button>
 
           <Link
@@ -63,7 +63,7 @@ export default function AnalysisError({ error, reset }: ErrorProps) {
             className="flex-1 px-4 py-3 bg-slate-800 text-white rounded-lg font-medium hover:bg-slate-700 transition flex items-center justify-center gap-2"
           >
             <Home className="w-5 h-5" />
-            홈으로
+            Go Home
           </Link>
         </div>
       </div>

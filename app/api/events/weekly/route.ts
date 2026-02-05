@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
     const status = searchParams.get('status') || 'all';
     const league = searchParams.get('league') || 'all';
 
-    // 동적으로 현재 주 기준 데이터 생성
+    // Dynamically generate data based on the current week
     const data = await getWeeklyEvents({ week, status, league });
 
     return new NextResponse(JSON.stringify(data), {

@@ -1,18 +1,18 @@
 import type { WeeklyEventsResponse, Event } from '@/lib/types';
 
 /**
- * 이번 주의 시작일(월요일)과 종료일(일요일)을 반환
+ * Returns the start (Monday) and end (Sunday) of the week
  */
 function getWeekRange(weekType: 'prev' | 'current' | 'next' = 'current') {
   const now = new Date();
-  const dayOfWeek = now.getDay(); // 0(일) ~ 6(토)
+  const dayOfWeek = now.getDay(); // 0(Sun) ~ 6(Sat)
   const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
 
   const startOfWeek = new Date(now);
   startOfWeek.setDate(now.getDate() + mondayOffset);
   startOfWeek.setHours(0, 0, 0, 0);
 
-  // 주 타입에 따라 offset 조정
+  // Adjust offset based on week type
   if (weekType === 'prev') {
     startOfWeek.setDate(startOfWeek.getDate() - 7);
   } else if (weekType === 'next') {
@@ -27,7 +27,7 @@ function getWeekRange(weekType: 'prev' | 'current' | 'next' = 'current') {
 }
 
 /**
- * ISO 주차 번호를 계산
+ * Calculate the ISO week number
  */
 function getISOWeekNumber(date: Date): string {
   const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
@@ -39,12 +39,12 @@ function getISOWeekNumber(date: Date): string {
 }
 
 /**
- * Mock 데이터 생성 - 항상 현재 주 기준으로 동적 생성
+ * Generate mock data - dynamically generated based on the current week
  */
 function generateMockEvents(weekType: 'prev' | 'current' | 'next' = 'current'): Event[] {
   const { startOfWeek } = getWeekRange(weekType);
 
-  // 날짜 헬퍼: 주의 n번째 날(0=월, 6=일), 시간(UTC)
+  // Date helper: nth day of the week (0=Mon, 6=Sun), time (UTC)
   const makeDate = (dayOffset: number, hour: number, minute: number = 0) => {
     const date = new Date(startOfWeek);
     date.setDate(startOfWeek.getDate() + dayOffset);
@@ -53,13 +53,13 @@ function generateMockEvents(weekType: 'prev' | 'current' | 'next' = 'current'): 
   };
 
   return [
-    // EPL - 토요일, 일요일
+    // EPL - Saturday, Sunday
     {
       id: 'evt_epl_1',
       league: 'EPL',
       homeTeam: 'Man City',
       awayTeam: 'Arsenal',
-      startTime: makeDate(5, 15, 0), // 토요일 15:00 UTC (자정 KST)
+      startTime: makeDate(5, 15, 0), // Saturday 15:00 UTC
       stadium: 'Etihad Stadium',
       odds: { home: 2.1, draw: 3.2, away: 3.5 },
       aiPredictions: 8,
@@ -69,18 +69,18 @@ function generateMockEvents(weekType: 'prev' | 'current' | 'next' = 'current'): 
       league: 'EPL',
       homeTeam: 'Liverpool',
       awayTeam: 'Chelsea',
-      startTime: makeDate(6, 14, 0), // 일요일 14:00 UTC (23:00 KST)
+      startTime: makeDate(6, 14, 0), // Sunday 14:00 UTC
       stadium: 'Anfield',
       odds: { home: 1.9, draw: 3.5, away: 4.0 },
       aiPredictions: 5,
     },
-    // La Liga - 금요일, 토요일
+    // La Liga - Friday, Saturday
     {
       id: 'evt_laliga_1',
       league: 'LaLiga',
       homeTeam: 'Real Madrid',
       awayTeam: 'Barcelona',
-      startTime: makeDate(4, 20, 0), // 금요일 20:00 UTC (토요일 05:00 KST)
+      startTime: makeDate(4, 20, 0), // Friday 20:00 UTC
       stadium: 'Santiago Bernabéu',
       odds: { home: 2.3, draw: 3.1, away: 2.8 },
       aiPredictions: 12,
@@ -90,18 +90,18 @@ function generateMockEvents(weekType: 'prev' | 'current' | 'next' = 'current'): 
       league: 'LaLiga',
       homeTeam: 'Atletico Madrid',
       awayTeam: 'Sevilla',
-      startTime: makeDate(5, 21, 0), // 토요일 21:00 UTC (일요일 06:00 KST)
+      startTime: makeDate(5, 21, 0), // Saturday 21:00 UTC
       stadium: 'Metropolitano',
       odds: { home: 1.7, draw: 3.6, away: 5.0 },
       aiPredictions: 6,
     },
-    // Bundesliga - 토요일, 일요일
+    // Bundesliga - Saturday, Sunday
     {
       id: 'evt_bundesliga_1',
       league: 'Bundesliga',
       homeTeam: 'Bayern Munich',
       awayTeam: 'Borussia Dortmund',
-      startTime: makeDate(5, 18, 30), // 토요일 18:30 UTC
+      startTime: makeDate(5, 18, 30), // Saturday 18:30 UTC
       stadium: 'Allianz Arena',
       odds: { home: 1.6, draw: 4.0, away: 5.5 },
       aiPredictions: 10,
@@ -111,7 +111,7 @@ function generateMockEvents(weekType: 'prev' | 'current' | 'next' = 'current'): 
       league: 'Bundesliga',
       homeTeam: 'RB Leipzig',
       awayTeam: 'Bayer Leverkusen',
-      startTime: makeDate(6, 17, 30), // 일요일 17:30 UTC
+      startTime: makeDate(6, 17, 30), // Sunday 17:30 UTC
       stadium: 'Red Bull Arena',
       odds: { home: 2.4, draw: 3.3, away: 2.9 },
       aiPredictions: 7,
@@ -120,7 +120,7 @@ function generateMockEvents(weekType: 'prev' | 'current' | 'next' = 'current'): 
 }
 
 /**
- * 주간 이벤트 데이터 가져오기
+ * Fetch weekly event data
  */
 export async function getWeeklyEvents(params: {
   week?: string;
@@ -129,20 +129,20 @@ export async function getWeeklyEvents(params: {
 }): Promise<WeeklyEventsResponse> {
   const { week = 'current', status = 'all', league = 'all' } = params;
 
-  // week 파라미터 파싱
+  // Parse the week parameter
   const weekType = week === 'prev' ? 'prev' : week === 'next' ? 'next' : 'current';
   const { startOfWeek } = getWeekRange(weekType);
   const weekString = getISOWeekNumber(startOfWeek);
 
-  // Mock 이벤트 생성
+  // Generate mock events
   let events = generateMockEvents(weekType);
 
-  // 리그 필터링
+  // Filter by league
   if (league !== 'all') {
     events = events.filter(e => e.league === league);
   }
 
-  // 리그별로 그룹화
+  // Group by league
   const leagueMap = new Map<string, Event[]>();
   const leagueNames: Record<string, string> = {
     'EPL': 'English Premier League',
@@ -158,7 +158,7 @@ export async function getWeeklyEvents(params: {
     leagueMap.get(leagueId)!.push(event);
   }
 
-  // 응답 구성
+  // Build response
   const leagues = Array.from(leagueMap.entries()).map(([id, events]) => ({
     id,
     name: leagueNames[id] || id,

@@ -26,7 +26,7 @@ export const LeagueSection: React.FC<LeagueSectionProps> = ({ league }) => {
         </div>
         <div className="flex-1">
           <h2 className="text-2xl font-bold text-white mb-1">{league.name}</h2>
-          <p className="text-slate-400 text-sm">{league.events.length}경기 진행 예정</p>
+          <p className="text-slate-400 text-sm">{league.events.length} matches scheduled</p>
         </div>
         <div className="flex items-center gap-2 text-slate-500">
           <TrendingUp className="w-5 h-5" />

@@ -2,8 +2,8 @@
 
 /**
  * LiveEventStatus Component
- * 경기 상태 실시간 폴링 래퍼
- * Live 경기만 10초마다 업데이트, 종료된 경기는 폴링 안 함
+ * Real-time polling wrapper for event status
+ * Polls every 10s for live events, stops for finished events
  */
 
 import { useState, useEffect, useRef } from 'react';
@@ -20,11 +20,10 @@ import {
 import type { EventDetail, EventDetailResponse } from '@/lib/types';
 
 interface LiveEventStatusProps {
-  /** 서버에서 전달받은 초기 데이터 (SSR) */
   initialEvent: EventDetail;
 }
 
-const POLLING_INTERVAL = 10000; // 10초
+const POLLING_INTERVAL = 10000; // 10s
 
 export default function LiveEventStatus({ initialEvent }: LiveEventStatusProps) {
   const [event, setEvent] = useState<EventDetail>(initialEvent);
@@ -33,7 +32,6 @@ export default function LiveEventStatus({ initialEvent }: LiveEventStatusProps) 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const isMountedRef = useRef(true);
 
-  // 데이터 가져오기 함수
   const fetchData = async () => {
     try {
       const res = await fetch(`/api/event/${event.id}`, {
@@ -46,12 +44,10 @@ export default function LiveEventStatus({ initialEvent }: LiveEventStatusProps) 
 
       const data: EventDetailResponse = await res.json();
 
-      // 컴포넌트가 언마운트되지 않았을 때만 상태 업데이트
       if (isMountedRef.current) {
         setEvent(data.event);
         setLastUpdated(new Date());
 
-        // 경기 종료 시 폴링 중단
         if (data.event.status === 'FINISHED' && intervalRef.current) {
           clearInterval(intervalRef.current);
           intervalRef.current = null;
@@ -60,15 +56,12 @@ export default function LiveEventStatus({ initialEvent }: LiveEventStatusProps) 
       }
     } catch (error) {
       console.error('Event polling failed:', error);
-      // 에러 발생해도 기존 데이터 유지
     }
   };
 
-  // 폴링 Effect
   useEffect(() => {
     isMountedRef.current = true;
 
-    // Live 경기가 아니면 폴링하지 않음
     if (event.status !== 'LIVE') {
       setIsPolling(false);
       return;
@@ -76,12 +69,10 @@ export default function LiveEventStatus({ initialEvent }: LiveEventStatusProps) 
 
     setIsPolling(true);
 
-    // 폴링 시작
     intervalRef.current = setInterval(() => {
       fetchData();
     }, POLLING_INTERVAL);
 
-    // Cleanup: 컴포넌트 언마운트 시
     return () => {
       isMountedRef.current = false;
       if (intervalRef.current) {
@@ -92,12 +83,10 @@ export default function LiveEventStatus({ initialEvent }: LiveEventStatusProps) 
     };
   }, [event.id, event.status]);
 
-  // 수동 새로고침
   const handleRefresh = async () => {
     await fetchData();
   };
 
-  // 경기 상태에 따른 배지
   const getStatusBadge = () => {
     switch (event.status) {
       case 'LIVE':
@@ -110,13 +99,13 @@ export default function LiveEventStatus({ initialEvent }: LiveEventStatusProps) 
       case 'FINISHED':
         return (
           <span className="px-3 py-1 bg-slate-700 text-slate-300 text-sm rounded-full">
-            종료
+            Finished
           </span>
         );
       default:
         return (
           <span className="px-3 py-1 bg-blue-500/20 text-blue-400 text-sm rounded-full">
-            예정
+            Scheduled
           </span>
         );
     }
@@ -124,7 +113,7 @@ export default function LiveEventStatus({ initialEvent }: LiveEventStatusProps) 
 
   return (
     <div className="bg-slate-900/50 backdrop-blur border border-slate-800 rounded-lg p-6 md:p-8">
-      {/* 상단 정보 바 */}
+      {/* Info Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
         <div className="flex flex-wrap items-center gap-3">
           <span className="px-3 py-1 bg-slate-800 text-slate-300 text-sm rounded">
@@ -143,17 +132,17 @@ export default function LiveEventStatus({ initialEvent }: LiveEventStatusProps) 
           )}
         </div>
 
-        {/* 폴링 상태 및 새로고침 */}
+        {/* Polling status and refresh */}
         <div className="flex items-center gap-3">
           {isPolling && (
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-              <span className="text-xs text-slate-500">실시간</span>
+              <span className="text-xs text-slate-500">Live</span>
             </div>
           )}
           {lastUpdated && (
             <span className="text-xs text-slate-500 hidden md:block">
-              {lastUpdated.toLocaleTimeString('ko-KR', {
+              {lastUpdated.toLocaleTimeString('en-US', {
                 hour: '2-digit',
                 minute: '2-digit',
                 second: '2-digit',
@@ -163,16 +152,16 @@ export default function LiveEventStatus({ initialEvent }: LiveEventStatusProps) 
           <button
             onClick={handleRefresh}
             className="p-2 text-slate-400 hover:text-cyan-400 transition"
-            title="새로고침"
+            title="Refresh"
           >
             <RefreshCw className="w-4 h-4" />
           </button>
         </div>
       </div>
 
-      {/* 대진 및 스코어 */}
+      {/* Matchup and Score */}
       <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12 mb-8">
-        {/* 홈팀 */}
+        {/* Home Team */}
         <div className="text-center">
           <div className="w-20 h-20 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-3">
             <span className="text-2xl font-bold text-white">
@@ -182,10 +171,10 @@ export default function LiveEventStatus({ initialEvent }: LiveEventStatusProps) 
           <h2 className="text-xl md:text-2xl font-bold text-white">
             {event.homeTeam}
           </h2>
-          <span className="text-slate-500 text-sm">홈</span>
+          <span className="text-slate-500 text-sm">Home</span>
         </div>
 
-        {/* 스코어 또는 VS */}
+        {/* Score or VS */}
         <div className="flex items-center gap-4">
           {event.status === 'LIVE' || event.status === 'FINISHED' ? (
             <div className="text-center">
@@ -213,7 +202,7 @@ export default function LiveEventStatus({ initialEvent }: LiveEventStatusProps) 
           )}
         </div>
 
-        {/* 원정팀 */}
+        {/* Away Team */}
         <div className="text-center">
           <div className="w-20 h-20 bg-gradient-to-br from-slate-600 to-slate-700 rounded-full flex items-center justify-center mx-auto mb-3">
             <span className="text-2xl font-bold text-white">
@@ -223,32 +212,32 @@ export default function LiveEventStatus({ initialEvent }: LiveEventStatusProps) 
           <h2 className="text-xl md:text-2xl font-bold text-white">
             {event.awayTeam}
           </h2>
-          <span className="text-slate-500 text-sm">원정</span>
+          <span className="text-slate-500 text-sm">Away</span>
         </div>
       </div>
 
-      {/* 배당률 */}
+      {/* Odds */}
       <div className="flex justify-center gap-4 mb-6">
         <div className="bg-cyan-500/10 border border-cyan-500/30 px-6 py-3 rounded-lg text-center">
-          <p className="text-slate-400 text-xs mb-1">홈 승</p>
+          <p className="text-slate-400 text-xs mb-1">Home Win</p>
           <p className="text-cyan-400 font-bold text-xl">{event.odds.home}</p>
         </div>
         <div className="bg-slate-800/50 px-6 py-3 rounded-lg text-center">
-          <p className="text-slate-400 text-xs mb-1">무승부</p>
+          <p className="text-slate-400 text-xs mb-1">Draw</p>
           <p className="text-white font-bold text-xl">{event.odds.draw}</p>
         </div>
         <div className="bg-slate-800/50 px-6 py-3 rounded-lg text-center">
-          <p className="text-slate-400 text-xs mb-1">원정 승</p>
+          <p className="text-slate-400 text-xs mb-1">Away Win</p>
           <p className="text-white font-bold text-xl">{event.odds.away}</p>
         </div>
       </div>
 
-      {/* 추가 정보 */}
+      {/* Additional Info */}
       <div className="flex flex-wrap justify-center gap-4 text-sm text-slate-400">
         {event.referee && (
           <div className="flex items-center gap-1">
             <User className="w-4 h-4" />
-            <span>심판: {event.referee}</span>
+            <span>Referee: {event.referee}</span>
           </div>
         )}
         {event.weather && (
@@ -259,7 +248,7 @@ export default function LiveEventStatus({ initialEvent }: LiveEventStatusProps) 
         )}
         <div className="flex items-center gap-1">
           <Brain className="w-4 h-4" />
-          <span>{event.aiPredictions ?? 0}개 에이전트 참여 중</span>
+          <span>{event.aiPredictions ?? 0} agents participating</span>
         </div>
       </div>
     </div>

@@ -2,7 +2,7 @@
 
 /**
  * Analysis Not Found Page
- * 존재하지 않는 분석글 ID 접근 시 표시
+ * Displayed when accessing a non-existent analysis ID
  */
 
 import Link from 'next/link';
@@ -19,11 +19,11 @@ export default function AnalysisNotFound() {
         </div>
 
         <h2 className="text-2xl font-bold text-white mb-2">
-          분석글을 찾을 수 없습니다
+          Analysis Not Found
         </h2>
 
         <p className="text-slate-400 mb-6">
-          요청하신 분석글이 존재하지 않거나 삭제되었을 수 있습니다.
+          The requested analysis does not exist or may have been deleted.
         </p>
 
         <div className="flex gap-3">
@@ -32,7 +32,7 @@ export default function AnalysisNotFound() {
             className="flex-1 px-4 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 text-white rounded-lg font-medium hover:opacity-90 transition flex items-center justify-center gap-2"
           >
             <Home className="w-5 h-5" />
-            홈으로
+            Go Home
           </Link>
 
           <Link
@@ -40,7 +40,7 @@ export default function AnalysisNotFound() {
             className="flex-1 px-4 py-3 bg-slate-800 text-white rounded-lg font-medium hover:bg-slate-700 transition flex items-center justify-center gap-2"
           >
             <Sparkles className="w-5 h-5" />
-            분석 목록 보기
+            View Analysis List
           </Link>
         </div>
       </div>

@@ -2,7 +2,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 export default function Loading() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950" role="status" aria-label="페이지 로딩 중">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950" role="status" aria-label="Loading page">
       {/* Header Skeleton */}
       <header className="border-b border-slate-800 bg-slate-950/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">

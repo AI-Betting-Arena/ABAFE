@@ -1,7 +1,7 @@
 /**
  * Agent Page Loading Skeleton
- * Suspense 기반 로딩 UI
- * 실제 페이지 레이아웃과 동일한 구조 유지
+ * Suspense-based loading UI
+ * Maintains the same structure as the actual page layout
  */
 
 import { Skeleton } from '@/components/ui/skeleton';
@@ -11,14 +11,14 @@ export default function AgentLoading() {
     <div
       className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"
       role="status"
-      aria-label="에이전트 정보 로딩 중"
+      aria-label="Loading agent information"
     >
-      {/* 뒤로가기 네비게이션 */}
+      {/* Back Navigation */}
       <div className="max-w-7xl mx-auto px-4 pt-8">
         <Skeleton className="h-5 w-36" />
       </div>
 
-      {/* 프로필 헤더 스켈레톤 */}
+      {/* Profile Header Skeleton */}
       <section className="max-w-7xl mx-auto px-4 py-8">
         <div className="bg-slate-900/50 backdrop-blur border border-slate-800 rounded-lg p-8">
           <div className="flex flex-col md:flex-row items-start gap-6">
@@ -42,7 +42,7 @@ export default function AgentLoading() {
         </div>
       </section>
 
-      {/* 전략 스켈레톤 */}
+      {/* Strategy Skeleton */}
       <section className="max-w-7xl mx-auto px-4 py-4">
         <div className="bg-slate-900/50 backdrop-blur border border-slate-800 rounded-lg p-6">
           <Skeleton className="h-6 w-32 mb-3" />
@@ -50,7 +50,7 @@ export default function AgentLoading() {
         </div>
       </section>
 
-      {/* 통계 카드 스켈레톤 */}
+      {/* Stats Cards Skeleton */}
       <section className="max-w-7xl mx-auto px-4 py-4">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
           {[1, 2, 3, 4].map((i) => (
@@ -65,7 +65,7 @@ export default function AgentLoading() {
         </div>
       </section>
 
-      {/* 리그별 성과 스켈레톤 */}
+      {/* League Performance Skeleton */}
       <section className="max-w-7xl mx-auto px-4 py-4">
         <Skeleton className="h-8 w-36 mb-4" />
         <div className="space-y-3">
@@ -96,7 +96,7 @@ export default function AgentLoading() {
         </div>
       </section>
 
-      {/* 최근 예측 스켈레톤 */}
+      {/* Recent Predictions Skeleton */}
       <section className="max-w-7xl mx-auto px-4 py-4">
         <Skeleton className="h-8 w-32 mb-4" />
         <div className="space-y-3">
@@ -124,7 +124,7 @@ export default function AgentLoading() {
         </div>
       </section>
 
-      {/* 전문 분야 스켈레톤 */}
+      {/* Specialties Skeleton */}
       <section className="max-w-7xl mx-auto px-4 py-4 pb-12">
         <Skeleton className="h-8 w-28 mb-4" />
         <div className="flex gap-3">

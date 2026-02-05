@@ -20,24 +20,24 @@ export default function CredentialsDisplay({ credentials, onNext }: CredentialsD
 
   return (
     <div className="space-y-6">
-      {/* 성공 메시지 */}
+      {/* Success message */}
       <div className="p-4 bg-green-500/10 border border-green-500/30 rounded-lg flex items-start gap-3">
         <CheckCircle className="w-5 h-5 text-green-400 mt-0.5" />
         <div>
-          <p className="font-semibold text-green-400">등록 완료!</p>
+          <p className="font-semibold text-green-400">Registration Complete!</p>
           <p className="text-sm text-slate-300 mt-1">
-            AI 에이전트가 성공적으로 등록되었습니다.
+            Your AI agent has been successfully registered.
           </p>
         </div>
       </div>
 
-      {/* 경고 배너 */}
+      {/* Warning banner */}
       <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg flex items-start gap-3">
         <AlertTriangle className="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0" />
         <div className="space-y-1">
-          <p className="font-semibold text-red-400">중요: Secret Key를 안전하게 보관하세요</p>
+          <p className="font-semibold text-red-400">Important: Store your Secret Key securely</p>
           <p className="text-sm text-slate-300">
-            이 페이지를 벗어나면 Secret Key를 다시 볼 수 없습니다. 반드시 복사하여 안전한 곳에 저장하세요.
+            You will not be able to view the Secret Key again after leaving this page. Make sure to copy and store it in a safe place.
           </p>
         </div>
       </div>
@@ -56,12 +56,12 @@ export default function CredentialsDisplay({ credentials, onNext }: CredentialsD
             type="button"
             onClick={() => copyId(credentials.agentId)}
             className="px-4 py-3 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors flex items-center gap-2"
-            title="복사"
+            title="Copy"
           >
             {copiedId ? (
               <>
                 <CheckCircle className="w-5 h-5 text-green-400" />
-                <span className="text-sm text-green-400">복사됨</span>
+                <span className="text-sm text-green-400">Copied</span>
               </>
             ) : (
               <Copy className="w-5 h-5" />
@@ -84,7 +84,7 @@ export default function CredentialsDisplay({ credentials, onNext }: CredentialsD
             type="button"
             onClick={() => setShowSecret(!showSecret)}
             className="px-4 py-3 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors"
-            title={showSecret ? '숨기기' : '보기'}
+            title={showSecret ? 'Hide' : 'Show'}
           >
             {showSecret ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
           </button>
@@ -92,12 +92,12 @@ export default function CredentialsDisplay({ credentials, onNext }: CredentialsD
             type="button"
             onClick={() => copySecret(credentials.secretKey)}
             className="px-4 py-3 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors flex items-center gap-2"
-            title="복사"
+            title="Copy"
           >
             {copiedSecret ? (
               <>
                 <CheckCircle className="w-5 h-5 text-green-400" />
-                <span className="text-sm text-green-400">복사됨</span>
+                <span className="text-sm text-green-400">Copied</span>
               </>
             ) : (
               <Copy className="w-5 h-5" />
@@ -106,9 +106,9 @@ export default function CredentialsDisplay({ credentials, onNext }: CredentialsD
         </div>
       </div>
 
-      {/* 생성 시간 */}
+      {/* Created at */}
       <div className="text-xs text-slate-500 text-center">
-        생성 시간: {new Date(credentials.createdAt).toLocaleString('ko-KR')}
+        Created at: {new Date(credentials.createdAt).toLocaleString('en-US')}
       </div>
 
       <button
@@ -116,7 +116,7 @@ export default function CredentialsDisplay({ credentials, onNext }: CredentialsD
         onClick={onNext}
         className="w-full px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 rounded-lg font-semibold transition-colors"
       >
-        연결 가이드 보기
+        View Setup Guide
       </button>
     </div>
   );

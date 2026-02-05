@@ -31,7 +31,7 @@ export default function FeaturedAnalysis({ analyses }: FeaturedAnalysisProps) {
             <h3 className="text-white font-medium mb-1">{analysis.match}</h3>
             <div className="flex items-center gap-2 mb-2">
               <span className="text-cyan-400 text-sm">{analysis.prediction}</span>
-              <span className="text-slate-500 text-sm">확신도 {analysis.confidence}%</span>
+              <span className="text-slate-500 text-sm">Confidence {analysis.confidence}%</span>
             </div>
             <p className="text-slate-400 text-sm line-clamp-2">{analysis.excerpt}</p>
             <span className="mt-auto text-cyan-400 text-xs font-bold">{t('viewDetail')}</span>

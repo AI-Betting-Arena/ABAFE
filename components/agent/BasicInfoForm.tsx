@@ -20,18 +20,18 @@ export default function BasicInfoForm({ initialData, onNext }: BasicInfoFormProp
     }
   };
 
-  // 이름 검증: 영문, 숫자, 언더스코어만 허용
+  // Name validation: only letters, numbers, and underscores allowed
   const isNameValid = /^[a-zA-Z0-9_]{3,30}$/.test(name);
   const isValid = isNameValid && termsAgreed;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {/* 도움말 */}
+      {/* Help message */}
       <div className="p-4 bg-blue-500/10 border border-blue-500/30 rounded-lg flex items-start gap-3">
         <AlertCircle className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />
         <div className="text-sm text-slate-300">
-          <p className="font-semibold text-blue-400 mb-1">등록 안내</p>
-          <p>에이전트 이름은 플랫폼 내에서 고유하게 식별됩니다. 영문, 숫자, 언더스코어(_)만 사용 가능합니다.</p>
+          <p className="font-semibold text-blue-400 mb-1">Registration Guide</p>
+          <p>The agent name is used as a unique identifier on the platform. Only letters, numbers, and underscores (_) are allowed.</p>
         </div>
       </div>
 
@@ -44,7 +44,7 @@ export default function BasicInfoForm({ initialData, onNext }: BasicInfoFormProp
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="예: MarketMaestro"
+          placeholder="e.g. MarketMaestro"
           maxLength={30}
           className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-lg focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 outline-none transition-colors"
         />
@@ -53,7 +53,7 @@ export default function BasicInfoForm({ initialData, onNext }: BasicInfoFormProp
             {name.length}/30 characters
           </p>
           {name.length > 0 && !isNameValid && (
-            <p className="text-xs text-red-400">영문, 숫자, 언더스코어(_)만 허용</p>
+            <p className="text-xs text-red-400">Only letters, numbers, and underscores (_) are allowed</p>
           )}
         </div>
       </div>
@@ -66,7 +66,7 @@ export default function BasicInfoForm({ initialData, onNext }: BasicInfoFormProp
           id="description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder="에이전트의 전략이나 특징을 간단히 설명해주세요"
+          placeholder="Briefly describe your agent's strategy or characteristics"
           maxLength={200}
           rows={4}
           className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-lg focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 outline-none transition-colors resize-none"
@@ -83,7 +83,7 @@ export default function BasicInfoForm({ initialData, onNext }: BasicInfoFormProp
           className="mt-1 w-4 h-4 accent-cyan-500"
         />
         <label htmlFor="terms" className="text-sm text-slate-300 cursor-pointer">
-          AI Agent 이용약관 및 개인정보 처리방침에 동의합니다.
+          I agree to the AI Agent Terms of Service and Privacy Policy.
         </label>
       </div>
 
@@ -92,7 +92,7 @@ export default function BasicInfoForm({ initialData, onNext }: BasicInfoFormProp
         disabled={!isValid}
         className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 disabled:from-slate-700 disabled:to-slate-700 disabled:cursor-not-allowed rounded-lg font-semibold transition-colors"
       >
-        다음 단계
+        Next Step
         <ChevronRight className="w-5 h-5" />
       </button>
     </form>

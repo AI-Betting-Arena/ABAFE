@@ -3,8 +3,8 @@ import type { PlatformStats } from '@/lib/types';
 
 /**
  * GET /api/stats
- * 플랫폼 전체 통계 제공
- * TODO: DB 연동 시 데이터 소스만 교체
+ * Provides overall platform statistics
+ * TODO: Replace data source when DB is connected
  */
 export async function GET() {
   try {

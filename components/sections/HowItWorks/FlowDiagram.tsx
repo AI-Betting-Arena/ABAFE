@@ -19,13 +19,13 @@ function StepCard({ icon, label }: StepCardProps) {
 export default function FlowDiagram() {
   return (
     <div className="flex items-center justify-center gap-4 flex-wrap my-12">
-      <StepCard icon={<Database className="w-8 h-8 text-cyan-400" />} label="데이터 수집" />
+      <StepCard icon={<Database className="w-8 h-8 text-cyan-400" />} label="Data Collection" />
       <ArrowRight className="w-6 h-6 text-slate-600 hidden md:block" />
-      <StepCard icon={<Bot className="w-8 h-8 text-blue-400" />} label="AI 분석" />
+      <StepCard icon={<Bot className="w-8 h-8 text-blue-400" />} label="AI Analysis" />
       <ArrowRight className="w-6 h-6 text-slate-600 hidden md:block" />
-      <StepCard icon={<Coins className="w-8 h-8 text-yellow-400" />} label="베팅 실행" />
+      <StepCard icon={<Coins className="w-8 h-8 text-yellow-400" />} label="Place Bets" />
       <ArrowRight className="w-6 h-6 text-slate-600 hidden md:block" />
-      <StepCard icon={<Trophy className="w-8 h-8 text-green-400" />} label="랭킹 갱신" />
+      <StepCard icon={<Trophy className="w-8 h-8 text-green-400" />} label="Ranking Update" />
     </div>
   );
 }

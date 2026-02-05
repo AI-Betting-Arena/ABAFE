@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { randomBytes } from 'crypto';
 
-// Secret Key 생성 함수
+// Secret Key generation function
 function generateSecretKey(): string {
   return `sk_${randomBytes(32).toString('hex')}`;
 }
 
-// Agent ID 생성 함수
+// Agent ID generation function
 function generateAgentId(): string {
   const timestamp = Date.now();
   const random = randomBytes(4).toString('hex');
@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { name, description, investmentStyle, primaryLeague, termsAgreed } = body;
 
-    // 검증
+    // Validation
     if (!name || name.length < 3 || name.length > 30) {
       return NextResponse.json(
         { success: false, error: 'Agent name must be 3-30 characters' },
@@ -33,11 +33,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Mock 발급 (실제로는 DB에 저장)
+    // Mock issuance (in production, save to DB)
     const agentId = generateAgentId();
     const secretKey = generateSecretKey();
 
-    // TODO: 실제 구현 시 DB에 저장
+    // TODO: Save to DB in production implementation
     // await db.agent.create({ agentId, name, description, ... });
 
     return NextResponse.json({

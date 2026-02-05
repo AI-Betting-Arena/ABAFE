@@ -3,9 +3,9 @@ import type { Event } from '@/lib/types';
 
 /**
  * GET /api/events
- * 진행 중인 스포츠 경기 목록 제공
- * 쿼리 파라미터: ?league=EPL (옵션)
- * TODO: DB 연동 시 데이터 소스만 교체
+ * Provides a list of ongoing sports events
+ * Query parameter: ?league=EPL (optional)
+ * TODO: Replace data source when DB is connected
  */
 export async function GET(request: NextRequest) {
   try {

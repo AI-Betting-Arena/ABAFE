@@ -2,8 +2,8 @@
 
 /**
  * LiveLeaderboard Component
- * 폴링 기반 실시간 리더보드 래퍼
- * 기존 Leaderboard UI 컴포넌트 재사용 (DRY 원칙)
+ * Polling-based real-time leaderboard wrapper
+ * Reuses existing Leaderboard UI component (DRY)
  */
 
 import { useState, useEffect, useRef } from 'react';
@@ -12,11 +12,10 @@ import { Trophy, TrendingUp, ArrowUpRight, Brain, RefreshCw } from 'lucide-react
 import type { Agent, LeaderboardResponse } from '@/lib/types';
 
 interface LiveLeaderboardProps {
-  /** 서버에서 전달받은 초기 데이터 (SSR) */
   initialAgents: Agent[];
 }
 
-const POLLING_INTERVAL = 30000; // 30초
+const POLLING_INTERVAL = 30000; // 30s
 
 export default function LiveLeaderboard({ initialAgents }: LiveLeaderboardProps) {
   const [agents, setAgents] = useState<Agent[]>(initialAgents);
@@ -25,7 +24,6 @@ export default function LiveLeaderboard({ initialAgents }: LiveLeaderboardProps)
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const isMountedRef = useRef(true);
 
-  // 데이터 가져오기 함수
   const fetchData = async () => {
     try {
       const res = await fetch('/api/leaderboard', {
@@ -38,28 +36,23 @@ export default function LiveLeaderboard({ initialAgents }: LiveLeaderboardProps)
 
       const data: LeaderboardResponse = await res.json();
 
-      // 컴포넌트가 언마운트되지 않았을 때만 상태 업데이트
       if (isMountedRef.current) {
         setAgents(data.agents);
         setLastUpdated(new Date());
       }
     } catch (error) {
       console.error('Leaderboard polling failed:', error);
-      // 에러 발생해도 기존 데이터 유지
     }
   };
 
-  // 폴링 Effect
   useEffect(() => {
     isMountedRef.current = true;
     setIsPolling(true);
 
-    // 폴링 시작
     intervalRef.current = setInterval(() => {
       fetchData();
     }, POLLING_INTERVAL);
 
-    // Cleanup: 컴포넌트 언마운트 시
     return () => {
       isMountedRef.current = false;
       if (intervalRef.current) {
@@ -70,7 +63,6 @@ export default function LiveLeaderboard({ initialAgents }: LiveLeaderboardProps)
     };
   }, []);
 
-  // 수동 새로고침
   const handleRefresh = async () => {
     await fetchData();
   };
@@ -81,7 +73,6 @@ export default function LiveLeaderboard({ initialAgents }: LiveLeaderboardProps)
         <div className="flex items-center gap-3">
           <Trophy className="w-6 h-6 text-yellow-500" />
           <h3 className="text-2xl font-bold text-white">Live Leaderboard</h3>
-          {/* 폴링 상태 인디케이터 */}
           <div className="flex items-center gap-2">
             <div
               className={`w-2 h-2 rounded-full ${
@@ -89,32 +80,30 @@ export default function LiveLeaderboard({ initialAgents }: LiveLeaderboardProps)
               }`}
             />
             <span className="text-xs text-slate-500">
-              {isPolling ? '실시간' : '오프라인'}
+              {isPolling ? 'Live' : 'Offline'}
             </span>
           </div>
         </div>
         <div className="flex items-center gap-4">
-          {/* 마지막 업데이트 시간 */}
           {lastUpdated && (
             <span className="text-xs text-slate-500 hidden md:block">
-              마지막 업데이트:{' '}
-              {lastUpdated.toLocaleTimeString('ko-KR', {
+              Last updated:{' '}
+              {lastUpdated.toLocaleTimeString('en-US', {
                 hour: '2-digit',
                 minute: '2-digit',
                 second: '2-digit',
               })}
             </span>
           )}
-          {/* 수동 새로고침 버튼 */}
           <button
             onClick={handleRefresh}
             className="p-2 text-slate-400 hover:text-cyan-400 transition"
-            title="새로고침"
+            title="Refresh"
           >
             <RefreshCw className="w-4 h-4" />
           </button>
           <button className="text-cyan-400 hover:text-cyan-300 text-sm flex items-center gap-1">
-            전체 보기
+            View All
             <ArrowUpRight className="w-4 h-4" />
           </button>
         </div>
@@ -126,22 +115,22 @@ export default function LiveLeaderboard({ initialAgents }: LiveLeaderboardProps)
             <thead className="bg-slate-800/50 border-b border-slate-700">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
-                  순위
+                  Rank
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
-                  에이전트
+                  Agent
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
-                  승률
+                  Win Rate
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
                   ROI
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
-                  최근 픽
+                  Recent Pick
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
-                  변동
+                  Trend
                 </th>
               </tr>
             </thead>

@@ -1,7 +1,7 @@
 /**
  * Footer Component
- * SRP: 하단 네비게이션 및 법적 정보 표시
- * KISS: 정적 컨텐츠만 포함
+ * SRP: Bottom navigation and legal info display
+ * KISS: Static content only
  */
 
 export default function Footer() {

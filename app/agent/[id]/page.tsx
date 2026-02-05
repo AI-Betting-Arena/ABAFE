@@ -1,7 +1,7 @@
 /**
  * Agent Profile Page
- * SRP: 에이전트 상세 정보 표시 책임
- * async Server Component로 SSR 지원
+ * SRP: Responsible for displaying agent detail information
+ * async Server Component with SSR support
  */
 
 import { notFound } from 'next/navigation';
@@ -50,7 +50,7 @@ export async function generateMetadata({
 
   if (!agent) {
     return {
-      title: '에이전트를 찾을 수 없습니다 - AI Betting Arena',
+      title: 'Agent Not Found - AI Betting Arena',
     };
   }
 
@@ -60,7 +60,7 @@ export async function generateMetadata({
   };
 }
 
-// 통계 카드 컴포넌트
+// Stat card component
 function StatCard({
   label,
   value,
@@ -89,23 +89,23 @@ function StatCard({
   );
 }
 
-// 예측 카드 컴포넌트
+// Prediction card component
 function PredictionCard({ prediction }: { prediction: Prediction }) {
   const resultConfig = {
     win: {
       icon: CheckCircle,
       color: 'text-green-400 bg-green-400/10 border-green-400/20',
-      label: '승리',
+      label: 'Win',
     },
     loss: {
       icon: XCircle,
       color: 'text-red-400 bg-red-400/10 border-red-400/20',
-      label: '패배',
+      label: 'Loss',
     },
     pending: {
       icon: Clock,
       color: 'text-yellow-400 bg-yellow-400/10 border-yellow-400/20',
-      label: '진행중',
+      label: 'Pending',
     },
   };
 
@@ -134,24 +134,24 @@ function PredictionCard({ prediction }: { prediction: Prediction }) {
 
       <div className="mb-3">
         <p className="text-white font-medium mb-1">
-          예측: {prediction.prediction}
+          Prediction: {prediction.prediction}
         </p>
         <p className="text-slate-400 text-sm">{prediction.analysis}</p>
       </div>
 
       <div className="flex items-center gap-4 text-sm">
         <span className="text-slate-500">
-          배당률:{' '}
+          Odds:{' '}
           <span className="text-cyan-400 font-medium">{prediction.odds}</span>
         </span>
         <span className="text-slate-500">
-          확신도:{' '}
+          Confidence:{' '}
           <span className="text-cyan-400 font-medium">
             {prediction.confidence}%
           </span>
         </span>
         <span className="text-slate-500">
-          {new Date(prediction.predictedAt).toLocaleDateString('ko-KR')}
+          {new Date(prediction.predictedAt).toLocaleDateString('en-US')}
         </span>
       </div>
     </Link>
@@ -172,27 +172,27 @@ export default async function AgentPage({
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
-      {/* 뒤로가기 네비게이션 */}
+      {/* Back navigation */}
       <div className="max-w-7xl mx-auto px-4 pt-8">
         <Link
           href="/"
           className="inline-flex items-center gap-2 text-slate-400 hover:text-cyan-400 transition"
         >
           <ArrowLeft className="w-4 h-4" />
-          홈으로 돌아가기
+          Back to Home
         </Link>
       </div>
 
-      {/* 프로필 헤더 */}
+      {/* Profile header */}
       <section className="max-w-7xl mx-auto px-4 py-8">
         <div className="bg-slate-900/50 backdrop-blur border border-slate-800 rounded-lg p-8">
           <div className="flex flex-col md:flex-row items-start gap-6">
-            {/* 에이전트 아바타 */}
+            {/* Agent avatar */}
             <div className="w-24 h-24 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-full flex items-center justify-center shrink-0">
               <Brain className="w-12 h-12 text-white" />
             </div>
 
-            {/* 정보 */}
+            {/* Info */}
             <div className="flex-1">
               <div className="flex flex-wrap items-center gap-3 mb-2">
                 <h1 className="text-3xl md:text-4xl font-bold text-white">
@@ -212,25 +212,25 @@ export default async function AgentPage({
                 {agent.trend === 'up' && (
                   <span className="flex items-center gap-1 text-green-400 text-sm">
                     <TrendingUp className="w-4 h-4" />
-                    상승세
+                    Trending Up
                   </span>
                 )}
               </div>
               <p className="text-slate-400 mb-6">{agent.description}</p>
 
-              {/* 주요 지표 */}
+              {/* Key metrics */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                 <div>
                   <p className="text-slate-500 text-sm flex items-center gap-1">
                     <Trophy className="w-4 h-4" />
-                    순위
+                    Rank
                   </p>
                   <p className="text-2xl font-bold text-white">#{agent.rank}</p>
                 </div>
                 <div>
                   <p className="text-slate-500 text-sm flex items-center gap-1">
                     <Target className="w-4 h-4" />
-                    승률
+                    Win Rate
                   </p>
                   <p className="text-2xl font-bold text-green-400">
                     {agent.winRate.toFixed(1)}%
@@ -247,10 +247,10 @@ export default async function AgentPage({
                 </div>
                 <div>
                   <p className="text-slate-500 text-sm flex items-center gap-1">
-                    <Calendar className="w-4 h-4" />총 예측
+                    <Calendar className="w-4 h-4" />Total Predictions
                   </p>
                   <p className="text-2xl font-bold text-white">
-                    {agent.totalPredictions}회
+                    {agent.totalPredictions}
                   </p>
                 </div>
               </div>
@@ -259,42 +259,42 @@ export default async function AgentPage({
         </div>
       </section>
 
-      {/* 전략 설명 */}
+      {/* Strategy description */}
       <section className="max-w-7xl mx-auto px-4 py-4">
         <div className="bg-slate-900/50 backdrop-blur border border-slate-800 rounded-lg p-6">
           <h2 className="text-xl font-bold text-white mb-3 flex items-center gap-2">
             <Brain className="w-5 h-5 text-cyan-400" />
-            분석 전략
+            Analysis Strategy
           </h2>
           <p className="text-slate-400">{agent.strategy}</p>
         </div>
       </section>
 
-      {/* 통계 카드 */}
+      {/* Stats cards */}
       <section className="max-w-7xl mx-auto px-4 py-4">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
           <StatCard
-            label="총 예측"
+            label="Total Predictions"
             value={agent.totalPredictions}
             color="blue"
           />
           <StatCard
-            label="성공한 예측"
+            label="Successful Predictions"
             value={agent.successfulPredictions}
             color="green"
           />
           <StatCard
-            label="평균 배당률"
+            label="Average Odds"
             value={agent.averageOdds.toFixed(2)}
             color="cyan"
           />
-          <StatCard label="최고 연승" value={agent.bestStreak} color="yellow" />
+          <StatCard label="Best Streak" value={agent.bestStreak} color="yellow" />
         </div>
       </section>
 
-      {/* 리그별 성과 */}
+      {/* Performance by league */}
       <section className="max-w-7xl mx-auto px-4 py-4">
-        <h2 className="text-2xl font-bold text-white mb-4">리그별 성과</h2>
+        <h2 className="text-2xl font-bold text-white mb-4">Performance by League</h2>
         <div className="space-y-3">
           {agent.performanceByLeague.map((perf) => (
             <div
@@ -307,12 +307,12 @@ export default async function AgentPage({
                     {perf.league}
                   </h3>
                   <p className="text-sm text-slate-500">
-                    {perf.predictions}개 예측
+                    {perf.predictions} predictions
                   </p>
                 </div>
                 <div className="flex gap-6">
                   <div className="text-right">
-                    <p className="text-sm text-slate-500">승률</p>
+                    <p className="text-sm text-slate-500">Win Rate</p>
                     <p className="text-lg font-bold text-green-400">
                       {perf.winRate}%
                     </p>
@@ -324,7 +324,7 @@ export default async function AgentPage({
                     </p>
                   </div>
                 </div>
-                {/* 승률 프로그레스 바 */}
+                {/* Win rate progress bar */}
                 <div className="w-full md:w-48">
                   <div className="bg-slate-800 rounded-full h-2 overflow-hidden">
                     <div
@@ -339,9 +339,9 @@ export default async function AgentPage({
         </div>
       </section>
 
-      {/* 최근 예측 이력 */}
+      {/* Recent prediction history */}
       <section className="max-w-7xl mx-auto px-4 py-4">
-        <h2 className="text-2xl font-bold text-white mb-4">최근 예측</h2>
+        <h2 className="text-2xl font-bold text-white mb-4">Recent Predictions</h2>
         {agent.recentPredictions.length > 0 ? (
           <div className="space-y-3">
             {agent.recentPredictions.map((pred) => (
@@ -350,14 +350,14 @@ export default async function AgentPage({
           </div>
         ) : (
           <div className="bg-slate-900/50 backdrop-blur border border-slate-800 rounded-lg p-8 text-center">
-            <p className="text-slate-400">아직 예측 이력이 없습니다.</p>
+            <p className="text-slate-400">No prediction history yet.</p>
           </div>
         )}
       </section>
 
-      {/* 전문 분야 */}
+      {/* Specialties */}
       <section className="max-w-7xl mx-auto px-4 py-4 pb-12">
-        <h2 className="text-2xl font-bold text-white mb-4">전문 분야</h2>
+        <h2 className="text-2xl font-bold text-white mb-4">Specialties</h2>
         <div className="flex flex-wrap gap-3">
           {agent.specialties.map((specialty) => (
             <span

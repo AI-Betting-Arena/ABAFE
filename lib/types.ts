@@ -1,20 +1,20 @@
 /**
  * Core Domain Types
  * SOLID Principle: Interface Segregation Principle (ISP)
- * - 각 도메인(Agent, Event, Analysis)은 독립적인 인터페이스 보유
- * - 불필요한 의존성 제거
+ * - Each domain (Agent, Event, Analysis) has its own independent interface
+ * - Unnecessary dependencies are eliminated
  */
 
 // Agent Domain
 export interface Agent {
-  id: string; // 에이전트 고유 ID
+  id: string; // Unique agent ID
   rank: number;
   name: string;
-  winRate: number; // 승률 (%)
+  winRate: number; // Win rate (%)
   roi: number; // Return on Investment (%)
   badge: AgentBadge | null;
   trend: TrendDirection;
-  recentPick: string; // 최근 베팅한 경기
+  recentPick: string; // Most recently bet match
 }
 
 export type AgentBadge = 'Expert' | 'Rising';
@@ -63,14 +63,14 @@ export interface EventOdds {
 
 // Analysis Domain
 export interface Analysis {
-  id: string; // 분석글 고유 ID
-  agentId: string; // 작성 에이전트 ID
-  agent: string; // Agent 이름
-  match: string; // 경기 매치업
-  prediction: string; // 예측 결과 (e.g., "Man City Win", "Over 2.5 Goals")
-  confidence: number; // 확신도 (0-100)
-  excerpt: string; // 분석 요약
-  timestamp: string; // 상대 시간 (e.g., "2시간 전")
+  id: string; // Unique analysis ID
+  agentId: string; // Author agent ID
+  agent: string; // Agent name
+  match: string; // Match matchup
+  prediction: string; // Prediction result (e.g., "Man City Win", "Over 2.5 Goals")
+  confidence: number; // Confidence level (0-100)
+  excerpt: string; // Analysis summary
+  timestamp: string; // Relative time (e.g., "2 hours ago")
 }
 
 // Platform Stats Domain
@@ -98,25 +98,25 @@ export interface StatsResponse {
 }
 
 // ===================================
-// Phase 3-B: 상세 페이지 타입 정의
+// Phase 3-B: Detail page type definitions
 // ===================================
 
-// 예측 정보
+// Prediction info
 export interface Prediction {
   id: string;
   eventId: string;
-  eventName: string; // 예: "맨체스터 시티 vs 리버풀"
+  eventName: string; // e.g., "Manchester City vs Liverpool"
   league: string;
-  prediction: string; // 예: "맨체스터 시티 승리"
+  prediction: string; // e.g., "Manchester City Win"
   odds: number;
   confidence: number; // 0-100
   result: 'win' | 'loss' | 'pending';
   predictedAt: string; // ISO date
   settledAt?: string; // ISO date
-  analysis: string; // 간단한 분석 요약
+  analysis: string; // Brief analysis summary
 }
 
-// 리그별 성과
+// Performance by league
 export interface LeaguePerformance {
   league: string;
   winRate: number;
@@ -124,23 +124,23 @@ export interface LeaguePerformance {
   predictions: number;
 }
 
-// 에이전트 상세 정보 (기존 Agent 타입 확장)
+// Agent detail info (extends existing Agent type)
 export interface AgentDetail extends Omit<Agent, 'badge'> {
   id: string;
   badge: AgentBadge | null;
-  description: string; // 에이전트 설명
-  strategy: string; // 전략 설명
-  totalPredictions: number; // 총 예측 수
-  successfulPredictions: number; // 성공한 예측 수
-  averageOdds: number; // 평균 배당률
-  bestStreak: number; // 최고 연승 기록
-  currentStreak: number; // 현재 연승/연패
-  specialties: string[]; // 전문 리그/종목
-  recentPredictions: Prediction[]; // 최근 예측 5개
-  performanceByLeague: LeaguePerformance[]; // 리그별 성적
+  description: string; // Agent description
+  strategy: string; // Strategy description
+  totalPredictions: number; // Total number of predictions
+  successfulPredictions: number; // Successful predictions
+  averageOdds: number; // Average odds
+  bestStreak: number; // Best winning streak
+  currentStreak: number; // Current win/loss streak
+  specialties: string[]; // Specialized leagues/categories
+  recentPredictions: Prediction[]; // Recent 5 predictions
+  performanceByLeague: LeaguePerformance[]; // Performance by league
 }
 
-// 댓글
+// Comment
 export interface Comment {
   id: string;
   author: string;
@@ -149,41 +149,41 @@ export interface Comment {
   likes: number;
 }
 
-// 분석글 상세 정보 (기존 Analysis 타입 확장)
+// Analysis detail info (extends existing Analysis type)
 export interface AnalysisDetail extends Analysis {
   id: string;
   agentId: string;
-  content: string; // 전체 분석 내용 (마크다운)
-  keyPoints: string[]; // 핵심 포인트 (불릿 포인트)
+  content: string; // Full analysis content (markdown)
+  keyPoints: string[]; // Key points (bullet points)
   statistics: {
-    // 통계 데이터
+    // Statistical data
     label: string;
     value: string | number;
   }[];
-  relatedAnalyses: Analysis[]; // 관련 분석글
-  comments: Comment[]; // 댓글 (선택사항)
+  relatedAnalyses: Analysis[]; // Related analyses
+  comments: Comment[]; // Comments (optional)
 }
 
-// 팀 통계
+// Team stats
 export interface TeamStats {
   name: string;
-  form: string; // 예: "W-W-D-W-L" (최근 5경기)
-  position: number; // 리그 순위
-  goalsScored: number; // 득점
-  goalsConceded: number; // 실점
-  cleanSheets: number; // 무실점 경기
+  form: string; // e.g., "W-W-D-W-L" (last 5 matches)
+  position: number; // League position
+  goalsScored: number; // Goals scored
+  goalsConceded: number; // Goals conceded
+  cleanSheets: number; // Clean sheet matches
 }
 
-// 맞대결 기록
+// Head-to-head record
 export interface H2HMatch {
   date: string;
   homeTeam: string;
   awayTeam: string;
-  score: string; // 예: "2-1"
+  score: string; // e.g., "2-1"
   competition: string;
 }
 
-// 에이전트 예측 현황
+// Agent prediction status
 export interface AgentPrediction {
   agentId: string;
   agentName: string;
@@ -193,7 +193,7 @@ export interface AgentPrediction {
   odds: number;
 }
 
-// 관련 뉴스
+// Related news
 export interface NewsItem {
   id: string;
   title: string;
@@ -202,23 +202,23 @@ export interface NewsItem {
   url: string;
 }
 
-// 경기 상세 정보 (기존 Event 타입 확장)
+// Event detail info (extends existing Event type)
 export interface EventDetail extends Event {
-  description: string; // 경기 설명
-  venue: string; // 경기장
-  referee: string; // 심판
-  weather?: string; // 날씨 (선택사항)
+  description: string; // Match description
+  venue: string; // Venue
+  referee: string; // Referee
+  weather?: string; // Weather (optional)
   teamStats: {
-    // 팀 통계
+    // Team statistics
     home: TeamStats;
     away: TeamStats;
   };
-  h2hHistory: H2HMatch[]; // 최근 맞대결 기록
-  agentPredictions: AgentPrediction[]; // 에이전트 예측 현황
-  news: NewsItem[]; // 관련 뉴스
+  h2hHistory: H2HMatch[]; // Recent head-to-head records
+  agentPredictions: AgentPrediction[]; // Agent prediction status
+  news: NewsItem[]; // Related news
 }
 
-// 상세 페이지 API 응답 타입
+// Detail page API response types
 export interface AgentDetailResponse {
   agent: AgentDetail;
 }

@@ -1,7 +1,7 @@
 /**
  * Leaderboard Component
- * SRP: 에이전트 랭킹 표시 책임
- * Props로 데이터를 받아 순수 함수처럼 동작 (Testability 향상)
+ * SRP: Agent ranking display
+ * Props-driven pure function for testability
  */
 
 import Link from 'next/link';
@@ -18,7 +18,7 @@ interface LeaderboardProps {
 }
 
 export default function Leaderboard({ agents }: LeaderboardProps) {
-  const { lang, setLang, t } = useI18n();
+  const { t } = useI18n();
   const [sortKey, setSortKey] = useState<'winRate' | 'roi'>('winRate');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [filter, setFilter] = useState<'All' | 'Expert' | 'Rising'>('All');
@@ -81,16 +81,9 @@ export default function Leaderboard({ agents }: LeaderboardProps) {
           <button
             className="px-2 py-1 rounded bg-slate-800 text-white text-sm border border-slate-700 focus:outline-none focus:border-cyan-400"
             onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-            aria-label={sortOrder === 'asc' ? t('sort') + ' ↑' : t('sort') + ' ↓'}
+            aria-label={sortOrder === 'asc' ? t('sort') + ' Asc' : t('sort') + ' Desc'}
           >
             {sortOrder === 'asc' ? '↑' : '↓'}
-          </button>
-          <button
-            className="px-2 py-1 rounded bg-slate-800 text-white text-sm border border-slate-700 focus:outline-none focus:border-cyan-400"
-            onClick={() => setLang(lang === 'ko' ? 'en' : 'ko')}
-            aria-label="언어 전환"
-          >
-            {lang === 'ko' ? 'EN' : '한'}
           </button>
         </div>
       </div>
@@ -100,12 +93,12 @@ export default function Leaderboard({ agents }: LeaderboardProps) {
           <table className="w-full" aria-label={t('leaderboard')}>
             <thead className="bg-slate-800/50 border-b border-slate-700">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">{t('sort')}</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">{t('search')}</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">{t('winRate')}</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">{t('roi')}</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">최근 픽</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">변동</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Rank</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Agent</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Win Rate</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">ROI</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Recent Pick</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Trend</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800">
@@ -153,8 +146,8 @@ export default function Leaderboard({ agents }: LeaderboardProps) {
                     <span className="text-slate-400 text-sm">{agent.recentPick}</span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    {agent.trend === 'up' && <TrendingUp className="w-5 h-5 text-green-400" aria-label="상승" />}
-                    {agent.trend === 'down' && <TrendingUp className="w-5 h-5 text-red-400 rotate-180" aria-label="하락" />}
+                    {agent.trend === 'up' && <TrendingUp className="w-5 h-5 text-green-400" aria-label="Up" />}
+                    {agent.trend === 'down' && <TrendingUp className="w-5 h-5 text-red-400 rotate-180" aria-label="Down" />}
                     {agent.trend === 'same' && <span className="text-slate-600">—</span>}
                   </td>
                 </tr>
@@ -162,7 +155,7 @@ export default function Leaderboard({ agents }: LeaderboardProps) {
             </tbody>
           </table>
         </div>
-        {/* 페이지네이션 */}
+        {/* Pagination */}
         <nav className="flex justify-center items-center gap-2 py-4" aria-label={t('page')}>
           <button
             onClick={prevPage}

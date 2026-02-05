@@ -1,24 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
 import type { EventDetail, EventDetailResponse } from '@/lib/types';
 
-// Mock 경기 데이터
+// Mock event data
 const mockEvents: Record<string, EventDetail> = {
   '1': {
     id: '1',
     league: 'EPL',
-    homeTeam: '맨체스터 시티',
-    awayTeam: '리버풀',
+    homeTeam: 'Manchester City',
+    awayTeam: 'Liverpool',
     startTime: '2024-02-04 00:30',
     odds: { home: 1.75, draw: 3.8, away: 4.2 },
     aiPredictions: 12,
     description:
-      '시즌 가장 주목받는 EPL 빅매치. 리그 선두 경쟁의 향방을 가를 중요한 경기입니다.',
-    venue: '에티하드 스타디움',
-    referee: '마이클 올리버',
-    weather: '흐림, 12°C',
+      'The most anticipated EPL big match of the season. A crucial game that could determine the league title race.',
+    venue: 'Etihad Stadium',
+    referee: 'Michael Oliver',
+    weather: 'Cloudy, 12°C',
     teamStats: {
       home: {
-        name: '맨체스터 시티',
+        name: 'Manchester City',
         form: 'W-W-D-W-W',
         position: 1,
         goalsScored: 52,
@@ -26,7 +26,7 @@ const mockEvents: Record<string, EventDetail> = {
         cleanSheets: 9,
       },
       away: {
-        name: '리버풀',
+        name: 'Liverpool',
         form: 'W-D-W-L-W',
         position: 2,
         goalsScored: 48,
@@ -37,37 +37,37 @@ const mockEvents: Record<string, EventDetail> = {
     h2hHistory: [
       {
         date: '2023-11-25',
-        homeTeam: '리버풀',
-        awayTeam: '맨체스터 시티',
+        homeTeam: 'Liverpool',
+        awayTeam: 'Manchester City',
         score: '1-1',
         competition: 'EPL',
       },
       {
         date: '2023-04-01',
-        homeTeam: '맨체스터 시티',
-        awayTeam: '리버풀',
+        homeTeam: 'Manchester City',
+        awayTeam: 'Liverpool',
         score: '4-1',
         competition: 'EPL',
       },
       {
         date: '2022-10-16',
-        homeTeam: '리버풀',
-        awayTeam: '맨체스터 시티',
+        homeTeam: 'Liverpool',
+        awayTeam: 'Manchester City',
         score: '1-0',
         competition: 'EPL',
       },
       {
         date: '2022-04-10',
-        homeTeam: '맨체스터 시티',
-        awayTeam: '리버풀',
+        homeTeam: 'Manchester City',
+        awayTeam: 'Liverpool',
         score: '2-2',
         competition: 'FA Cup',
       },
       {
         date: '2022-02-27',
         homeTeam: 'Wembley',
-        awayTeam: '리버풀',
-        score: '3-2 (승부차기)',
+        awayTeam: 'Liverpool',
+        score: '3-2 (Penalties)',
         competition: 'League Cup Final',
       },
     ],
@@ -76,7 +76,7 @@ const mockEvents: Record<string, EventDetail> = {
         agentId: '1',
         agentName: 'AlphaPredictor',
         agentBadge: 'Expert',
-        prediction: '맨시티 승리',
+        prediction: 'Man City Win',
         confidence: 85,
         odds: 1.75,
       },
@@ -84,7 +84,7 @@ const mockEvents: Record<string, EventDetail> = {
         agentId: '2',
         agentName: 'DataDriven',
         agentBadge: 'Expert',
-        prediction: '맨시티 승리',
+        prediction: 'Man City Win',
         confidence: 78,
         odds: 1.75,
       },
@@ -92,7 +92,7 @@ const mockEvents: Record<string, EventDetail> = {
         agentId: '3',
         agentName: 'ValueHunter',
         agentBadge: 'Rising',
-        prediction: '양팀 모두 득점',
+        prediction: 'Both Teams to Score',
         confidence: 82,
         odds: 1.65,
       },
@@ -100,7 +100,7 @@ const mockEvents: Record<string, EventDetail> = {
         agentId: '4',
         agentName: 'StatMaster',
         agentBadge: null,
-        prediction: '무승부',
+        prediction: 'Draw',
         confidence: 55,
         odds: 3.8,
       },
@@ -116,21 +116,21 @@ const mockEvents: Record<string, EventDetail> = {
     news: [
       {
         id: '1',
-        title: '리버풀, 주전 미드필더 3명 부상으로 결장',
+        title: 'Liverpool to miss 3 starting midfielders due to injury',
         source: 'ESPN',
         publishedAt: '2024-02-03T08:00:00Z',
         url: '#',
       },
       {
         id: '2',
-        title: '펩 과르디올라: "리버풀은 항상 어려운 상대"',
+        title: 'Pep Guardiola: "Liverpool is always a tough opponent"',
         source: 'Sky Sports',
         publishedAt: '2024-02-02T14:30:00Z',
         url: '#',
       },
       {
         id: '3',
-        title: '맨시티 vs 리버풀: 역대 전적 및 기록 분석',
+        title: 'Man City vs Liverpool: Head-to-head record analysis',
         source: 'BBC Sport',
         publishedAt: '2024-02-02T10:00:00Z',
         url: '#',
@@ -140,18 +140,18 @@ const mockEvents: Record<string, EventDetail> = {
   '2': {
     id: '2',
     league: 'EPL',
-    homeTeam: '아스날',
-    awayTeam: '첼시',
+    homeTeam: 'Arsenal',
+    awayTeam: 'Chelsea',
     startTime: '2024-02-04 21:00',
     odds: { home: 1.85, draw: 3.6, away: 4.0 },
     aiPredictions: 8,
-    description: '런던 더비. 아스날의 홈 경기에서 첼시와의 치열한 대결이 예상됩니다.',
-    venue: '에미레이츠 스타디움',
-    referee: '안소니 테일러',
-    weather: '맑음, 8°C',
+    description: 'London Derby. A fierce clash between Arsenal at home and Chelsea is expected.',
+    venue: 'Emirates Stadium',
+    referee: 'Anthony Taylor',
+    weather: 'Clear, 8°C',
     teamStats: {
       home: {
-        name: '아스날',
+        name: 'Arsenal',
         form: 'W-W-W-D-W',
         position: 3,
         goalsScored: 45,
@@ -159,7 +159,7 @@ const mockEvents: Record<string, EventDetail> = {
         cleanSheets: 8,
       },
       away: {
-        name: '첼시',
+        name: 'Chelsea',
         form: 'W-L-D-W-D',
         position: 7,
         goalsScored: 38,
@@ -170,22 +170,22 @@ const mockEvents: Record<string, EventDetail> = {
     h2hHistory: [
       {
         date: '2023-10-21',
-        homeTeam: '첼시',
-        awayTeam: '아스날',
+        homeTeam: 'Chelsea',
+        awayTeam: 'Arsenal',
         score: '2-2',
         competition: 'EPL',
       },
       {
         date: '2023-05-02',
-        homeTeam: '아스날',
-        awayTeam: '첼시',
+        homeTeam: 'Arsenal',
+        awayTeam: 'Chelsea',
         score: '3-1',
         competition: 'EPL',
       },
       {
         date: '2023-02-18',
-        homeTeam: '첼시',
-        awayTeam: '아스날',
+        homeTeam: 'Chelsea',
+        awayTeam: 'Arsenal',
         score: '0-1',
         competition: 'EPL',
       },
@@ -195,7 +195,7 @@ const mockEvents: Record<string, EventDetail> = {
         agentId: '2',
         agentName: 'DataDriven',
         agentBadge: 'Expert',
-        prediction: '아스날 승리',
+        prediction: 'Arsenal Win',
         confidence: 78,
         odds: 1.85,
       },
@@ -203,7 +203,7 @@ const mockEvents: Record<string, EventDetail> = {
         agentId: '1',
         agentName: 'AlphaPredictor',
         agentBadge: 'Expert',
-        prediction: '아스날 승리',
+        prediction: 'Arsenal Win',
         confidence: 72,
         odds: 1.85,
       },
@@ -211,14 +211,14 @@ const mockEvents: Record<string, EventDetail> = {
     news: [
       {
         id: '4',
-        title: '아스날, 에미레이츠에서 8연승 도전',
+        title: 'Arsenal going for 8 consecutive wins at the Emirates',
         source: 'The Guardian',
         publishedAt: '2024-02-03T09:00:00Z',
         url: '#',
       },
       {
         id: '5',
-        title: '첼시 새 감독, 첫 런던 더비 대비',
+        title: 'Chelsea new manager prepares for first London Derby',
         source: 'Daily Mail',
         publishedAt: '2024-02-03T07:30:00Z',
         url: '#',
@@ -228,18 +228,18 @@ const mockEvents: Record<string, EventDetail> = {
   '3': {
     id: '3',
     league: 'La Liga',
-    homeTeam: '레알 마드리드',
-    awayTeam: '바르셀로나',
+    homeTeam: 'Real Madrid',
+    awayTeam: 'Barcelona',
     startTime: '2024-02-05 04:00',
     odds: { home: 2.1, draw: 3.4, away: 3.2 },
     aiPredictions: 15,
-    description: '세계 최대의 더비, 엘클라시코. 역사적인 라이벌전이 펼쳐집니다.',
-    venue: '산티아고 베르나베우',
-    referee: '헤수스 힐 만사노',
-    weather: '맑음, 14°C',
+    description: 'The world\'s greatest derby, El Clasico. A historic rivalry match unfolds.',
+    venue: 'Santiago Bernabeu',
+    referee: 'Jesus Gil Manzano',
+    weather: 'Clear, 14°C',
     teamStats: {
       home: {
-        name: '레알 마드리드',
+        name: 'Real Madrid',
         form: 'W-W-W-W-D',
         position: 1,
         goalsScored: 58,
@@ -247,7 +247,7 @@ const mockEvents: Record<string, EventDetail> = {
         cleanSheets: 10,
       },
       away: {
-        name: '바르셀로나',
+        name: 'Barcelona',
         form: 'W-W-D-W-W',
         position: 2,
         goalsScored: 52,
@@ -258,29 +258,29 @@ const mockEvents: Record<string, EventDetail> = {
     h2hHistory: [
       {
         date: '2023-10-28',
-        homeTeam: '바르셀로나',
-        awayTeam: '레알 마드리드',
+        homeTeam: 'Barcelona',
+        awayTeam: 'Real Madrid',
         score: '1-2',
         competition: 'La Liga',
       },
       {
         date: '2023-04-05',
-        homeTeam: '레알 마드리드',
-        awayTeam: '바르셀로나',
+        homeTeam: 'Real Madrid',
+        awayTeam: 'Barcelona',
         score: '3-1',
         competition: 'Copa del Rey',
       },
       {
         date: '2023-03-19',
-        homeTeam: '바르셀로나',
-        awayTeam: '레알 마드리드',
+        homeTeam: 'Barcelona',
+        awayTeam: 'Real Madrid',
         score: '2-1',
         competition: 'La Liga',
       },
       {
         date: '2023-01-15',
         homeTeam: 'Saudi Arabia',
-        awayTeam: '바르셀로나',
+        awayTeam: 'Barcelona',
         score: '1-3',
         competition: 'Supercopa',
       },
@@ -290,7 +290,7 @@ const mockEvents: Record<string, EventDetail> = {
         agentId: '3',
         agentName: 'ValueHunter',
         agentBadge: 'Rising',
-        prediction: '양팀 모두 득점',
+        prediction: 'Both Teams to Score',
         confidence: 92,
         odds: 1.65,
       },
@@ -298,7 +298,7 @@ const mockEvents: Record<string, EventDetail> = {
         agentId: '1',
         agentName: 'AlphaPredictor',
         agentBadge: 'Expert',
-        prediction: '레알 마드리드 승리',
+        prediction: 'Real Madrid Win',
         confidence: 68,
         odds: 2.1,
       },
@@ -306,7 +306,7 @@ const mockEvents: Record<string, EventDetail> = {
         agentId: '2',
         agentName: 'DataDriven',
         agentBadge: 'Expert',
-        prediction: '무승부',
+        prediction: 'Draw',
         confidence: 45,
         odds: 3.4,
       },
@@ -314,14 +314,14 @@ const mockEvents: Record<string, EventDetail> = {
     news: [
       {
         id: '6',
-        title: '엘클라시코: 빈시우스 vs 야말, 젊은 스타들의 대결',
+        title: 'El Clasico: Vinicius vs Yamal, a clash of young stars',
         source: 'Marca',
         publishedAt: '2024-02-04T10:00:00Z',
         url: '#',
       },
       {
         id: '7',
-        title: '베르나베우 매진, 티켓 가격 역대 최고',
+        title: 'Bernabeu sold out, ticket prices at all-time high',
         source: 'AS',
         publishedAt: '2024-02-04T08:00:00Z',
         url: '#',
@@ -337,25 +337,25 @@ export async function GET(
   try {
     const { id } = await params;
 
-    // Mock 데이터에서 경기 찾기
+    // Find event in mock data
     let event = mockEvents[id];
 
-    // ID로 찾지 못하면 기본 경기 생성
+    // If not found by ID, create a default event
     if (!event) {
       event = {
         id: id,
         league: 'Unknown',
-        homeTeam: '홈팀',
-        awayTeam: '원정팀',
+        homeTeam: 'Home Team',
+        awayTeam: 'Away Team',
         startTime: new Date().toISOString(),
         odds: { home: 2.0, draw: 3.5, away: 3.0 },
         aiPredictions: 0,
-        description: '경기 정보를 불러올 수 없습니다.',
+        description: 'Unable to load event information.',
         venue: '-',
         referee: '-',
         teamStats: {
           home: {
-            name: '홈팀',
+            name: 'Home Team',
             form: '-',
             position: 0,
             goalsScored: 0,
@@ -363,7 +363,7 @@ export async function GET(
             cleanSheets: 0,
           },
           away: {
-            name: '원정팀',
+            name: 'Away Team',
             form: '-',
             position: 0,
             goalsScored: 0,

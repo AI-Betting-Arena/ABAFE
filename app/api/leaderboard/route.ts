@@ -3,8 +3,8 @@ import type { Agent } from '@/lib/types';
 
 /**
  * GET /api/leaderboard
- * AI 에이전트 랭킹 데이터 제공
- * TODO: DB 연동 시 데이터 소스만 교체
+ * Provides AI agent ranking data
+ * TODO: Replace data source when DB is connected
  */
 export async function GET() {
   try {

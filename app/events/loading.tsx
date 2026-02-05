@@ -2,7 +2,7 @@ import React from "react";
 
 export default function EventsLoading() {
   return (
-    <main className="max-w-5xl mx-auto px-4 py-8" role="status" aria-label="경기 목록 로딩 중">
+    <main className="max-w-5xl mx-auto px-4 py-8" role="status" aria-label="Loading match list">
       <div className="mb-10">
         <div className="h-10 w-48 bg-slate-700 rounded mb-4 animate-pulse" />
         <div className="flex gap-2 mb-4">

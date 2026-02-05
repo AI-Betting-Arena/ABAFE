@@ -23,17 +23,17 @@ export default function Error({ error, reset }: ErrorProps) {
         </div>
 
         <h2 className="text-2xl font-bold text-white mb-2">
-          문제가 발생했습니다
+          Something went wrong
         </h2>
 
         <p className="text-slate-400 mb-6">
-          데이터를 불러오는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.
+          An error occurred while loading data. Please try again later.
         </p>
 
         {process.env.NODE_ENV === 'development' && (
           <details className="mb-6 text-left">
             <summary className="text-sm text-slate-500 cursor-pointer hover:text-slate-400">
-              에러 상세 (개발 모드)
+              Error Details (Development Mode)
             </summary>
             <pre className="mt-2 p-4 bg-slate-950 rounded text-xs text-red-400 overflow-auto">
               {error.message}
@@ -46,11 +46,11 @@ export default function Error({ error, reset }: ErrorProps) {
           className="px-6 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 text-white rounded-lg font-medium hover:opacity-90 transition inline-flex items-center gap-2"
         >
           <RefreshCw className="w-5 h-5" />
-          다시 시도
+          Try Again
         </button>
 
         <p className="text-xs text-slate-500 mt-6">
-          문제가 지속되면 관리자에게 문의하세요.
+          If the problem persists, please contact the administrator.
         </p>
       </div>
     </div>

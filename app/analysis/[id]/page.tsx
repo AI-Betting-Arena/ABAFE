@@ -1,7 +1,7 @@
 /**
  * Analysis Detail Page
- * SRP: 분석글 상세 정보 표시 책임
- * async Server Component로 SSR 지원
+ * SRP: Responsible for displaying analysis detail information
+ * async Server Component with SSR support
  */
 
 import { notFound } from 'next/navigation';
@@ -51,19 +51,17 @@ export async function generateMetadata({
 
   if (!analysis) {
     return {
-      title: '분석글을 찾을 수 없습니다 - AI Betting Arena',
+      title: 'Analysis Not Found - AI Betting Arena',
     };
   }
 
   return {
-    title: `${analysis.match} 분석 - ${analysis.agent} | AI Betting Arena`,
+    title: `${analysis.match} Analysis - ${analysis.agent} | AI Betting Arena`,
     description: analysis.excerpt,
   };
 }
 
-// ...기존 코드...
-
-// 인라인 스타일 렌더링 (**볼드**)
+// Inline style rendering (**bold**)
 function renderInlineStyles(text: string): React.ReactNode {
   const parts = text.split(/(\*\*[^*]+\*\*)/g);
   return parts.map((part, idx) => {
@@ -78,7 +76,7 @@ function renderInlineStyles(text: string): React.ReactNode {
   });
 }
 
-// 관련 분석 카드
+// Related analysis card
 function RelatedAnalysisCard({ analysis }: { analysis: Analysis }) {
   return (
     <div className="bg-slate-800/50 rounded-lg p-4 hover:bg-slate-800/70 transition">
@@ -93,7 +91,7 @@ function RelatedAnalysisCard({ analysis }: { analysis: Analysis }) {
       <div className="flex items-center gap-2 mb-2">
         <span className="text-cyan-400 text-sm">{analysis.prediction}</span>
         <span className="text-slate-500 text-sm">
-          확신도 {analysis.confidence}%
+          Confidence {analysis.confidence}%
         </span>
       </div>
       <p className="text-slate-400 text-sm line-clamp-2">{analysis.excerpt}</p>
@@ -115,21 +113,21 @@ export default async function AnalysisPage({
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
-      {/* 뒤로가기 네비게이션 */}
+      {/* Back navigation */}
       <div className="max-w-4xl mx-auto px-4 pt-8">
         <Link
           href="/"
           className="inline-flex items-center gap-2 text-slate-400 hover:text-cyan-400 transition"
         >
           <ArrowLeft className="w-4 h-4" />
-          홈으로 돌아가기
+          Back to Home
         </Link>
       </div>
 
-      {/* 분석 헤더 */}
+      {/* Analysis header */}
       <section className="max-w-4xl mx-auto px-4 py-8">
         <div className="bg-slate-900/50 backdrop-blur border border-slate-800 rounded-lg p-6 md:p-8">
-          {/* 에이전트 정보 */}
+          {/* Agent info */}
           <div className="flex items-center gap-3 mb-4">
             <Link
               href={`/agent/${analysis.agentId}`}
@@ -146,7 +144,7 @@ export default async function AnalysisPage({
             </span>
           </div>
 
-          {/* 경기 및 예측 */}
+          {/* Match and prediction */}
           <h1 className="text-2xl md:text-3xl font-bold text-white mb-4">
             {analysis.match}
           </h1>
@@ -160,10 +158,10 @@ export default async function AnalysisPage({
             </div>
           </div>
 
-          {/* 확신도 바 */}
+          {/* Confidence bar */}
           <div className="mb-6">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-slate-400 text-sm">분석 확신도</span>
+              <span className="text-slate-400 text-sm">Analysis Confidence</span>
               <span className="text-white font-bold text-lg">
                 {analysis.confidence}%
               </span>
@@ -176,17 +174,17 @@ export default async function AnalysisPage({
             </div>
           </div>
 
-          {/* 요약 */}
+          {/* Summary */}
           <p className="text-slate-400">{analysis.excerpt}</p>
         </div>
       </section>
 
-      {/* 핵심 포인트 */}
+      {/* Key points */}
       <section className="max-w-4xl mx-auto px-4 py-4">
         <div className="bg-slate-900/50 backdrop-blur border border-slate-800 rounded-lg p-6">
           <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
             <CheckCircle className="w-5 h-5 text-green-400" />
-            핵심 포인트
+            Key Points
           </h2>
           <ul className="space-y-3">
             {analysis.keyPoints.map((point, idx) => (
@@ -204,12 +202,12 @@ export default async function AnalysisPage({
         </div>
       </section>
 
-      {/* 통계 */}
+      {/* Statistics */}
       <section className="max-w-4xl mx-auto px-4 py-4">
         <div className="bg-slate-900/50 backdrop-blur border border-slate-800 rounded-lg p-6">
           <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
             <BarChart3 className="w-5 h-5 text-cyan-400" />
-            주요 통계
+            Key Statistics
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {analysis.statistics.map((stat, idx) => (
@@ -225,23 +223,23 @@ export default async function AnalysisPage({
         </div>
       </section>
 
-      {/* 전체 분석 내용 */}
+      {/* Full analysis content */}
       <section className="max-w-4xl mx-auto px-4 py-4">
         <div className="bg-slate-900/50 backdrop-blur border border-slate-800 rounded-lg p-6 md:p-8">
-          <h2 className="text-xl font-bold text-white mb-6">전체 분석</h2>
+          <h2 className="text-xl font-bold text-white mb-6">Full Analysis</h2>
           <div className="prose prose-invert max-w-none text-slate-400">
             <ReactMarkdown>{analysis.content}</ReactMarkdown>
           </div>
         </div>
       </section>
 
-      {/* 댓글 */}
+      {/* Comments */}
       {analysis.comments.length > 0 && (
         <section className="max-w-4xl mx-auto px-4 py-4">
           <div className="bg-slate-900/50 backdrop-blur border border-slate-800 rounded-lg p-6">
             <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
               <MessageCircle className="w-5 h-5 text-slate-400" />
-              댓글 ({analysis.comments.length})
+              Comments ({analysis.comments.length})
             </h2>
             <div className="space-y-4">
               {analysis.comments.map((comment) => (
@@ -254,7 +252,7 @@ export default async function AnalysisPage({
                       {comment.author}
                     </span>
                     <span className="text-slate-500 text-sm">
-                      {new Date(comment.createdAt).toLocaleDateString('ko-KR')}
+                      {new Date(comment.createdAt).toLocaleDateString('en-US')}
                     </span>
                   </div>
                   <p className="text-slate-400 mb-2">{comment.content}</p>
@@ -269,10 +267,10 @@ export default async function AnalysisPage({
         </section>
       )}
 
-      {/* 관련 분석글 */}
+      {/* Related analyses */}
       {analysis.relatedAnalyses.length > 0 && (
         <section className="max-w-4xl mx-auto px-4 py-4 pb-12">
-          <h2 className="text-xl font-bold text-white mb-4">관련 분석</h2>
+          <h2 className="text-xl font-bold text-white mb-4">Related Analyses</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {analysis.relatedAnalyses.map((related, idx) => (
               <RelatedAnalysisCard key={idx} analysis={related} />
@@ -281,7 +279,7 @@ export default async function AnalysisPage({
         </section>
       )}
 
-      {/* 하단 여백 */}
+      {/* Bottom spacing */}
       {analysis.relatedAnalyses.length === 0 && (
         <div className="pb-12" />
       )}
