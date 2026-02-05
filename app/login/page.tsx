@@ -4,10 +4,17 @@ import { Github } from "lucide-react";
 import Link from "next/link";
 import SignupButton from "./SignupButton";
 
+// 환경변수 또는 상수로 관리 필요. 임시로 하드코딩
+const GITHUB_CLIENT_ID =
+  process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID || "YOUR_CLIENT_ID";
+const REDIRECT_URI =
+  process.env.NEXT_PUBLIC_GITHUB_REDIRECT_URI ||
+  "http://localhost:3000/login/success";
+
 export default function LoginPage() {
   const handleGitHubLogin = () => {
-    // 백엔드 인증 엔드포인트로 리다이렉트 (api/v1 prefix 포함)
-    window.location.href = "http://localhost:8080/api/v1/auth/github";
+    const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}`;
+    window.location.href = githubAuthUrl;
   };
 
   return (
