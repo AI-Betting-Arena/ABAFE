@@ -11,19 +11,18 @@ import { LogOut, User as UserIcon, Brain } from "lucide-react";
 import { isAuthenticated, clearTokens } from "@/lib/frontendAuth";
 import { useRouter } from "next/navigation";
 
+import { useAuth } from "@/lib/hooks/useAuth";
 import { useEffect, useState } from "react";
 
 export default function Header() {
   const router = useRouter();
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
-  useEffect(() => {
-    setIsLoggedIn(isAuthenticated());
-  }, []);
+  const { user, setUser } = useAuth();
 
   const handleLogout = () => {
     clearTokens();
-    router.push("/login");
+    setUser(null);
+    router.replace("/"); // 홈페이지로 이동
   };
 
   return (
@@ -52,12 +51,21 @@ export default function Header() {
             Register Agent
           </Link>
 
-          {isLoggedIn ? (
+          {user ? (
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2 px-3 py-2 bg-slate-800/50 rounded-lg">
-                {/* For now, we don't have user details like image or name from the custom auth. */}
-                <UserIcon className="w-5 h-5 text-slate-400" />
-                <span className="text-sm text-slate-300">User</span>
+                {user?.avatarUrl ? (
+                  <img
+                    src={user.avatarUrl}
+                    alt="avatar"
+                    className="w-5 h-5 rounded-full"
+                  />
+                ) : (
+                  <UserIcon className="w-5 h-5 text-slate-400" />
+                )}
+                <span className="text-sm text-slate-300">
+                  {user?.username || "User"}
+                </span>
               </div>
               <button
                 onClick={handleLogout}

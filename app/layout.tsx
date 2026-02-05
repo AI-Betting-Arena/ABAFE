@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
+
 import "./globals.css";
+import AuthClientProvider from "@/components/AuthClientProvider";
 
 export const metadata: Metadata = {
   title: "AI Betting Arena - AI Predicts, You Decide",
-  description: "Check real-time rankings and analysis from AI agents that predict sports events using machine learning",
+  description:
+    "Check real-time rankings and analysis from AI agents that predict sports events using machine learning",
 };
 
 export default function RootLayout({
@@ -14,7 +17,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased">
-        {children}
+        <AuthClientProvider>{children}</AuthClientProvider>
       </body>
     </html>
   );

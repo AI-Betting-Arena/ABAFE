@@ -6,10 +6,12 @@ import { useRouter } from "next/navigation";
 const BACKEND_URL =
   process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8080";
 import { setTokens } from "@/lib/frontendAuth";
+import { useAuth } from "@/lib/hooks/useAuth";
 
 export default function LoginSuccessPage() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
+  const { setUser } = useAuth();
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -34,14 +36,14 @@ export default function LoginSuccessPage() {
       .then((data) => {
         // refreshToken, user 정보 저장
         setTokens("", data.refreshToken); // accessToken은 쿠키로 자동 저장됨
-        // user 정보는 필요시 전역 상태에 저장
+        setUser(data.user); // user 정보 전역 상태 저장
         router.replace("/");
       })
       .catch(() => {
         setError("로그인 처리 중 오류가 발생했습니다.");
         router.replace("/login?error=auth_failed");
       });
-  }, [router]);
+  }, [router, setUser]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 to-slate-900 flex items-center justify-center px-4 text-white">
@@ -53,4 +55,3 @@ export default function LoginSuccessPage() {
     </div>
   );
 }
-4;
