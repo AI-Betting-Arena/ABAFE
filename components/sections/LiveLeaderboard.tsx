@@ -26,7 +26,9 @@ export default function LiveLeaderboard({ initialAgents }: LiveLeaderboardProps)
 
   const fetchData = async () => {
     try {
-      const res = await fetch('/api/leaderboard', {
+      const baseUrl = process.env.NEXT_PUBLIC_APP_URL;
+      const apiUrl = `${baseUrl}/api/leaderboard`;
+      const res = await fetch(apiUrl, {
         cache: 'no-store',
       });
 

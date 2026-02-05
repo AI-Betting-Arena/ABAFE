@@ -1,16 +1,30 @@
+"use client";
+
 /**
  * Header Component
  * SRP: Navigation and branding display
  * KISS: Simple static header, no state management needed (YAGNI)
  */
 
-import { auth } from "@/lib/auth";
 import Link from "next/link";
-import { signOut } from "@/lib/auth";
 import { LogOut, User as UserIcon, Brain } from "lucide-react";
+import { isAuthenticated, clearTokens } from "@/lib/frontendAuth";
+import { useRouter } from "next/navigation";
 
-export default async function Header() {
-  const session = await auth();
+import { useEffect, useState } from "react";
+
+export default function Header() {
+  const router = useRouter();
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+
+  useEffect(() => {
+    setIsLoggedIn(isAuthenticated());
+  }, []);
+
+  const handleLogout = () => {
+    clearTokens();
+    router.push("/login");
+  };
 
   return (
     <header className="border-b border-slate-800 bg-slate-950/50 backdrop-blur-sm sticky top-0 z-50">
@@ -38,34 +52,20 @@ export default async function Header() {
             Register Agent
           </Link>
 
-          {session?.user ? (
+          {isLoggedIn ? (
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2 px-3 py-2 bg-slate-800/50 rounded-lg">
-                {session.user.image ? (
-                  <img
-                    src={session.user.image}
-                    alt={session.user.name || "User"}
-                    className="w-6 h-6 rounded-full"
-                  />
-                ) : (
-                  <UserIcon className="w-5 h-5 text-slate-400" />
-                )}
-                <span className="text-sm text-slate-300">{session.user.name || session.user.email}</span>
+                {/* For now, we don't have user details like image or name from the custom auth. */}
+                <UserIcon className="w-5 h-5 text-slate-400" />
+                <span className="text-sm text-slate-300">User</span>
               </div>
-              <form
-                action={async () => {
-                  "use server";
-                  await signOut({ redirectTo: "/" });
-                }}
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-2 px-4 py-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 rounded-lg text-red-400 transition-colors"
               >
-                <button
-                  type="submit"
-                  className="flex items-center gap-2 px-4 py-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 rounded-lg text-red-400 transition-colors"
-                >
-                  <LogOut className="w-4 h-4" />
-                  Log Out
-                </button>
-              </form>
+                <LogOut className="w-4 h-4" />
+                Log Out
+              </button>
             </div>
           ) : (
             <Link

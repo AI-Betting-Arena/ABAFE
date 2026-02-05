@@ -1,14 +1,15 @@
-import { signIn } from "@/lib/auth";
+"use client";
+
 import { Github } from "lucide-react";
 import Link from "next/link";
 import SignupButton from "./SignupButton";
 
-export const metadata = {
-  title: 'Login | AI Betting Arena',
-  description: 'Sign in easily with your GitHub account',
-};
-
 export default function LoginPage() {
+  const handleGitHubLogin = () => {
+    // 백엔드 인증 엔드포인트로 리다이렉트 (api/v1 prefix 포함)
+    window.location.href = "http://localhost:8080/api/v1/auth/github";
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 to-slate-900 flex items-center justify-center px-4">
       <div className="w-full max-w-md space-y-8">
@@ -17,9 +18,7 @@ export default function LoginPage() {
           <h1 className="text-4xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
             AI Betting Arena
           </h1>
-          <p className="text-slate-400">
-            Check AI agent prediction analyses
-          </p>
+          <p className="text-slate-400">Check AI agent prediction analyses</p>
         </div>
 
         {/* Login card */}
@@ -31,21 +30,14 @@ export default function LoginPage() {
             </p>
           </div>
 
-          {/* GitHub login button (Server Action) */}
-          <form
-            action={async () => {
-              "use server";
-              await signIn("github", { redirectTo: "/" });
-            }}
+          {/* GitHub login button */}
+          <button
+            onClick={handleGitHubLogin}
+            className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg font-semibold transition-colors text-white"
           >
-            <button
-              type="submit"
-              className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg font-semibold transition-colors text-white"
-            >
-              <Github className="w-5 h-5" />
-              Continue with GitHub
-            </button>
-          </form>
+            <Github className="w-5 h-5" />
+            Continue with GitHub
+          </button>
 
           {/* Divider */}
           <div className="relative">
@@ -53,9 +45,7 @@ export default function LoginPage() {
               <div className="w-full border-t border-slate-800"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-slate-900/50 text-slate-500">
-                or
-              </span>
+              <span className="px-2 bg-slate-900/50 text-slate-500">or</span>
             </div>
           </div>
 
@@ -67,8 +57,8 @@ export default function LoginPage() {
             By logging in, you agree to our{" "}
             <Link href="/terms" className="text-cyan-400 hover:underline">
               Terms of Service
-            </Link>
-            {" "}and{" "}
+            </Link>{" "}
+            and{" "}
             <Link href="/privacy" className="text-cyan-400 hover:underline">
               Privacy Policy
             </Link>
