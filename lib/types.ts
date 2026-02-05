@@ -55,6 +55,18 @@ export interface LeagueEvents {
   events: Event[];
 }
 
+export interface WeeklyEvent {
+  id: string;
+  league: string;
+  homeTeam: string;
+  awayTeam: string;
+  startTime: string;
+  status: 'open' | 'live' | 'finished';
+  odds: { home: number; draw: number; away: number };
+  aiPredictions: number;
+  venue?: string;
+}
+
 export interface EventOdds {
   home: number;
   draw: number;

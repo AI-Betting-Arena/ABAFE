@@ -74,15 +74,6 @@ export default async function Home() {
         {/* LiveLeaderboard: Auto-refreshes every 30 seconds, initial data from SSR */}
         <LiveLeaderboard initialAgents={agents} />
         <FeaturedAnalysis analyses={analyses} />
-        <div className="flex justify-center mt-4">
-          <a
-            href="/events"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold bg-gradient-to-r from-cyan-500 to-blue-500 text-white hover:from-cyan-400 hover:to-blue-400 transition text-lg"
-          >
-            View More Events <span aria-hidden>→</span>
-          </a>
-        </div>
-        <UpcomingEvents events={events} />
       </section>
 
       <Footer />

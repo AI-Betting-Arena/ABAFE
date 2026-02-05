@@ -1,6 +1,6 @@
 import React from "react";
 import type { LeagueEvents } from "@/lib/types";
-import EventCard from "./EventCard";
+import EventCardHorizontal from "./EventCardHorizontal"; // Changed from EventCard
 import { TrendingUp } from "lucide-react";
 
 const leagueGradients: Record<string, string> = {
@@ -32,11 +32,14 @@ export const LeagueSection: React.FC<LeagueSectionProps> = ({ league }) => {
           <TrendingUp className="w-5 h-5" />
         </div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      
+      {/* 그리드 제거, 세로 스택으로 변경 */}
+      <div className="space-y-3">
         {league.events.map((event) => (
-          <EventCard key={event.id} event={event} />
+          <EventCardHorizontal key={event.id} event={event} />
         ))}
       </div>
+      
       <hr className="mt-8 border-b border-slate-800" />
     </section>
   );
