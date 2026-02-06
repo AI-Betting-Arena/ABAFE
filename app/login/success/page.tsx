@@ -33,15 +33,20 @@ export default function LoginSuccessPage() {
         if (!res.ok) {
           throw new Error("Authentication failed on the backend.");
         }
-        
+
         const data = await res.json();
 
         // The user's backend sends `refreshToken` and `user`
         if (data.refreshToken && data.user) {
           // setTokens saves refreshToken to localStorage
-          setTokens("", data.refreshToken); 
+          setTokens("", data.refreshToken);
           // setUser updates the global context
-          setUser(data.user);
+          setUser({
+            id: data.user.id || "",
+            username: data.user.username || "",
+            avatarUrl: data.user.avatarUrl || "",
+            email: data.user.email || "",
+          });
           // Now redirect to home, where useAuth will pick up the new state
           router.replace("/");
         } else {
