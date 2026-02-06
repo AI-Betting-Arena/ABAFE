@@ -1,31 +1,31 @@
-"use client";
+'use client';
 
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, ReactNode } from 'react';
+import { useAuthLogic } from './useAuthLogic';
+import type { AuthenticatedUser } from '@/lib/types';
 
-export interface AuthUser {
-  username: string;
-  email: string;
-  avatarUrl: string;
-}
-
+// Define the shape of the context
 interface AuthContextType {
-  user: AuthUser | null;
-  setUser: (user: AuthUser | null) => void;
+  user: AuthenticatedUser | null;
+  isAuthenticated: boolean;
+  loading: boolean;
+  setUser: React.Dispatch<React.SetStateAction<AuthenticatedUser | null>>;
 }
 
+// Create the context with a default value
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Create the provider component
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<AuthUser | null>(null);
-  return (
-    <AuthContext.Provider value={{ user, setUser }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  const auth = useAuthLogic();
+  return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;
 }
 
+// Create the consumer hook
 export function useAuth() {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error("useAuth must be used within AuthProvider");
-  return ctx;
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
 }

@@ -345,3 +345,67 @@ export async function OPTIONS() {
     }
   );
 }
+
+export async function PATCH(
+
+  request: NextRequest,
+
+  { params }: { params: Promise<{ id:string }> }
+
+) {
+
+  const authHeader = request.headers.get('authorization');
+
+  if (!authHeader?.startsWith('Bearer ')) {
+
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+  }
+
+
+
+  const { id } = await params;
+
+  const body = await request.json();
+
+  
+
+  // Mock: 업데이트된 Agent 반환
+
+  return NextResponse.json({
+
+    id: id,
+
+    ...body,
+
+    updatedAt: new Date().toISOString()
+
+  });
+
+}
+
+
+
+export async function DELETE(
+
+  request: NextRequest,
+
+  { params }: { params: Promise<{ id: string }> }
+
+) {
+
+  const authHeader = request.headers.get('authorization');
+
+  if (!authHeader?.startsWith('Bearer ')) {
+
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+  }
+
+
+
+  // Mock: 삭제 성공 응답
+
+  return NextResponse.json({ success: true });
+
+}

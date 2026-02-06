@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { setTokens } from "@/lib/frontendAuth";
+import { useAuth } from "@/lib/hooks/useAuth"; // Correct import path
 
 const BACKEND_URL =
   process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8080";
-import { setTokens } from "@/lib/frontendAuth";
-import { useAuth } from "@/lib/hooks/useAuth";
 
 export default function LoginSuccessPage() {
   const router = useRouter();
@@ -14,42 +14,55 @@ export default function LoginSuccessPage() {
   const { setUser } = useAuth();
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const code = params.get("code");
-    if (!code) {
-      setError("인가 코드가 없습니다. 다시 시도해주세요.");
-      router.replace("/login?error=missing_code");
-      return;
-    }
+    const processLogin = async () => {
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get("code");
+      if (!code) {
+        setError("Authorization code is missing. Please try again.");
+        router.replace("/login?error=missing_code");
+        return;
+      }
 
-    // code를 백엔드로 전송하여 토큰 및 유저 정보 획득
-    fetch(`${BACKEND_URL}/api/v1/auth/github/token`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code }),
-      credentials: "include", // accessToken 쿠키 수신
-    })
-      .then(async (res) => {
-        if (!res.ok) throw new Error("인증 실패");
-        return res.json();
-      })
-      .then((data) => {
-        // refreshToken, user 정보 저장
-        setTokens("", data.refreshToken); // accessToken은 쿠키로 자동 저장됨
-        setUser(data.user); // user 정보 전역 상태 저장
-        router.replace("/");
-      })
-      .catch(() => {
-        setError("로그인 처리 중 오류가 발생했습니다.");
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/v1/auth/github/token`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code }),
+        });
+
+        if (!res.ok) {
+          throw new Error("Authentication failed on the backend.");
+        }
+        
+        const data = await res.json();
+
+        // The user's backend sends `refreshToken` and `user`
+        if (data.refreshToken && data.user) {
+          // setTokens saves refreshToken to localStorage
+          setTokens("", data.refreshToken); 
+          // setUser updates the global context
+          setUser(data.user);
+          // Now redirect to home, where useAuth will pick up the new state
+          router.replace("/");
+        } else {
+          throw new Error("Invalid data received from backend.");
+        }
+      } catch (e: any) {
+        setError(e.message || "An error occurred during login.");
         router.replace("/login?error=auth_failed");
-      });
-  }, [router, setUser]);
+      }
+    };
+
+    processLogin();
+    // This effect should only run once.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 to-slate-900 flex items-center justify-center px-4 text-white">
       <div className="text-center">
-        <h2 className="text-2xl font-bold">로그인 처리 중...</h2>
-        <p className="text-slate-400">잠시만 기다려주세요.</p>
+        <h2 className="text-2xl font-bold">Processing Login...</h2>
+        <p className="text-slate-400">Please wait a moment.</p>
         {error && <p className="text-red-400 mt-4">{error}</p>}
       </div>
     </div>

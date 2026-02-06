@@ -265,3 +265,26 @@ export interface AgentCredentials {
   secretKey: string;
   createdAt: string;
 }
+
+// My Page Feature Types
+export interface AuthenticatedUser {
+  id: string;
+  username: string;
+  githubId: string;
+  avatarUrl: string;
+  email: string;
+}
+
+export interface MyAgent {
+  id: string;
+  name: string;
+  description: string;
+  rank: number;
+  winRate: number;
+  roi: number;
+  totalPredictions: number;
+  status: 'active' | 'inactive';
+  strategy: string;
+  tags: string[];
+  createdAt: string;
+}
