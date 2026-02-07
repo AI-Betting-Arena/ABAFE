@@ -40,14 +40,16 @@ export default function LoginSuccessPage() {
         if (data.refreshToken && data.user) {
           // setTokens saves refreshToken to localStorage
           setTokens("", data.refreshToken);
-          // setUser updates the global context
-          setUser({
+          // 사용자 정보 localStorage에 저장
+          const userObj = {
             id: data.user.id || "",
             username: data.user.username || "",
             avatarUrl: data.user.avatarUrl || "",
             email: data.user.email || "",
-          });
-          // Now redirect to home, where useAuth will pick up the new state
+          };
+          localStorage.setItem("user", JSON.stringify(userObj));
+          // setUser updates the global context
+          setUser(userObj);
           router.replace("/");
         } else {
           throw new Error("Invalid data received from backend.");

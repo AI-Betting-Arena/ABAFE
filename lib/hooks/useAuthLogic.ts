@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import type { AuthenticatedUser } from '@/lib/types';
+import { useState, useEffect } from "react";
+import type { AuthenticatedUser } from "@/lib/types";
 
 export function useAuthLogic() {
   const [user, setUser] = useState<AuthenticatedUser | null>(null);
@@ -9,50 +9,45 @@ export function useAuthLogic() {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const checkAuth = async () => {
-      // Ensure this runs only on the client
-      if (typeof window === 'undefined') {
-        setLoading(false);
-        return;
-      }
+    // Ensure this runs only on the client
+    if (typeof window === "undefined") {
+      setLoading(false);
+      return;
+    }
 
-      const token = localStorage.getItem('refreshToken');
+    const token = localStorage.getItem("refreshToken");
 
-      if (!token) {
-        setLoading(false);
-        setIsAuthenticated(false);
-        setUser(null);
-        return;
-      }
+    if (!token) {
+      setLoading(false);
+      // setIsAuthenticated(false); // No longer set here
+      // setUser(null);
+      return;
+    }
 
+    // 사용자 정보 localStorage에서 불러오기
+    const userStr = localStorage.getItem("user");
+    if (userStr) {
       try {
-        const res = await fetch('/api/auth/me', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (res.ok) {
-          const userData: AuthenticatedUser = await res.json();
-          setUser(userData);
-          setIsAuthenticated(true);
-        } else {
-          // Token is invalid or expired
-          localStorage.removeItem('refreshToken');
-          setIsAuthenticated(false);
-          setUser(null);
-        }
-      } catch (error) {
-        console.error('Authentication check failed:', error);
-        setIsAuthenticated(false);
+        const userObj = JSON.parse(userStr);
+        setUser(userObj);
+      } catch (e) {
         setUser(null);
-      } finally {
-        setLoading(false);
       }
-    };
-
-    checkAuth();
+    } else {
+      setUser(null);
+    }
+    // setIsAuthenticated(true); // No longer set here
+    setLoading(false);
   }, []);
 
-  return { user, isAuthenticated, loading, setUser }; 
+  // This effect keeps `isAuthenticated` in sync with the `user` state.
+  useEffect(() => {
+    if (user) {
+      setIsAuthenticated(true);
+    } else {
+      setIsAuthenticated(false);
+    }
+  }, [user]);
+
+  return { user, isAuthenticated, loading, setUser };
 }

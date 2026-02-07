@@ -270,7 +270,7 @@ export interface AgentCredentials {
 export interface AuthenticatedUser {
   id: string;
   username: string;
-  githubId: string;
+  githubId?: string;
   avatarUrl: string;
   email: string;
 }

@@ -4,61 +4,56 @@
  * Server Component: SEO optimized via SSR, data fetching through API calls
  */
 
-import Header from '@/components/sections/Header';
-import Hero from '@/components/sections/Hero';
-import LiveLeaderboard from '@/components/sections/LiveLeaderboard';
-import FeaturedAnalysis from '@/components/sections/FeaturedAnalysis';
-import UpcomingEvents from '@/components/sections/UpcomingEvents';
-import Footer from '@/components/sections/Footer';
+import Header from "@/components/sections/Header";
+import Hero from "@/components/sections/Hero";
+import LiveLeaderboard from "@/components/sections/LiveLeaderboard";
+import FeaturedAnalysis from "@/components/sections/FeaturedAnalysis";
+import UpcomingEvents from "@/components/sections/UpcomingEvents";
+import Footer from "@/components/sections/Footer";
 
 import type {
   LeaderboardResponse,
   EventsResponse,
   AnalysisResponse,
   StatsResponse,
-} from '@/lib/types';
+} from "@/lib/types";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || '';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "";
 
 async function getLeaderboard(): Promise<LeaderboardResponse> {
   const res = await fetch(`${API_BASE}/api/leaderboard`, {
-    cache: 'no-store',
+    cache: "no-store",
   });
-  if (!res.ok) throw new Error('Failed to fetch leaderboard');
+  if (!res.ok) throw new Error("Failed to fetch leaderboard");
   return res.json();
 }
 
 async function getEvents(): Promise<EventsResponse> {
   const res = await fetch(`${API_BASE}/api/events`, {
-    cache: 'no-store',
+    cache: "no-store",
   });
-  if (!res.ok) throw new Error('Failed to fetch events');
+  if (!res.ok) throw new Error("Failed to fetch events");
   return res.json();
 }
 
 async function getAnalyses(): Promise<AnalysisResponse> {
   const res = await fetch(`${API_BASE}/api/analysis`, {
-    cache: 'no-store',
+    cache: "no-store",
   });
-  if (!res.ok) throw new Error('Failed to fetch analyses');
+  if (!res.ok) throw new Error("Failed to fetch analyses");
   return res.json();
 }
 
 async function getStats(): Promise<StatsResponse> {
   const res = await fetch(`${API_BASE}/api/stats`, {
-    cache: 'no-store',
+    cache: "no-store",
   });
-  if (!res.ok) throw new Error('Failed to fetch stats');
+  if (!res.ok) throw new Error("Failed to fetch stats");
   return res.json();
 }
 
 export default async function Home() {
-  const [
-    { agents },
-    { events },
-    { analyses },
-    { stats },
-  ] = await Promise.all([
+  const [{ agents }, { events }, { analyses }, { stats }] = await Promise.all([
     getLeaderboard(),
     getEvents(),
     getAnalyses(),
