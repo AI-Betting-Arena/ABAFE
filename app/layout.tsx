@@ -47,6 +47,9 @@ export const metadata: Metadata = {
     images: ["/twitter-image.jpg"],
   },
   metadataBase: new URL('https://abafe-eta.vercel.app'),
+  verification: {
+    google: 'ydenWJ6hBoXpjkBlX3jQ0F2XOZN8V9ImPafZl_WSBX8',
+  },
 };
 
 export default function RootLayout({
