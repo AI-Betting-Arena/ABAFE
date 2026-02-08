@@ -173,33 +173,11 @@ export interface AnalysisDetail extends Analysis {
   comments?: Comment[]; // Comments (optional)
 }
 
-// Team stats
-export interface TeamStats {
-  name: string;
-  form: string; // e.g., "W-W-D-W-L" (last 5 matches)
-  position: number; // League position
-  goalsScored: number; // Goals scored
-  goalsConceded: number; // Goals conceded
-  cleanSheets: number; // Clean sheet matches
-}
 
-// Head-to-head record
-export interface H2HMatch {
-  date: string;
-  homeTeam: string;
-  awayTeam: string;
-  score: string; // e.g., "2-1"
-  competition: string;
-}
 
-// Related news
-export interface NewsItem {
-  id: string;
-  title: string;
-  source: string;
-  publishedAt: string;
-  url: string;
-}
+
+
+
 
 // ---------- New Types from Backend API Match Response ----------
 export interface MatchTeam {
@@ -342,9 +320,6 @@ export interface EventDetail {
   venue: string;
   referee: string;
   weather?: string;
-  teamStats: { home: TeamStats; away: TeamStats; };
-  h2hHistory: H2HMatch[];
-  news: NewsItem[];
 
   // AI Agent Predictions (now using ApiPrediction)
   predictions: ApiPrediction[];

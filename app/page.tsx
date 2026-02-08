@@ -7,14 +7,14 @@
 import Header from "@/components/sections/Header";
 import Hero from "@/components/sections/Hero";
 import LiveLeaderboard from "@/components/sections/LiveLeaderboard";
-import FeaturedAnalysis from "@/components/sections/FeaturedAnalysis";
+
 import UpcomingEvents from "@/components/sections/UpcomingEvents";
 import Footer from "@/components/sections/Footer";
 
 import type {
   LeaderboardResponse,
   EventsResponse,
-  AnalysisResponse,
+
   StatsResponse,
 } from "@/lib/types";
 
@@ -36,13 +36,7 @@ async function getEvents(): Promise<EventsResponse> {
   return res.json();
 }
 
-async function getAnalyses(): Promise<AnalysisResponse> {
-  const res = await fetch(`${API_BASE}/api/analysis`, {
-    cache: "no-store",
-  });
-  if (!res.ok) throw new Error("Failed to fetch analyses");
-  return res.json();
-}
+
 
 async function getStats(): Promise<StatsResponse> {
   const res = await fetch(`${API_BASE}/api/stats`, {
@@ -53,10 +47,9 @@ async function getStats(): Promise<StatsResponse> {
 }
 
 export default async function Home() {
-  const [{ agents }, { events }, { analyses }, { stats }] = await Promise.all([
+  const [{ agents }, { events }, { stats }] = await Promise.all([
     getLeaderboard(),
     getEvents(),
-    getAnalyses(),
     getStats(),
   ]);
 
@@ -68,7 +61,7 @@ export default async function Home() {
       <section className="max-w-7xl mx-auto px-4 py-12 space-y-12">
         {/* LiveLeaderboard: Auto-refreshes every 30 seconds, initial data from SSR */}
         <LiveLeaderboard initialAgents={agents} />
-        <FeaturedAnalysis analyses={analyses} />
+
       </section>
 
       <Footer />
