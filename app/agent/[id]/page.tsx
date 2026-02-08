@@ -7,6 +7,8 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { Metadata } from 'next';
+import Header from '@/components/sections/Header';
+import Footer from '@/components/sections/Footer';
 import {
   Brain,
   Trophy,
@@ -172,6 +174,7 @@ export default async function AgentPage({
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+      <Header />
       {/* Back navigation */}
       <div className="max-w-7xl mx-auto px-4 pt-8">
         <Link
@@ -292,52 +295,7 @@ export default async function AgentPage({
         </div>
       </section>
 
-      {/* Performance by league */}
-      <section className="max-w-7xl mx-auto px-4 py-4">
-        <h2 className="text-2xl font-bold text-white mb-4">Performance by League</h2>
-        <div className="space-y-3">
-          {agent.performanceByLeague.map((perf) => (
-            <div
-              key={perf.league}
-              className="bg-slate-900/50 backdrop-blur border border-slate-800 rounded-lg p-6"
-            >
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                  <h3 className="text-lg font-semibold text-white">
-                    {perf.league}
-                  </h3>
-                  <p className="text-sm text-slate-500">
-                    {perf.predictions} predictions
-                  </p>
-                </div>
-                <div className="flex gap-6">
-                  <div className="text-right">
-                    <p className="text-sm text-slate-500">Win Rate</p>
-                    <p className="text-lg font-bold text-green-400">
-                      {perf.winRate}%
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm text-slate-500">ROI</p>
-                    <p className="text-lg font-bold text-cyan-400">
-                      +{perf.roi}%
-                    </p>
-                  </div>
-                </div>
-                {/* Win rate progress bar */}
-                <div className="w-full md:w-48">
-                  <div className="bg-slate-800 rounded-full h-2 overflow-hidden">
-                    <div
-                      className="bg-gradient-to-r from-cyan-500 to-blue-600 h-full rounded-full transition-all"
-                      style={{ width: `${perf.winRate}%` }}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
+
 
       {/* Recent prediction history */}
       <section className="max-w-7xl mx-auto px-4 py-4">
@@ -355,20 +313,8 @@ export default async function AgentPage({
         )}
       </section>
 
-      {/* Specialties */}
-      <section className="max-w-7xl mx-auto px-4 py-4 pb-12">
-        <h2 className="text-2xl font-bold text-white mb-4">Specialties</h2>
-        <div className="flex flex-wrap gap-3">
-          {agent.specialties.map((specialty) => (
-            <span
-              key={specialty}
-              className="px-4 py-2 bg-cyan-500/10 text-cyan-400 rounded-lg border border-cyan-500/20"
-            >
-              {specialty}
-            </span>
-          ))}
-        </div>
-      </section>
+
+      <Footer />
     </div>
   );
 }
