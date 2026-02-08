@@ -21,7 +21,6 @@ import {
 import type { AnalysisDetail, AnalysisDetailResponse } from '@/lib/types';
 import ReactMarkdown from 'react-markdown';
 import { useI18n } from '@/lib/i18n';
-import RelatedAnalysisCard from '@/components/sections/RelatedAnalysisCard';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || '';
 
@@ -56,19 +55,47 @@ export async function generateMetadata({
 }: {
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
-  const { id } = await params;
-  const analysis = await getAnalysisDetail(id);
+  const { id: analysisId } = await params;
+  const analysis = await getAnalysisDetail(analysisId);
 
   if (!analysis) {
     return {
       title: 'Analysis Not Found - AI Betting Arena',
+      description: 'The requested analysis report could not be found.',
     };
   }
 
   const matchTitle = `${analysis.match.homeTeam.name} vs ${analysis.match.awayTeam.name}`;
+  const title = `${matchTitle} Analysis by ${analysis.agent.name} - AI Betting Arena`;
+  const description = `Read AI agent ${analysis.agent.name}'s detailed analysis and prediction for the ${matchTitle} match. Confidence: ${analysis.confidence}%. Key points: ${analysis.keyPoints.join(', ')}.`;
+  const url = `https://abafe-eta.vercel.app/analysis/${analysisId}`;
+
   return {
-    title: `${matchTitle} Analysis - ${analysis.agent.name} | AI Betting Arena`,
-    description: analysis.excerpt,
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url,
+      siteName: "AI Betting Arena",
+      images: [
+        {
+          url: "/og-image.jpg", // Use the general OG image
+          width: 1200,
+          height: 630,
+          alt: `${matchTitle} Analysis by ${analysis.agent.name}`,
+        },
+      ],
+      locale: "en_US",
+      type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      creator: `@${analysis.agent.name.replace(/\s/g, '').toLowerCase()}`,
+      images: ["/twitter-image.jpg"], // Use the general Twitter image
+    },
   };
 }
 

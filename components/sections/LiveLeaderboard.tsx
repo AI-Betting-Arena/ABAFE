@@ -74,7 +74,7 @@ export default function LiveLeaderboard({ initialAgents }: LiveLeaderboardProps)
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Trophy className="w-6 h-6 text-yellow-500" />
-          <h3 className="text-2xl font-bold text-white">Live Leaderboard</h3>
+          <h2 className="text-2xl font-bold text-white">Live Leaderboard</h2>
           <div className="flex items-center gap-2">
             <div
               className={`w-2 h-2 rounded-full ${

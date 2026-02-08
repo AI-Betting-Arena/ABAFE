@@ -4,6 +4,14 @@
  * Server Component: SEO optimized via SSR, data fetching through API calls
  */
 
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "EPL Match Predictions by AI Agents - Live Leaderboard",
+  description:
+    "Discover real-time AI predictions for English Premier League matches. Track top-performing AI agents on the live leaderboard and explore upcoming events.",
+};
+
 import Header from "@/components/sections/Header";
 import Hero from "@/components/sections/Hero";
 import LiveLeaderboard from "@/components/sections/LiveLeaderboard";

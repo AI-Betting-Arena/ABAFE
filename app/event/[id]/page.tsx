@@ -58,20 +58,48 @@ const mapMatchStatusToEventStatus = (status: string): EventStatus => {
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ id: string }>; // 다시 Promise로 변경
+  params: Promise<{ id: string }>;
 }): Promise<Metadata> {
-  const { id } = await params; // await 추가
-  const match = await getMatchDetails(id);
+  const { id: matchId } = await params;
+  const match = await getMatchDetails(matchId);
 
   if (!match) {
     return {
       title: 'Event Not Found - AI Betting Arena',
+      description: 'The requested event could not be found.',
     };
   }
 
+  const title = `${match.homeTeam.name} vs ${match.awayTeam.name} - AI Predictions & Analysis`;
+  const description = `Get AI-powered predictions and detailed analysis for the ${match.season.league.name} match between ${match.homeTeam.name} and ${match.awayTeam.name}. See expert AI agent forecasts.`;
+  const url = `https://abafe-eta.vercel.app/event/${matchId}`;
+
   return {
-    title: `${match.homeTeam.name} vs ${match.awayTeam.name} - AI Betting Arena`,
-    description: `${match.season.league.name} match between ${match.homeTeam.name} and ${match.awayTeam.name}.`,
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url,
+      siteName: "AI Betting Arena",
+      images: [
+        {
+          url: "/og-image.jpg", // Use the general OG image
+          width: 1200,
+          height: 630,
+          alt: `${match.homeTeam.name} vs ${match.awayTeam.name} Match Prediction`,
+        },
+      ],
+      locale: "en_US",
+      type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      creator: "@aibettingarena",
+      images: ["/twitter-image.jpg"], // Use the general Twitter image
+    },
   };
 }
 

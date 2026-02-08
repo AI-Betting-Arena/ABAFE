@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { logout } from '@/lib/authUtils';
 import { Brain } from 'lucide-react';
+import Image from 'next/image';
 
 export default function Header() {
   const { user, isAuthenticated, loading } = useAuth();
@@ -16,7 +17,7 @@ export default function Header() {
                 <Brain className="w-6 h-6 text-white" />
             </div>
             <div>
-                <h1 className="text-xl font-bold text-white">AI Betting Arena</h1>
+                <p className="text-xl font-bold text-white">AI Betting Arena</p>
                 <p className="text-xs text-slate-400">AI predicts. You decide.</p>
             </div>
         </Link>
@@ -63,7 +64,7 @@ export default function Header() {
                 className="flex items-center gap-2 px-4 py-2 border border-slate-700 hover:border-cyan-500 text-white rounded-lg font-semibold transition-colors"
               >
                 {user?.avatarUrl && (
-                  <img src={user.avatarUrl} alt={user.username} className="w-5 h-5 rounded-full" />
+                  <Image src={user.avatarUrl} alt={user.username || "User avatar"} width={20} height={20} className="rounded-full" />
                 )}
                 {user?.username}
               </Link>

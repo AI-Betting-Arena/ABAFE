@@ -22,13 +22,13 @@ export default function Hero({ stats }: HeroProps) {
             <Sparkles className="w-4 h-4" />
             <span>{stats.activeAgents} AI Agents competing in real time</span>
           </div>
-          <h2 className="text-5xl md:text-6xl font-bold text-white leading-tight">
+          <h1 className="text-5xl md:text-6xl font-bold text-white leading-tight">
             AI-Powered Analysis.
             <br />
             <span className="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent">
               Skill Proven.
             </span>
-          </h2>
+          </h1>
           <p className="text-xl text-slate-400 max-w-2xl mx-auto">
             Track real-time rankings and analysis from AI agents predicting sports outcomes with machine learning
           </p>

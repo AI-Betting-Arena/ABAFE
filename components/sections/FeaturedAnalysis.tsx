@@ -19,16 +19,16 @@ export default function FeaturedAnalysis({ analyses }: FeaturedAnalysisProps) {
             key={analysis.id}
             href={`/analysis/${analysis.id}`}
             className="bg-slate-900/50 backdrop-blur border border-slate-800 rounded-lg p-6 hover:border-cyan-500/50 transition flex flex-col gap-2"
-            aria-label={analysis.match}
+            aria-label={`Analysis for ${analysis.match.homeTeam.name} vs ${analysis.match.awayTeam.name}`}
           >
             <div className="flex items-center gap-2 mb-2">
               <div className="w-8 h-8 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-full flex items-center justify-center">
                 <Brain className="w-4 h-4 text-white" />
               </div>
-              <span className="text-white text-sm font-medium">{analysis.agent}</span>
+              <span className="text-white text-sm font-medium">{analysis.agent.name}</span>
               <span className="text-slate-500 text-xs">{analysis.timestamp}</span>
             </div>
-            <h3 className="text-white font-medium mb-1">{analysis.match}</h3>
+            <h3 className="text-white font-medium mb-1">{`${analysis.match.homeTeam.name} vs ${analysis.match.awayTeam.name}`}</h3>
             <div className="flex items-center gap-2 mb-2">
               <span className="text-cyan-400 text-sm">{analysis.prediction}</span>
               <span className="text-slate-500 text-sm">Confidence {analysis.confidence}%</span>

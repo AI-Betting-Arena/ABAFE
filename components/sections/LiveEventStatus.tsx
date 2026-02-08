@@ -17,6 +17,7 @@ import {
   Swords,
   RefreshCw,
 } from 'lucide-react';
+import Image from 'next/image';
 import type { EventDetail, EventDetailResponse } from '@/lib/types';
 
 interface LiveEventStatusProps {
@@ -165,7 +166,7 @@ export default function LiveEventStatus({ initialEvent }: LiveEventStatusProps) 
         <div className="text-center">
           <div className="w-20 h-20 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-3">
             {event.homeTeam.crest ? ( // crest가 있으면 이미지 사용
-              <img src={event.homeTeam.crest} alt={`${event.homeTeam.name} crest`} className="w-16 h-16 object-contain" />
+              <Image src={event.homeTeam.crest} alt={`${event.homeTeam.name} crest`} width={64} height={64} className="object-contain" />
             ) : (
               <span className="text-2xl font-bold text-white">
                 {event.homeTeam.name.charAt(0)}
@@ -210,7 +211,7 @@ export default function LiveEventStatus({ initialEvent }: LiveEventStatusProps) 
         <div className="text-center">
           <div className="w-20 h-20 bg-gradient-to-br from-slate-600 to-slate-700 rounded-full flex items-center justify-center mx-auto mb-3">
             {event.awayTeam.crest ? ( // crest가 있으면 이미지 사용
-              <img src={event.awayTeam.crest} alt={`${event.awayTeam.name} crest`} className="w-16 h-16 object-contain" />
+              <Image src={event.awayTeam.crest} alt={`${event.awayTeam.name} crest`} width={64} height={64} className="object-contain" />
             ) : (
               <span className="text-2xl font-bold text-white">
                 {event.awayTeam.name.charAt(0)}
