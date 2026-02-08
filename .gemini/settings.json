@@ -1,19 +1,11 @@
 {
   "mcpServers": {
-    "chrome-devtools-mcp-2": {
-      "url": "https://server.smithery.ai/@SHAY5555-gif/chrome-devtools-mcp-2/mcp",
-      "type": "http"
-    },
     "notion": {
       "url": "https://server.smithery.ai/notion/mcp",
       "type": "http"
     },
     "context7-mcp": {
       "url": "https://server.smithery.ai/@upstash/context7-mcp/mcp",
-      "type": "http"
-    },
-    "mcp-browserbase": {
-      "url": "https://server.smithery.ai/@browserbasehq/mcp-browserbase/mcp",
       "type": "http"
     }
   }

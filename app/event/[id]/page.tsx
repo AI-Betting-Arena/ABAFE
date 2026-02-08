@@ -22,50 +22,110 @@ import {
 import LiveEventStatus from '@/components/sections/LiveEventStatus';
 import type {
   EventDetail,
-  EventDetailResponse,
+  EventOdds,
   TeamStats,
   H2HMatch,
   AgentPrediction,
   NewsItem,
+  ApiMatchDetail, // ApiMatch -> ApiMatchDetail
+  ApiPrediction,
+  EventStatus,
 } from '@/lib/types';
+import { getMatchDetails, getMatchPredictions } from '@/lib/api/matchApi'; // 추가
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || '';
 
-async function getEventDetail(id: string): Promise<EventDetail | null> {
-  try {
-    const res = await fetch(`${API_BASE}/api/event/${id}`, {
-      cache: 'no-store',
-    });
-
-    if (!res.ok) {
-      if (res.status === 404) return null;
-      throw new Error('Failed to fetch event');
-    }
-
-    const data: EventDetailResponse = await res.json();
-    return data.event;
-  } catch {
-    throw new Error('Failed to fetch event detail');
+// Helper functions for mapping
+const mapMatchStatusToEventStatus = (status: string): EventStatus => {
+  switch (status) {
+    case 'SCHEDULED':
+      return 'BETTING_OPEN';
+    case 'LIVE':
+    case 'IN_PLAY':
+    case 'PAUSED':
+      return 'LIVE';
+    case 'FINISHED':
+      return 'FINISHED';
+    case 'POSTPONED':
+      return 'POSTPONED';
+    case 'CANCELLED':
+      return 'CANCELLED';
+    default:
+      return 'BETTING_OPEN'; // Default or handle unknown status
   }
-}
+};
+
+// Mock data for teamStats, h2hHistory, news
+const MOCK_TEAM_STATS: { home: TeamStats; away: TeamStats } = {
+  home: {
+    name: 'Home Team', // This will be overwritten by actual team name
+    form: 'W-D-W-L-W',
+    position: 1,
+    goalsScored: 50,
+    goalsConceded: 20,
+    cleanSheets: 10,
+  },
+  away: {
+    name: 'Away Team', // This will be overwritten by actual team name
+    form: 'L-L-D-W-L',
+    position: 5,
+    goalsScored: 35,
+    goalsConceded: 30,
+    cleanSheets: 5,
+  },
+};
+
+const MOCK_H2H_HISTORY: H2HMatch[] = [
+  {
+    date: '2025-10-20',
+    homeTeam: 'Team A', // This will be overwritten by actual team name
+    awayTeam: 'Team B', // This will be overwritten by actual team name
+    score: '2-1',
+    competition: 'Premier League',
+  },
+  {
+    date: '2025-05-15',
+    homeTeam: 'Team B',
+    awayTeam: 'Team A',
+    score: '0-0',
+    competition: 'FA Cup',
+  },
+];
+
+const MOCK_NEWS: NewsItem[] = [
+  {
+    id: 'news1',
+    title: 'Team A strengthens defense ahead of crucial match',
+    source: 'Sports News',
+    publishedAt: '2026-02-07T10:00:00Z',
+    url: 'https://example.com/news1',
+  },
+  {
+    id: 'news2',
+    title: 'Star striker of Team B doubtful for Sunday game',
+    source: 'Football Daily',
+    publishedAt: '2026-02-06T15:30:00Z',
+    url: 'https://example.com/news2',
+  },
+];
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ id: string }>; // 다시 Promise로 변경
 }): Promise<Metadata> {
-  const { id } = await params;
-  const event = await getEventDetail(id);
+  const { id } = await params; // await 추가
+  const match = await getMatchDetails(id);
 
-  if (!event) {
+  if (!match) {
     return {
       title: 'Event Not Found - AI Betting Arena',
     };
   }
 
   return {
-    title: `${event.homeTeam} vs ${event.awayTeam} - AI Betting Arena`,
-    description: event.description,
+    title: `${match.homeTeam.name} vs ${match.awayTeam.name} - AI Betting Arena`,
+    description: `${match.season.league.name} match between ${match.homeTeam.name} and ${match.awayTeam.name}.`,
   };
 }
 
@@ -225,14 +285,79 @@ function NewsCard({ news }: { news: NewsItem }) {
 export default async function EventPage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ id: string }>; // 다시 Promise로 변경
 }) {
-  const { id } = await params;
-  const event = await getEventDetail(id);
+  const { id } = await params; // await 추가
+  const matchId = id;
 
-  if (!event) {
+  const [apiMatch, apiPredictions] = await Promise.all([
+    getMatchDetails(matchId),
+    getMatchPredictions(matchId),
+  ]);
+
+  if (!apiMatch) {
     notFound();
   }
+
+  // Construct EventDetail object
+  const event: EventDetail = {
+    id: String(apiMatch.id),
+    homeTeam: apiMatch.homeTeam, // apiMatch.homeTeam.name -> apiMatch.homeTeam
+    awayTeam: apiMatch.awayTeam, // apiMatch.awayTeam.name -> apiMatch.awayTeam
+    startTime: apiMatch.utcDate,
+    status: mapMatchStatusToEventStatus(apiMatch.status),
+    league: apiMatch.season.league.name,
+    score: {
+      home: apiMatch.homeScore,
+      away: apiMatch.awayScore,
+    },
+    odds: {
+      home: apiMatch.poolHome,
+      draw: apiMatch.poolDraw,
+      away: apiMatch.poolAway,
+    },
+    minute: undefined, // null 대신 undefined로 초기화
+    // Fill in mock data for fields not from API
+    description: `${apiMatch.homeTeam.name} vs ${apiMatch.awayTeam.name} in ${apiMatch.season.league.name}.`,
+    venue: 'Unknown Stadium', // Mock
+    referee: 'Unknown Referee', // Mock
+    weather: 'Clear', // Mock
+    teamStats: {
+      home: { ...MOCK_TEAM_STATS.home, name: apiMatch.homeTeam.name },
+      away: { ...MOCK_TEAM_STATS.away, name: apiMatch.awayTeam.name },
+    },
+    h2hHistory: MOCK_H2H_HISTORY.map(h2h => ({
+      ...h2h,
+      homeTeam: apiMatch.homeTeam.name,
+      awayTeam: apiMatch.awayTeam.name,
+    })),
+    news: MOCK_NEWS,
+    predictions: apiPredictions, // Use actual API predictions
+  };
+
+  // Transform apiPredictions into AgentPrediction for AgentPredictionRow
+  const agentPredictionsForDisplay: AgentPrediction[] = apiPredictions.map(pred => {
+    let displayPredictionText = '';
+    if (pred.prediction === 'HOME_TEAM') {
+      displayPredictionText = `${apiMatch.homeTeam.name} Win`;
+    } else if (pred.prediction === 'AWAY_TEAM') {
+      displayPredictionText = `${apiMatch.awayTeam.name} Win`;
+    } else if (pred.prediction === 'DRAW') {
+      displayPredictionText = 'Draw';
+    } else {
+      displayPredictionText = pred.prediction; // Fallback
+    }
+
+    return {
+      id: pred.id, // Assign the prediction ID
+      agentId: pred.agent.id,
+      agentName: pred.agent.name,
+      agentBadge: pred.agent.badge,
+      prediction: displayPredictionText,
+      confidence: pred.confidence,
+      // odds: undefined // ApiPrediction does not have a direct 'odds' field in the way AgentPrediction expects
+    };
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
@@ -279,15 +404,15 @@ export default async function EventPage({
       )}
 
       {/* Agent predictions */}
-      {event.agentPredictions.length > 0 && (
+      {agentPredictionsForDisplay.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 py-4">
           <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
             <Brain className="w-6 h-6 text-cyan-400" />
             AI Agent Predictions
           </h2>
           <div className="space-y-3">
-            {event.agentPredictions.map((prediction) => (
-              <AgentPredictionRow key={prediction.agentId} prediction={prediction} />
+            {agentPredictionsForDisplay.map((prediction) => (
+              <AgentPredictionRow key={prediction.id} prediction={prediction} />
             ))}
           </div>
         </section>

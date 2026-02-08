@@ -22,7 +22,7 @@ export type TrendDirection = 'up' | 'down' | 'same';
 
 // Event Status
 // New EventStatus for betting arena
-export type EventStatus = 'BETTING_OPEN' | 'LIVE' | 'FINISHED';
+export type EventStatus = 'BETTING_OPEN' | 'LIVE' | 'FINISHED' | 'SCHEDULED' | 'POSTPONED' | 'CANCELLED';
 
 // Event Domain
 export interface Event {
@@ -77,8 +77,8 @@ export interface EventOdds {
 export interface Analysis {
   id: string; // Unique analysis ID
   agentId: string; // Author agent ID
-  agent: string; // Agent name
-  match: string; // Match matchup
+  agent: PredictionAgent; // Agent name
+  match: ApiPredictionMatch; // Match matchup
   prediction: string; // Prediction result (e.g., "Man City Win", "Over 2.5 Goals")
   confidence: number; // Confidence level (0-100)
   excerpt: string; // Analysis summary
@@ -167,13 +167,10 @@ export interface AnalysisDetail extends Analysis {
   agentId: string;
   content: string; // Full analysis content (markdown)
   keyPoints: string[]; // Key points (bullet points)
-  statistics: {
-    // Statistical data
-    label: string;
-    value: string | number;
-  }[];
+  betAmount: number; // New field for bet amount
+  analysisStats: AnalysisStats;
   relatedAnalyses: Analysis[]; // Related analyses
-  comments: Comment[]; // Comments (optional)
+  comments?: Comment[]; // Comments (optional)
 }
 
 // Team stats
@@ -195,16 +192,6 @@ export interface H2HMatch {
   competition: string;
 }
 
-// Agent prediction status
-export interface AgentPrediction {
-  agentId: string;
-  agentName: string;
-  agentBadge: AgentBadge | null;
-  prediction: string;
-  confidence: number;
-  odds: number;
-}
-
 // Related news
 export interface NewsItem {
   id: string;
@@ -214,20 +201,153 @@ export interface NewsItem {
   url: string;
 }
 
-// Event detail info (extends existing Event type)
-export interface EventDetail extends Event {
-  description: string; // Match description
-  venue: string; // Venue
-  referee: string; // Referee
-  weather?: string; // Weather (optional)
-  teamStats: {
-    // Team statistics
-    home: TeamStats;
-    away: TeamStats;
-  };
-  h2hHistory: H2HMatch[]; // Recent head-to-head records
-  agentPredictions: AgentPrediction[]; // Agent prediction status
-  news: NewsItem[]; // Related news
+// ---------- New Types from Backend API Match Response ----------
+export interface MatchTeam {
+  id: number;
+  apiId: number;
+  name: string;
+  shortName: string;
+  tla: string;
+  crest: string;
+}
+
+export interface MatchLeague {
+  id: number;
+  apiId: number;
+  name: string;
+  code: string;
+  type: string;
+  emblem: string;
+  areaName: string;
+  areaCode: string;
+  areaFlag: string;
+}
+
+export interface MatchSeason {
+  id: number;
+  apiId: number;
+  startDate: string;
+  endDate: string;
+  league: MatchLeague;
+}
+
+// ApiMatchDetail: For GET /api/v1/matches/{id}
+export interface ApiMatchDetail {
+  id: number;
+  apiId: number;
+  utcDate: string;
+  status: string; // "SCHEDULED", "LIVE", "IN_PLAY", "PAUSED", "FINISHED", "POSTPONED", "SUSPENDED", "CANCELLED"
+  matchday: number;
+  stage: string;
+  homeTeam: MatchTeam;
+  awayTeam: MatchTeam;
+  winner: 'HOME_TEAM' | 'AWAY_TEAM' | 'DRAW' | null;
+  homeScore: number | null;
+  awayScore: number | null;
+  poolHome: number;
+  poolDraw: number;
+  poolAway: number;
+  season: MatchSeason;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// ApiMatchListItem: For GET /api/v1/matches (list)
+export interface ApiMatchListItem {
+    id: number;
+    league: string; // "PL"
+    homeTeam: string; // "Tottenham"
+    awayTeam: string; // "Newcastle"
+    startTime: string; // "2026-02-10T19:30:00.000Z"
+    status: string; // "OPEN"
+    oddsHome: number;
+    oddsDraw: number;
+    oddsAway: number;
+    agentCount: number;
+}
+
+// ---------- New Types from Backend API Predictions Response ----------
+export interface PredictionAgent {
+  id: number;
+  name: string;
+  badge: AgentBadge | null;
+  strategy: string;
+}
+
+export interface ApiPredictionMatch {
+  id: number;
+  apiId: number;
+  utcDate: string;
+  status: string;
+  matchday: number;
+  stage: string | null;
+  homeTeam: MatchTeam;
+  awayTeam: MatchTeam;
+  homeScore: number | null;
+  awayScore: number | null;
+  winner: 'HOME_TEAM' | 'AWAY_TEAM' | 'DRAW' | null;
+}
+
+export interface AnalysisStats {
+  homeWinRate?: number;
+  avgHomeGoals?: number;
+  awayLossRateAgainstTopTeams?: number;
+  drawRateBetweenTeams?: number;
+  avgGoalsConceded?: number;
+  keyPlayerInjuryImpact?: string; // "HIGH", "MEDIUM", "LOW"
+}
+
+export interface ApiPrediction {
+  id: number;
+  agent: PredictionAgent;
+  match: ApiPredictionMatch;
+  prediction: 'HOME_TEAM' | 'AWAY_TEAM' | 'DRAW';
+  confidence: number;
+  betAmount: number;
+  summary: string;
+  content: string; // Full analysis content
+  keyPoints: string[];
+  analysisStats: AnalysisStats;
+  status: 'PENDING' | 'SETTLED' | 'CANCELLED';
+  createdAt: string;
+}
+
+// Agent prediction status (updated for compatibility with ApiPrediction)
+export interface AgentPrediction {
+  id: number; // Unique prediction ID from ApiPrediction
+  agentId: number; // ApiPrediction.agent.id
+  agentName: string; // ApiPrediction.agent.name
+  agentBadge: AgentBadge | null; // ApiPrediction.agent.badge
+  prediction: string; // ApiPrediction.prediction (e.g., "HOME_TEAM")
+  confidence: number; // ApiPrediction.confidence
+  odds?: number; // Optional, as it's not directly in ApiPrediction
+}
+
+
+// Event detail info (updated to combine ApiMatch and existing mock data fields)
+export interface EventDetail {
+  // Fields from ApiMatch
+  id: string; // ApiMatch.id (number -> string conversion)
+  homeTeam: MatchTeam; // ApiMatch.homeTeam.name -> MatchTeam
+  awayTeam: MatchTeam; // ApiMatch.awayTeam.name -> MatchTeam
+  startTime: string; // ApiMatch.utcDate
+  status: EventStatus; // Mapping from ApiMatch.status string to EventStatus
+  league?: string; // ApiMatch.season.league.name
+  score?: { home: number | null; away: number | null }; // ApiMatch.homeScore, awayScore
+  odds: EventOdds; // Mapping from ApiMatch.poolHome, poolDraw, poolAway
+  minute?: number; // LiveEventStatus.tsx에서 사용되므로 추가
+
+  // Existing mock data fields
+  description: string;
+  venue: string;
+  referee: string;
+  weather?: string;
+  teamStats: { home: TeamStats; away: TeamStats; };
+  h2hHistory: H2HMatch[];
+  news: NewsItem[];
+
+  // AI Agent Predictions (now using ApiPrediction)
+  predictions: ApiPrediction[];
 }
 
 // Detail page API response types
