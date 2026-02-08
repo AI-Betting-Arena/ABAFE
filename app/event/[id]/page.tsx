@@ -183,9 +183,9 @@ export default async function EventPage({
     minute: undefined, // null 대신 undefined로 초기화
     // Fill in mock data for fields not from API
     description: `${apiMatch.homeTeam.name} vs ${apiMatch.awayTeam.name} in ${apiMatch.season.league.name}.`,
-    venue: 'Unknown Stadium', // Mock
-    referee: 'Unknown Referee', // Mock
-    weather: 'Clear', // Mock
+    // venue: 'Unknown Stadium', // Mock - Removed as per request
+    // referee: 'Unknown Referee', // Mock - Removed as per request
+    // weather: 'Clear', // Mock - Removed as per request
 
     predictions: apiPredictions, // Use actual API predictions
   };

@@ -123,14 +123,9 @@ export default function LiveEventStatus({ initialEvent }: LiveEventStatusProps) 
           {getStatusBadge()}
           <div className="flex items-center gap-1 text-slate-400 text-sm">
             <Clock className="w-4 h-4" />
-            <span>{event.startTime}</span>
+            <span>{new Date(event.startTime).toLocaleString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true })}</span>
           </div>
-          {event.venue && (
-            <div className="flex items-center gap-1 text-slate-400 text-sm">
-              <MapPin className="w-4 h-4" />
-              <span>{event.venue}</span>
-            </div>
-          )}
+
         </div>
 
         {/* Polling status and refresh */}
@@ -243,23 +238,12 @@ export default function LiveEventStatus({ initialEvent }: LiveEventStatusProps) 
 
       {/* Additional Info */}
       <div className="flex flex-wrap justify-center gap-4 text-sm text-slate-400">
-        {event.referee && (
-          <div className="flex items-center gap-1">
-            <User className="w-4 h-4" />
-            <span>Referee: {event.referee}</span>
-          </div>
-        )}
-        {event.weather && (
-          <div className="flex items-center gap-1">
-            <Cloud className="w-4 h-4" />
-            <span>{event.weather}</span>
-          </div>
-        )}
         <div className="flex items-center gap-1">
           <Brain className="w-4 h-4" />
           <span>{event.predictions?.length ?? 0} agents participating</span>
         </div>
       </div>
+
     </div>
   );
 }

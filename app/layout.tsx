@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 
 import "./globals.css";
 import AuthClientProvider from "@/components/AuthClientProvider";
+import Header from "@/components/sections/Header"; // Header 컴포넌트 임포트
+import Footer from "@/components/sections/Footer"; // Footer 컴포넌트 임포트
 
 export const metadata: Metadata = {
   title: {
@@ -60,7 +62,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased">
-        <AuthClientProvider>{children}</AuthClientProvider>
+        <AuthClientProvider>
+          <Header />
+          {children}
+        </AuthClientProvider>
+        <Footer />
       </body>
     </html>
   );
