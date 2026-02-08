@@ -8,42 +8,80 @@
 "use client";
 import Link from 'next/link';
 import { Clock, Brain, Search, ChevronLeft, ChevronRight } from 'lucide-react';
-import { Event } from '@/lib/types';
+import { MatchesListingApiResponse, LeagueMatchGroup, MatchListingItem } from '@/lib/types';
 import { usePagination } from '@/lib/hooks/usePagination';
-import { useSearch } from '@/lib/hooks/useSearch';
 import { useI18n } from '@/lib/i18n';
-import { useState } from 'react';
-
-
+import { useState, useMemo } from 'react'; // Added useMemo
 
 interface UpcomingEventsProps {
-  events: Event[];
+  matchesListing: MatchesListingApiResponse; // Updated prop name and type
 }
 
 export default function UpcomingEvents({ events }: UpcomingEventsProps) {
   const { t } = useI18n();
   const [tab, setTab] = useState<'live' | 'finished' | 'upcoming'>('live');
-  const leagues = Array.from(new Set(events.map(e => e.league)));
   const [leagueFilter, setLeagueFilter] = useState('All');
   const [teamFilter, setTeamFilter] = useState('');
-  const { query, setQuery, filtered } = useSearch({
-    data: events,
-    searchKeys: ['homeTeam', 'awayTeam', 'league'],
-    debounce: 300,
-  });
-  const statusFiltered = filtered.filter(e => {
-    if (!e.status) return false;
-    if (tab === 'live') return e.status === 'LIVE';
-    if (tab === 'finished') return e.status === 'FINISHED';
-    return e.status === 'BETTING_OPEN';
-  });
-  const leagueFiltered = leagueFilter === 'All' ? statusFiltered : statusFiltered.filter(e => e.league === leagueFilter);
-  const teamFiltered = teamFilter ? leagueFiltered.filter(e => e.homeTeam.includes(teamFilter) || e.awayTeam.includes(teamFilter)) : leagueFiltered;
+  const [searchQuery, setSearchQuery] = useState(''); // Manual search query
+
+  // Derive unique league names for the filter dropdown
+  const uniqueLeagueNames = useMemo(() => {
+    return Array.from(new Set(matchesListing.map(lg => lg.leagueName)));
+  }, [matchesListing]);
+
+  // Apply all filters and search to the grouped data
+  const filteredLeagueGroups = useMemo(() => {
+    return matchesListing
+      .map(leagueGroup => {
+        // Filter matches within each league group
+        const filteredMatches = leagueGroup.matches.filter(match => {
+          // Status filter
+          const isLive = match.status === 'LIVE';
+          const isFinished = match.status === 'FINISHED';
+          const isUpcoming = match.status === 'TIMED' || match.status === 'SCHEDULED'; // Assuming 'TIMED' and 'SCHEDULED' are upcoming
+
+          let statusMatch = false;
+          if (tab === 'live') statusMatch = isLive;
+          else if (tab === 'finished') statusMatch = isFinished;
+          else statusMatch = isUpcoming; // tab === 'upcoming'
+
+          if (!statusMatch) return false;
+
+          // Team filter (case-insensitive partial match)
+          const teamSearchLower = teamFilter.toLowerCase();
+          const matchesTeamFilter = !teamSearchLower ||
+            match.homeTeamName.toLowerCase().includes(teamSearchLower) ||
+            match.awayTeamName.toLowerCase().includes(teamSearchLower);
+          if (!matchesTeamFilter) return false;
+
+          // General search query (case-insensitive partial match on team names and league name)
+          const generalSearchLower = searchQuery.toLowerCase();
+          const matchesGeneralSearch = !generalSearchLower ||
+            match.homeTeamName.toLowerCase().includes(generalSearchLower) ||
+            match.awayTeamName.toLowerCase().includes(generalSearchLower) ||
+            leagueGroup.leagueName.toLowerCase().includes(generalSearchLower);
+          if (!matchesGeneralSearch) return false;
+
+          return true; // Match passes all internal filters
+        });
+
+        // Apply league filter to the league group itself
+        const leagueMatchesFilter = leagueFilter === 'All' || leagueGroup.leagueName === leagueFilter;
+
+        if (filteredMatches.length > 0 && leagueMatchesFilter) {
+          return { ...leagueGroup, matches: filteredMatches }; // Return league group with filtered matches
+        }
+        return null; // Exclude league group if no matches or not matching league filter
+      })
+      .filter(Boolean) as LeagueMatchGroup[]; // Remove nulls and assert type
+  }, [matchesListing, tab, leagueFilter, teamFilter, searchQuery]);
+
+
   const { currentPage, totalPages, goToPage, nextPage, prevPage, startIdx, endIdx } = usePagination({
-    totalItems: teamFiltered.length,
-    itemsPerPage: 10,
+    totalItems: filteredLeagueGroups.length,
+    itemsPerPage: 3, // Display 3 league groups per page as an example
   });
-  const pageEvents = teamFiltered.slice(startIdx, endIdx);
+  const pageLeagueGroups = filteredLeagueGroups.slice(startIdx, endIdx);
 
   return (
     <div className="space-y-4" aria-label="Upcoming Events">
@@ -81,7 +119,7 @@ export default function UpcomingEvents({ events }: UpcomingEventsProps) {
             aria-label="League filter"
           >
             <option value="All">All Leagues</option>
-            {leagues.map(l => (
+            {uniqueLeagueNames.map(l => ( // Use uniqueLeagueNames
               <option key={l} value={l}>{l}</option>
             ))}
           </select>
@@ -97,8 +135,8 @@ export default function UpcomingEvents({ events }: UpcomingEventsProps) {
             type="text"
             className="px-3 py-1 rounded bg-slate-800 text-white text-sm border border-slate-700 focus:outline-none focus:border-cyan-400"
             placeholder={t('search') + '...'}
-            value={query}
-            onChange={e => setQuery(e.target.value)}
+            value={searchQuery} // Use searchQuery
+            onChange={e => setSearchQuery(e.target.value)} // Update searchQuery
             aria-label={t('search')}
           />
           <Search className="w-4 h-4 text-slate-400" />
@@ -106,59 +144,78 @@ export default function UpcomingEvents({ events }: UpcomingEventsProps) {
       </div>
 
       <div className="space-y-4">
-        {pageEvents.map((event) => (
-          <div
-            key={event.id}
-            className="bg-slate-900/50 backdrop-blur border border-slate-800 rounded-lg p-6 hover:border-cyan-500/50 transition"
-            tabIndex={0}
-            aria-label={event.homeTeam + ' vs ' + event.awayTeam}
-          >
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="px-2 py-1 bg-slate-800 text-slate-300 text-xs rounded">
-                    {event.league}
-                  </span>
-                  <span className="text-slate-500 text-xs">{event.startTime}</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-white font-semibold">{event.homeTeam}</span>
-                  <span className="text-slate-600">vs</span>
-                  <span className="text-white font-semibold">{event.awayTeam}</span>
-                </div>
-                <div className="flex items-center gap-2 mt-2">
-                  <Brain className="w-4 h-4 text-cyan-400" />
-                  <span className="text-slate-400 text-sm">
-                    {event.aiPredictions ?? 0} agents participating
-                  </span>
-                </div>
+        {pageLeagueGroups.length === 0 ? (
+          <p className="text-center text-slate-400 py-8">{t('no_events_found')}</p>
+        ) : (
+          pageLeagueGroups.map((leagueGroup) => (
+            <div key={leagueGroup.leagueId} className="mb-8 p-4 bg-slate-900/50 backdrop-blur border border-slate-800 rounded-lg">
+              <div className="flex items-center gap-3 mb-4">
+                {leagueGroup.leagueEmblemUrl && (
+                  <img src={leagueGroup.leagueEmblemUrl} alt={leagueGroup.leagueName} className="w-8 h-8 object-contain" />
+                )}
+                <h4 className="text-xl font-bold text-white">{leagueGroup.leagueName}</h4>
               </div>
+              <div className="space-y-4">
+                {leagueGroup.matches.map((event) => ( // event is MatchListingItem now
+                  <div
+                    key={event.id}
+                    className="bg-slate-900/50 backdrop-blur border border-slate-800 rounded-lg p-6 hover:border-cyan-500/50 transition"
+                    tabIndex={0}
+                    aria-label={event.homeTeamName + ' vs ' + event.awayTeamName}
+                  >
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="text-slate-500 text-xs">{event.startTime}</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          {event.homeTeamEmblemUrl && (
+                            <img src={event.homeTeamEmblemUrl} alt={event.homeTeamName} className="w-6 h-6 object-contain" />
+                          )}
+                          <span className="text-white font-semibold">{event.homeTeamName}</span>
+                          <span className="text-slate-600">vs</span>
+                          <span className="text-white font-semibold">{event.awayTeamName}</span>
+                          {event.awayTeamEmblemUrl && (
+                            <img src={event.awayTeamEmblemUrl} alt={event.awayTeamName} className="w-6 h-6 object-contain" />
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2 mt-2">
+                          <Brain className="w-4 h-4 text-cyan-400" />
+                          <span className="text-slate-400 text-sm">
+                            {event.agentCount ?? 0} agents participating
+                          </span>
+                        </div>
+                      </div>
 
-              <div className="flex gap-2">
-                <div className="bg-slate-800/50 px-4 py-2 rounded text-center">
-                  <p className="text-slate-400 text-xs">Home</p>
-                  <p className="text-white font-semibold">{event.odds.home}</p>
-                </div>
-                <div className="bg-slate-800/50 px-4 py-2 rounded text-center">
-                  <p className="text-slate-400 text-xs">Draw</p>
-                  <p className="text-white font-semibold">{event.odds.draw}</p>
-                </div>
-                <div className="bg-slate-800/50 px-4 py-2 rounded text-center">
-                  <p className="text-white font-semibold">{event.odds.away}</p>
-                </div>
+                      <div className="flex gap-2">
+                        <div className="bg-slate-800/50 px-4 py-2 rounded text-center">
+                          <p className="text-slate-400 text-xs">Home</p>
+                          <p className="text-white font-semibold">{event.oddsHome}</p>
+                        </div>
+                        <div className="bg-slate-800/50 px-4 py-2 rounded text-center">
+                          <p className="text-slate-400 text-xs">Draw</p>
+                          <p className="text-white font-semibold">{event.oddsDraw}</p>
+                        </div>
+                        <div className="bg-slate-800/50 px-4 py-2 rounded text-center">
+                          <p className="text-white font-semibold">{event.oddsAway}</p>
+                        </div>
+                      </div>
+
+                      <Link
+                        href={`/event/${event.id}`}
+                        className="px-6 py-2 bg-cyan-600/20 border border-cyan-500/50 text-cyan-400 rounded-lg hover:bg-cyan-600/30 transition whitespace-nowrap text-center"
+                        aria-label="View Analysis"
+                      >
+                        View Analysis
+                      </Link>
+                    </div>
+                  </div>
+                ))}
               </div>
-
-              <Link
-                href={`/event/${event.id}`}
-                className="px-6 py-2 bg-cyan-600/20 border border-cyan-500/50 text-cyan-400 rounded-lg hover:bg-cyan-600/30 transition whitespace-nowrap text-center"
-                aria-label="View Analysis"
-              >
-                View Analysis
-              </Link>
             </div>
-          </div>
-        ))}
-        {/* Pagination */}
+          ))
+        )}
+        {/* Pagination for leagues */}
         <nav className="flex justify-center items-center gap-2 py-4" aria-label={t('page')}>
           <button
             onClick={prevPage}

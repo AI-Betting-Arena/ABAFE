@@ -244,6 +244,44 @@ export interface ApiMatchListItem {
     agentCount: number;
 }
 
+// ---------- New types for grouped match listing API response ----------
+// For a team object within the new /api/v1/matches response
+export interface MatchListingTeam {
+  id: number;
+  name: string;
+  emblemUrl: string;
+}
+
+// For a match object within the new /api/v1/matches response
+export interface MatchListingItem {
+  id: number;
+  homeTeamId: number;
+  homeTeamName: string;
+  homeTeamEmblemUrl: string;
+  awayTeamId: number;
+  awayTeamName: string;
+  awayTeamEmblemUrl: string;
+  startTime: string;
+  status: string; // 'TIMED', etc.
+  oddsHome: number;
+  oddsDraw: number;
+  oddsAway: number;
+  agentCount: number;
+}
+
+// For a league object that contains matches in the new /api/v1/matches response
+export interface LeagueMatchGroup {
+  leagueId: number;
+  leagueName: string;
+  leagueCode: string;
+  leagueEmblemUrl: string;
+  matches: MatchListingItem[];
+}
+
+// The top-level response type for the new /api/v1/matches endpoint
+export type MatchesListingApiResponse = LeagueMatchGroup[];
+
+
 // ---------- New Types from Backend API Predictions Response ----------
 export interface PredictionAgent {
   id: number;

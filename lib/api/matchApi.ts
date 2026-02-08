@@ -1,109 +1,39 @@
 import { format } from "date-fns";
-import type { Event, EventOdds, LeagueEvents, ApiMatchDetail, ApiMatchListItem, ApiPrediction, EventStatus } from "@/lib/types";
-
-const LEAGUE_NAMES: { [key: string]: string } = {
-  PL: "English Premier League",
-};
+import type { Event, EventOdds, LeagueEvents, ApiMatchDetail, ApiPrediction, EventStatus, MatchesListingApiResponse, LeagueMatchGroup, MatchListingItem } from "@/lib/types";
 
 const API_BASE = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8080";
 
-// 새로운 헬퍼 함수: ApiMatchListItem의 status를 EventStatus로 매핑
-const mapApiMatchListItemStatusToEventStatus = (status: string): EventStatus => {
-  switch (status) {
-    case 'OPEN':
-      return 'BETTING_OPEN';
-    case 'LIVE':
-      return 'LIVE';
-    case 'FINISHED':
-      return 'FINISHED';
-    case 'SCHEDULED':
-      return 'SCHEDULED';
-    case 'POSTPONED':
-      return 'POSTPONED';
-    case 'CANCELLED':
-      return 'CANCELLED';
-    default:
-      return 'BETTING_OPEN';
-  }
-};
-
 /**
- * Fetches match data from the backend API for a given date range and transforms it to match the frontend's Event type.
+ * Fetches grouped match data from the backend API for a given date range.
+ * The data is grouped by league and includes detailed team and league emblem URLs.
  *
  * @param from Start date in YYYY-MM-DD format (UTC).
  * @param to End date in YYYY-MM-DD format (UTC).
- * @returns A promise that resolves to an array of Event objects.
+ * @returns A promise that resolves to an array of LeagueMatchGroup objects.
  */
-export async function fetchMatches(from: string, to: string): Promise<Event[]> {
+export async function fetchMatches(from: string, to: string): Promise<MatchesListingApiResponse> {
   try {
     const res = await fetch(`${API_BASE}/api/v1/matches?from=${from}&to=${to}`, {
       cache: "no-store", // Always fetch fresh data
     });
 
     if (!res.ok) {
-      console.error(`Failed to fetch matches: ${res.status} ${res.statusText}`);
-      // Return empty array on error to avoid breaking the build.
-      return [];
+      console.error(`Failed to fetch grouped matches: ${res.status} ${res.statusText}`);
+      return []; // Return empty array on error to avoid breaking the build.
     }
-    const data = await res.json();
-    const apiEvents: ApiMatchListItem[] = data.events || [];
-
-    // Transform the raw API data to match the frontend's Event type
-    return apiEvents.map((apiMatch) => ({
-      id: String(apiMatch.id),
-      league: apiMatch.league,
-      homeTeam: apiMatch.homeTeam,
-      awayTeam: apiMatch.awayTeam,
-      startTime: apiMatch.startTime,
-      status: mapApiMatchListItemStatusToEventStatus(apiMatch.status),
-      aiPredictions: apiMatch.agentCount,
-      odds: {
-        home: apiMatch.oddsHome,
-        draw: apiMatch.oddsDraw,
-        away: apiMatch.oddsAway,
-      },
-    }));
+    // Directly return the grouped response as it matches the new API structure
+    const data: MatchesListingApiResponse = await res.json();
+    return data;
   } catch (error) {
-    // 네트워크 연결 자체의 실패를 포함한 모든 에러를 여기서 잡음
     console.error(
       `Fetch failed (ECONNREFUSED or other network error) during build:`,
       error,
     );
-    return []; // 빌드 실패를 막기 위해 빈 배열 반환
+    return []; // Return empty array on error to avoid breaking the build.
   }
 }
 
-/**
- * Groups a list of events by their league and applies human-readable league names.
- *
- * @param events An array of Event objects.
- * @returns An array of LeagueEvents objects, compatible with frontend components.
- */
-export function groupByLeague(events: Event[]): LeagueEvents[] {
-  const leagueMap = new Map<string, Event[]>();
 
-  for (const event of events) {
-    const leagueName = event.league || "Other"; // Use full league name
-    if (!leagueMap.has(leagueName)) {
-      leagueMap.set(leagueName, []);
-    }
-    leagueMap.get(leagueName)!.push(event);
-  }
-
-  const groupedLeagues: LeagueEvents[] = Array.from(leagueMap.entries()).map(
-    ([leagueName, matches]) => ({
-      id: matches[0]?.league || leagueName, // Use actual league name as ID, or fallback
-      name: leagueName,
-      events: matches.sort(
-        (a, b) =>
-          new Date(a.startTime).getTime() - new Date(b.startTime).getTime(),
-      ),
-    }),
-  );
-
-  // Sort leagues alphabetically by name
-  return groupedLeagues.sort((a, b) => a.name.localeCompare(b.name));
-}
 
 
 /**

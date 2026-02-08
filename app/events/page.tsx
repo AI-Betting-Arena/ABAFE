@@ -12,13 +12,13 @@ import {
   getNextWeek,
   isCurrentWeek,
 } from "@/lib/utils/weekUtils";
-import { fetchMatches, groupByLeague } from "@/lib/api/matchApi";
+import { fetchMatches } from "@/lib/api/matchApi";
 import { EmptyMatchState } from "@/components/EmptyMatchState";
-import type { Event } from "@/lib/types";
+import type { MatchesListingApiResponse } from "@/lib/types";
 
 function EventsContent() {
   const searchParams = useSearchParams();
-  const [events, setEvents] = useState<Event[]>([]);
+  const [matchesListing, setMatchesListing] = useState<MatchesListingApiResponse>([]);
   const [loading, setLoading] = useState(true);
 
   const { currentFrom, currentTo } = useMemo(() => {
@@ -34,7 +34,7 @@ function EventsContent() {
   const prevWeek = getPreviousWeek(currentFrom);
   const nextWeek = getNextWeek(currentFrom);
   const isCurrent = isCurrentWeek(currentFrom);
-  const groupedLeagues = groupByLeague(events);
+  // Removed: const groupedLeagues = groupByLeague(events);
 
   const thisWeekUrl = "/events";
 
@@ -44,7 +44,7 @@ function EventsContent() {
       setLoading(true);
       const data = await fetchMatches(currentFrom, currentTo);
       if (!cancelled) {
-        setEvents(data);
+        setMatchesListing(data); // Changed setEvents to setMatchesListing
         setLoading(false);
       }
     }
@@ -78,7 +78,7 @@ function EventsContent() {
             {!isCurrent && (
               <Link href={thisWeekUrl} scroll={false}>
                 <div className="flex items-center gap-2 px-6 py-3 rounded-lg bg-cyan-500/20 border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/30 transition-all">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 0 0">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                   </svg>
                   <span>This Week</span>
@@ -112,13 +112,13 @@ function EventsContent() {
               </div>
             ))}
           </div>
-        ) : groupedLeagues.length === 0 ? (
+        ) : matchesListing.length === 0 ? ( // Condition now uses matchesListing
           <EmptyMatchState
             currentWeek={`${currentFrom} ~ ${currentTo}`}
             nextWeekUrl={`/events?from=${nextWeek.from}&to=${nextWeek.to}`}
           />
         ) : (
-          groupedLeagues.map((league) => <LeagueSection key={league.id} league={league} />)
+          matchesListing.map((leagueGroup) => <LeagueSection key={leagueGroup.leagueId} league={leagueGroup} />) // Map over matchesListing, pass leagueGroup
         )}
       </main>
     </div>

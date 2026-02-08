@@ -1,19 +1,23 @@
 import Link from 'next/link';
 import { Clock, MapPin, Users } from 'lucide-react';
-import type { Event as WeeklyEvent } from '@/lib/types'; // Using Event type with an alias
+import type { MatchListingItem } from '@/lib/types'; // Using MatchListingItem type
 
 interface Props {
-  event: WeeklyEvent;
+  event: MatchListingItem;
 }
 
 export default function EventCardHorizontal({ event }: Props) {
-  // Map EventStatus to the status strings expected by the UI
-  const getStatusString = (status: WeeklyEvent['status']): 'open' | 'live' | 'finished' => {
+  // Map MatchListingItem status to the status strings expected by the UI
+  const getStatusString = (status: MatchListingItem['status']): 'open' | 'live' | 'finished' => {
     switch (status) {
-      case 'BETTING_OPEN': return 'open';
+      case 'TIMED': // Assuming TIMED implies betting is open for upcoming events
+      case 'SCHEDULED': // Assuming SCHEDULED implies betting is open for upcoming events
+        return 'open';
       case 'LIVE': return 'live';
+      case 'IN_PLAY': return 'live'; // Backend might send IN_PLAY for live
+      case 'PAUSED': return 'live'; // Backend might send PAUSED for live
       case 'FINISHED': return 'finished';
-      default: return 'open';
+      default: return 'open'; // Default to open for unknown statuses
     }
   }
   const eventStatus = getStatusString(event.status);
@@ -24,7 +28,7 @@ export default function EventCardHorizontal({ event }: Props) {
     finished: { color: 'text-slate-400 bg-slate-400/10 border-slate-400/20', label: '⚫ Finished' },
   };
   const status = statusConfig[eventStatus];
-  const venue = event.stadium; // Use stadium as venue
+  // const venue = event.stadium; // stadium info is not in MatchListingItem
 
   return (
     <Link
@@ -33,28 +37,29 @@ export default function EventCardHorizontal({ event }: Props) {
     >
       {/* 데스크탑 레이아웃 */}
       <div className="hidden md:flex items-center justify-between gap-6">
-        {/* 왼쪽: 리그 + 대진 */}
+        {/* 왼쪽: 리그 정보는 LeagueSection에서 처리되므로 여기서는 제거 */}
         <div className="flex items-center gap-4 flex-1">
-          <span className="px-3 py-1 rounded-lg bg-cyan-500/20 text-cyan-400 text-sm font-semibold border border-cyan-500/30">
-            {event.league}
-          </span>
-          <div className="text-lg font-semibold text-white group-hover:text-cyan-400 transition">
-            {event.homeTeam} vs {event.awayTeam}
+          {/* event.league 제거 - LeagueSection에서 표시됨 */}
+          <div className="flex items-center gap-2 text-lg font-semibold text-white group-hover:text-cyan-400 transition">
+            {event.homeTeamEmblemUrl && (
+              <img src={event.homeTeamEmblemUrl} alt={event.homeTeamName} className="w-6 h-6 object-contain" />
+            )}
+            <span>{event.homeTeamName}</span>
+            <span className="text-slate-600">vs</span>
+            <span>{event.awayTeamName}</span>
+            {event.awayTeamEmblemUrl && (
+              <img src={event.awayTeamEmblemUrl} alt={event.awayTeamName} className="w-6 h-6 object-contain" />
+            )}
           </div>
         </div>
 
-        {/* 중앙: 날짜/시간/경기장 */}
+        {/* 중앙: 날짜/시간 (경기장 정보는 MatchListingItem에 없으므로 제거) */}
         <div className="flex flex-col gap-1 text-sm text-slate-400">
           <div className="flex items-center gap-2">
             <Clock className="w-4 h-4" />
             <span>{new Date(event.startTime).toLocaleString('en-US', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true })}</span>
           </div>
-          {venue && (
-            <div className="flex items-center gap-2">
-              <MapPin className="w-4 h-4" />
-              <span>{venue}</span>
-            </div>
-          )}
+          {/* venue (stadium) 정보는 MatchListingItem에 없으므로 제거 */}
         </div>
 
         {/* 오른쪽: 상태/에이전트/배당 */}
@@ -64,14 +69,14 @@ export default function EventCardHorizontal({ event }: Props) {
           </span>
           <div className="flex items-center gap-1 text-sm text-slate-400">
             <Users className="w-4 h-4" />
-            <span>{event.aiPredictions || 0} predictions</span>
+            <span>{event.agentCount || 0} predictions</span> {/* aiPredictions -> agentCount */}
           </div>
           <div className="flex gap-2 text-sm">
-            <span className="text-green-400">Home {event.odds.home}</span>
+            <span className="text-green-400">Home {event.oddsHome}</span> {/* odds.home -> oddsHome */}
             <span className="text-slate-500">/</span>
-            <span className="text-slate-400">Draw {event.odds.draw}</span>
+            <span className="text-slate-400">Draw {event.oddsDraw}</span> {/* odds.draw -> oddsDraw */}
             <span className="text-slate-500">/</span>
-            <span className="text-blue-400">Away {event.odds.away}</span>
+            <span className="text-blue-400">Away {event.oddsAway}</span> {/* odds.away -> oddsAway */}
           </div>
         </div>
       </div>
@@ -79,16 +84,22 @@ export default function EventCardHorizontal({ event }: Props) {
       {/* 모바일 레이아웃 */}
       <div className="md:hidden space-y-3">
         <div className="flex items-center justify-between">
-          <span className="px-2 py-1 rounded bg-cyan-500/20 text-cyan-400 text-xs font-semibold border border-cyan-500/30">
-            {event.league}
-          </span>
+          {/* event.league 제거 - LeagueSection에서 표시됨 */}
           <span className={`px-2 py-1 rounded-full text-xs border ${status.color}`}>
             {status.label}
           </span>
         </div>
         
-        <div className="text-lg font-semibold text-white">
-          {event.homeTeam} vs {event.awayTeam}
+        <div className="flex items-center gap-2 text-lg font-semibold text-white">
+          {event.homeTeamEmblemUrl && (
+            <img src={event.homeTeamEmblemUrl} alt={event.homeTeamName} className="w-6 h-6 object-contain" />
+          )}
+          <span>{event.homeTeamName}</span>
+          <span className="text-slate-600">vs</span>
+          <span>{event.awayTeamName}</span>
+          {event.awayTeamEmblemUrl && (
+            <img src={event.awayTeamEmblemUrl} alt={event.awayTeamName} className="w-6 h-6 object-contain" />
+          )}
         </div>
 
         <div className="flex items-center gap-4 text-sm text-slate-400">
@@ -96,23 +107,18 @@ export default function EventCardHorizontal({ event }: Props) {
             <Clock className="w-4 h-4" />
             <span>{new Date(event.startTime).toLocaleString('en-US', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true })}</span>
           </div>
-          {venue && (
-            <div className="flex items-center gap-1">
-              <MapPin className="w-4 h-4" />
-              <span className="truncate">{venue}</span>
-            </div>
-          )}
+          {/* venue (stadium) 정보는 MatchListingItem에 없으므로 제거 */}
         </div>
 
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1 text-sm text-slate-400">
             <Users className="w-4 h-4" />
-            <span>{event.aiPredictions || 0} predictions</span>
+            <span>{event.agentCount || 0} predictions</span> {/* aiPredictions -> agentCount */}
           </div>
           <div className="flex gap-3 text-sm">
-            <span className="text-green-400">Home {event.odds.home}</span>
-            <span className="text-slate-400">Draw {event.odds.draw}</span>
-            <span className="text-blue-400">Away {event.odds.away}</span>
+            <span className="text-green-400">Home {event.oddsHome}</span> {/* odds.home -> oddsHome */}
+            <span className="text-slate-400">Draw {event.oddsDraw}</span> {/* odds.draw -> oddsDraw */}
+            <span className="text-blue-400">Away {event.oddsAway}</span> {/* odds.away -> oddsAway */}
           </div>
         </div>
       </div>
