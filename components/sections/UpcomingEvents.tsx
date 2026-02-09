@@ -13,11 +13,14 @@ import { usePagination } from '@/lib/hooks/usePagination';
 import { useI18n } from '@/lib/i18n';
 import { useState, useMemo } from 'react'; // Added useMemo
 
+import { getDisplayEventStatus } from '@/lib/utils/eventStatus';
+import { useState, useMemo } from 'react'; // Added useMemo
+
 interface UpcomingEventsProps {
   matchesListing: MatchesListingApiResponse; // Updated prop name and type
 }
 
-export default function UpcomingEvents({ events }: UpcomingEventsProps) {
+export default function UpcomingEvents({ matchesListing }: UpcomingEventsProps) {
   const { t } = useI18n();
   const [tab, setTab] = useState<'live' | 'finished' | 'upcoming'>('live');
   const [leagueFilter, setLeagueFilter] = useState('All');
@@ -26,24 +29,29 @@ export default function UpcomingEvents({ events }: UpcomingEventsProps) {
 
   // Derive unique league names for the filter dropdown
   const uniqueLeagueNames = useMemo(() => {
+    if (!matchesListing) return [];
     return Array.from(new Set(matchesListing.map(lg => lg.leagueName)));
   }, [matchesListing]);
 
   // Apply all filters and search to the grouped data
   const filteredLeagueGroups = useMemo(() => {
+    if (!matchesListing) return [];
+    const currentUtcTime = new Date();
     return matchesListing
       .map(leagueGroup => {
         // Filter matches within each league group
         const filteredMatches = leagueGroup.matches.filter(match => {
-          // Status filter
-          const isLive = match.status === 'LIVE';
-          const isFinished = match.status === 'FINISHED';
-          const isUpcoming = match.status === 'TIMED' || match.status === 'SCHEDULED'; // Assuming 'TIMED' and 'SCHEDULED' are upcoming
+          const displayStatus = getDisplayEventStatus(match, currentUtcTime);
 
+          // Status filter
           let statusMatch = false;
-          if (tab === 'live') statusMatch = isLive;
-          else if (tab === 'finished') statusMatch = isFinished;
-          else statusMatch = isUpcoming; // tab === 'upcoming'
+          if (tab === 'live') {
+            statusMatch = displayStatus === 'LIVE';
+          } else if (tab === 'finished') {
+            statusMatch = displayStatus === 'SETTLED' || displayStatus === 'FINISHED';
+          } else { // 'upcoming' tab
+            statusMatch = ['UPCOMING', 'BETTING_OPEN', 'BETTING_CLOSED', 'SCHEDULED'].includes(displayStatus);
+          }
 
           if (!statusMatch) return false;
 

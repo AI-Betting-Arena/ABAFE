@@ -1,15 +1,17 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { getBettingStatusBadge, formatTimeLeft } from "@/lib/utils/eventStatus";
-import type { Event } from "@/lib/types";
+import { getDisplayEventStatus, getEventStatusBadge } from "@/lib/utils/eventStatus";
+import type { Event, MatchListingItem } from "@/lib/types";
 import { MapPin, Clock, Users, ArrowRight } from "lucide-react";
 
 const statusStyles = {
   green: "bg-green-500/20 border-green-500/50 text-green-400",
   orange: "bg-orange-500/20 border-orange-500/50 text-orange-400",
-  red: "bg-red-500/20 border-red-500/50 text-red-400 animate-pulse",
+  red: "bg-red-500/20 border-red-500/50 text-red-400",
+  blue: "bg-blue-500/20 border-blue-500/50 text-blue-400",
   gray: "bg-slate-700 border-slate-600 text-slate-400",
+  yellow: "bg-yellow-500/20 border-yellow-500/50 text-yellow-400",
 };
 
 interface EventCardProps {
@@ -17,36 +19,36 @@ interface EventCardProps {
 }
 
 export const EventCard: React.FC<EventCardProps> = ({ event }) => {
-  const [badge, setBadge] = useState(() => getBettingStatusBadge(event.startTime));
-  const [timeLeft, setTimeLeft] = useState(() => {
-    const now = new Date();
-    const start = new Date(event.startTime);
-    return start.getTime() - now.getTime() - 10 * 60 * 1000;
-  });
+  const getBadge = () => {
+    const currentUtcTime = new Date();
+    // Cast Event to MatchListingItem; the fields used by getDisplayEventStatus are compatible.
+    const pseudoMatchItem = {
+      ...event,
+      status: event.status || 'UPCOMING', // Provide default status if undefined
+    } as MatchListingItem;
+    const displayStatus = getDisplayEventStatus(pseudoMatchItem, currentUtcTime);
+    return getEventStatusBadge(displayStatus);
+  };
+
+  const [badge, setBadge] = useState(getBadge);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setBadge(getBettingStatusBadge(event.startTime));
-      const now = new Date();
-      const start = new Date(event.startTime);
-      setTimeLeft(start.getTime() - now.getTime() - 10 * 60 * 1000);
-    }, 60000);
+      setBadge(getBadge());
+    }, 60000); // Update every minute
     return () => clearInterval(interval);
-  }, [event.startTime]);
+  }, [event.startTime, event.status]);
 
   const badgeClass = statusStyles[badge.color] || statusStyles.gray;
 
   return (
     <div className="group relative overflow-hidden rounded-xl bg-gradient-to-br from-slate-800/80 to-slate-900/80 border border-slate-700/50 hover:border-cyan-500/50 transition-all duration-300 hover:shadow-xl hover:shadow-cyan-500/10 hover:-translate-y-1">
       {/* Betting Status Badge (top-right) */}
-      <div className={`absolute top-4 right-4 px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 ${badgeClass}`}>
-        {badge.color === "green" && <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />}
-        {badge.color === "orange" && <div className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse" />}
-        {badge.color === "red" && <div className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />}
-        {badge.label}
-        {badge.color === "orange" && (
-          <span className="ml-1">({formatTimeLeft(timeLeft > 0 ? timeLeft : 0)})</span>
+      <div className={`absolute top-4 right-4 px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 ${badgeClass} ${badge.color === 'red' || badge.color === 'live' ? 'animate-pulse' : ''}`}>
+        {(badge.color === "green" || badge.color === "orange" || badge.color === "red") && (
+          <div className={`w-1.5 h-1.5 rounded-full bg-${badge.color}-400`} />
         )}
+        {badge.label}
       </div>
       <div className="p-6">
         {/* Matchup Info */}

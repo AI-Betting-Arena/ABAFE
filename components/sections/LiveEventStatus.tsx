@@ -18,7 +18,8 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import Image from 'next/image';
-import type { EventDetail, EventDetailResponse } from '@/lib/types';
+import type { EventDetail, EventDetailResponse, MatchListingItem } from '@/lib/types';
+import { getDisplayEventStatus, getEventStatusBadge } from '@/lib/utils/eventStatus';
 
 interface LiveEventStatusProps {
   initialEvent: EventDetail;
@@ -49,7 +50,9 @@ export default function LiveEventStatus({ initialEvent }: LiveEventStatusProps) 
         setEvent(data.event);
         setLastUpdated(new Date());
 
-        if (data.event.status === 'FINISHED' && intervalRef.current) {
+        // The display status logic will handle re-evaluation on re-render.
+        // We just need to stop polling if the *backend* status is final.
+        if (data.event.status === 'FINISHED' || data.event.status === 'SETTLED' && intervalRef.current) {
           clearInterval(intervalRef.current);
           intervalRef.current = null;
           setIsPolling(false);
@@ -63,7 +66,11 @@ export default function LiveEventStatus({ initialEvent }: LiveEventStatusProps) 
   useEffect(() => {
     isMountedRef.current = true;
 
-    if (event.status !== 'LIVE') {
+    // Polling should start if the display status is LIVE.
+    const currentUtcTime = new Date();
+    const displayStatus = getDisplayEventStatus(event as any, currentUtcTime);
+
+    if (displayStatus !== 'LIVE') {
       setIsPolling(false);
       return;
     }
@@ -88,29 +95,19 @@ export default function LiveEventStatus({ initialEvent }: LiveEventStatusProps) 
     await fetchData();
   };
 
-  const getStatusBadge = () => {
-    switch (event.status) {
-      case 'LIVE':
-        return (
-          <span className="px-3 py-1 bg-red-500/20 text-red-400 text-sm rounded-full animate-pulse flex items-center gap-1">
-            <span className="w-2 h-2 bg-red-400 rounded-full" />
-            LIVE {event.minute && `${event.minute}'`}
-          </span>
-        );
-      case 'FINISHED':
-        return (
-          <span className="px-3 py-1 bg-slate-700 text-slate-300 text-sm rounded-full">
-            Finished
-          </span>
-        );
-      default:
-        return (
-          <span className="px-3 py-1 bg-blue-500/20 text-blue-400 text-sm rounded-full">
-            Scheduled
-          </span>
-        );
-    }
+  const currentUtcTime = new Date();
+  const displayStatus = getDisplayEventStatus(event as any, currentUtcTime);
+  const badge = getEventStatusBadge(displayStatus);
+
+  const statusColorMap = {
+    green: 'bg-green-500/20 text-green-400',
+    red: 'bg-red-500/20 text-red-400 animate-pulse',
+    orange: 'bg-orange-500/20 text-orange-400 animate-pulse',
+    blue: 'bg-blue-500/20 text-blue-400',
+    gray: 'bg-slate-700 text-slate-300',
+    yellow: 'bg-yellow-500/20 text-yellow-400',
   };
+  const badgeClass = statusColorMap[badge.color] || statusColorMap.gray;
 
   return (
     <div className="bg-slate-900/50 backdrop-blur border border-slate-800 rounded-lg p-6 md:p-8">
@@ -120,7 +117,9 @@ export default function LiveEventStatus({ initialEvent }: LiveEventStatusProps) 
           <span className="px-3 py-1 bg-slate-800 text-slate-300 text-sm rounded">
             {event.league}
           </span>
-          {getStatusBadge()}
+          <span className={`px-3 py-1 text-sm rounded-full flex items-center gap-1 ${badgeClass}`}>
+            {badge.label} {displayStatus === 'LIVE' && event.minute && `${event.minute}'`}
+          </span>
           <div className="flex items-center gap-1 text-slate-400 text-sm">
             <Clock className="w-4 h-4" />
             <span>{new Date(event.startTime).toLocaleString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true })}</span>
@@ -176,7 +175,7 @@ export default function LiveEventStatus({ initialEvent }: LiveEventStatusProps) 
 
         {/* Score or VS */}
         <div className="flex items-center gap-4">
-          {event.status === 'LIVE' || event.status === 'FINISHED' ? (
+          {displayStatus === 'LIVE' || displayStatus === 'SETTLED' || displayStatus === 'FINISHED' ? (
             <div className="text-center">
               <div className="flex items-center gap-4">
                 <span className="text-5xl font-bold text-white">
@@ -187,7 +186,7 @@ export default function LiveEventStatus({ initialEvent }: LiveEventStatusProps) 
                   {event.score?.away ?? 0}
                 </span>
               </div>
-              {event.status === 'LIVE' && event.minute && (
+              {displayStatus === 'LIVE' && event.minute && (
                 <span className="text-red-400 text-sm animate-pulse">
                   {event.minute}&apos;
                 </span>

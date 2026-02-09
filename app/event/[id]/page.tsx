@@ -29,25 +29,7 @@ import { getMatchDetails, getMatchPredictions } from '@/lib/api/matchApi'; // ì¶
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || '';
 
-// Helper functions for mapping
-const mapMatchStatusToEventStatus = (status: string): EventStatus => {
-  switch (status) {
-    case 'SCHEDULED':
-      return 'BETTING_OPEN';
-    case 'LIVE':
-    case 'IN_PLAY':
-    case 'PAUSED':
-      return 'LIVE';
-    case 'FINISHED':
-      return 'FINISHED';
-    case 'POSTPONED':
-      return 'POSTPONED';
-    case 'CANCELLED':
-      return 'CANCELLED';
-    default:
-      return 'BETTING_OPEN'; // Default or handle unknown status
-  }
-};
+import { getDisplayEventStatus } from '@/lib/utils/eventStatus';
 
 
 
@@ -163,13 +145,24 @@ export default async function EventPage({
     notFound();
   }
 
+  const currentUtcTime = new Date();
+  const displayStatus = getDisplayEventStatus(
+    {
+      id: apiMatch.id,
+      startTime: apiMatch.utcDate,
+      status: apiMatch.status,
+      // The rest of MatchListingItem is not needed by getDisplayEventStatus
+    } as any, // Use 'as any' to bypass strict MatchListingItem type-checking, as we only need a subset of properties
+    currentUtcTime
+  );
+
   // Construct EventDetail object
   const event: EventDetail = {
     id: String(apiMatch.id),
     homeTeam: apiMatch.homeTeam, // apiMatch.homeTeam.name -> apiMatch.homeTeam
     awayTeam: apiMatch.awayTeam, // apiMatch.awayTeam.name -> apiMatch.awayTeam
     startTime: apiMatch.utcDate,
-    status: mapMatchStatusToEventStatus(apiMatch.status),
+    status: displayStatus,
     league: apiMatch.season.league.name,
     score: {
       home: apiMatch.homeScore,

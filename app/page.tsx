@@ -22,7 +22,6 @@ import Footer from "@/components/sections/Footer";
 import type {
   LeaderboardResponse,
   EventsResponse,
-
   StatsResponse,
 } from "@/lib/types";
 
@@ -44,8 +43,6 @@ async function getEvents(): Promise<EventsResponse> {
   return res.json();
 }
 
-
-
 async function getStats(): Promise<StatsResponse> {
   const res = await fetch(`${API_BASE}/api/stats`, {
     cache: "no-store",
@@ -63,16 +60,12 @@ export default async function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
-      <Header />
       <Hero stats={stats} />
 
       <section className="max-w-7xl mx-auto px-4 py-12 space-y-12">
         {/* LiveLeaderboard: Auto-refreshes every 30 seconds, initial data from SSR */}
         <LiveLeaderboard initialAgents={agents} />
-
       </section>
-
-      <Footer />
     </div>
   );
 }

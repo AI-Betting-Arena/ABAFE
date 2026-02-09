@@ -1,34 +1,27 @@
 import Link from 'next/link';
 import { Clock, MapPin, Users } from 'lucide-react';
 import type { MatchListingItem } from '@/lib/types'; // Using MatchListingItem type
+import { getDisplayEventStatus, getEventStatusBadge } from "@/lib/utils/eventStatus";
 
 interface Props {
   event: MatchListingItem;
 }
 
 export default function EventCardHorizontal({ event }: Props) {
-  // Map MatchListingItem status to the status strings expected by the UI
-  const getStatusString = (status: MatchListingItem['status']): 'open' | 'live' | 'finished' => {
-    switch (status) {
-      case 'TIMED': // Assuming TIMED implies betting is open for upcoming events
-      case 'SCHEDULED': // Assuming SCHEDULED implies betting is open for upcoming events
-        return 'open';
-      case 'LIVE': return 'live';
-      case 'IN_PLAY': return 'live'; // Backend might send IN_PLAY for live
-      case 'PAUSED': return 'live'; // Backend might send PAUSED for live
-      case 'FINISHED': return 'finished';
-      default: return 'open'; // Default to open for unknown statuses
-    }
-  }
-  const eventStatus = getStatusString(event.status);
+  const currentUtcTime = new Date();
+  const displayStatus = getDisplayEventStatus(event, currentUtcTime);
+  const status = getEventStatusBadge(displayStatus);
 
-  const statusConfig = {
-    open: { color: 'text-green-400 bg-green-400/10 border-green-400/20', label: '🟢 Betting Open' },
-    live: { color: 'text-red-400 bg-red-400/10 border-red-400/20', label: '🔴 Live' },
-    finished: { color: 'text-slate-400 bg-slate-400/10 border-slate-400/20', label: '⚫ Finished' },
+  const statusColorMap = {
+    green: 'text-green-400 bg-green-400/10 border-green-400/20',
+    red: 'text-red-400 bg-red-400/10 border-red-400/20',
+    orange: 'text-orange-400 bg-orange-400/10 border-orange-400/20',
+    blue: 'text-blue-400 bg-blue-400/10 border-blue-400/20',
+    gray: 'text-slate-400 bg-slate-400/10 border-slate-400/20',
+    yellow: 'text-yellow-400 bg-yellow-400/10 border-yellow-400/20',
   };
-  const status = statusConfig[eventStatus];
-  // const venue = event.stadium; // stadium info is not in MatchListingItem
+
+  const statusColorClass = statusColorMap[status.color] || statusColorMap.gray;
 
   return (
     <Link
@@ -64,7 +57,7 @@ export default function EventCardHorizontal({ event }: Props) {
 
         {/* 오른쪽: 상태/에이전트/배당 */}
         <div className="flex items-center gap-4">
-          <span className={`px-3 py-1 rounded-full text-xs border ${status.color}`}>
+          <span className={`px-3 py-1 rounded-full text-xs border ${statusColorClass}`}>
             {status.label}
           </span>
           <div className="flex items-center gap-1 text-sm text-slate-400">
@@ -85,7 +78,7 @@ export default function EventCardHorizontal({ event }: Props) {
       <div className="md:hidden space-y-3">
         <div className="flex items-center justify-between">
           {/* event.league 제거 - LeagueSection에서 표시됨 */}
-          <span className={`px-2 py-1 rounded-full text-xs border ${status.color}`}>
+          <span className={`px-2 py-1 rounded-full text-xs border ${statusColorClass}`}>
             {status.label}
           </span>
         </div>

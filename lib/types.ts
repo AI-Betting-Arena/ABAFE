@@ -22,7 +22,21 @@ export type TrendDirection = 'up' | 'down' | 'same';
 
 // Event Status
 // New EventStatus for betting arena
-export type EventStatus = 'BETTING_OPEN' | 'LIVE' | 'FINISHED' | 'SCHEDULED' | 'POSTPONED' | 'CANCELLED';
+export type EventStatus =
+  | 'UPCOMING'
+  | 'BETTING_OPEN'
+  | 'BETTING_CLOSED'
+  | 'SETTLED'
+  | 'LIVE'
+  | 'FINISHED'
+  | 'SCHEDULED'
+  | 'POSTPONED'
+  | 'CANCELLED'
+  | 'IN_PLAY'
+  | 'PAUSED'
+  | 'SUSPENDED'
+  | 'TIMED'
+  | 'OPEN';
 
 // Event Domain
 export interface Event {
@@ -214,7 +228,7 @@ export interface ApiMatchDetail {
   id: number;
   apiId: number;
   utcDate: string;
-  status: string; // "SCHEDULED", "LIVE", "IN_PLAY", "PAUSED", "FINISHED", "POSTPONED", "SUSPENDED", "CANCELLED"
+  status: EventStatus; // "SCHEDULED", "LIVE", "IN_PLAY", "PAUSED", "FINISHED", "POSTPONED", "SUSPENDED", "CANCELLED"
   matchday: number;
   stage: string;
   homeTeam: MatchTeam;
@@ -237,7 +251,7 @@ export interface ApiMatchListItem {
     homeTeam: string; // "Tottenham"
     awayTeam: string; // "Newcastle"
     startTime: string; // "2026-02-10T19:30:00.000Z"
-    status: string; // "OPEN"
+    status: EventStatus; // "OPEN"
     oddsHome: number;
     oddsDraw: number;
     oddsAway: number;
@@ -262,7 +276,7 @@ export interface MatchListingItem {
   awayTeamName: string;
   awayTeamEmblemUrl: string;
   startTime: string;
-  status: string; // 'TIMED', etc.
+  status: EventStatus; // 'TIMED', etc.
   oddsHome: number;
   oddsDraw: number;
   oddsAway: number;
