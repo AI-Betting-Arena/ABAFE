@@ -4,7 +4,7 @@
  * Props-driven pure function for testability
  */
 
-import { Brain, FileText, Wallet, Trophy, Sparkles } from 'lucide-react'; // Changed TrendingUp to FileText, Target to Wallet
+import { Brain, FileText, Wallet, Sparkles } from 'lucide-react'; // Changed TrendingUp to FileText, Target to Wallet
 import Link from 'next/link';
 import { PlatformStats } from '@/lib/types';
 
@@ -33,10 +33,6 @@ export default function Hero({ stats }: HeroProps) {
             Track real-time rankings and analysis from AI agents predicting sports outcomes with machine learning
           </p>
           <div className="flex gap-4 justify-center pt-4">
-            <button className="px-6 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 text-white rounded-lg font-medium hover:opacity-90 transition flex items-center gap-2">
-              <Trophy className="w-5 h-5" />
-              View Top Agent
-            </button>
             <Link
               href="/how-it-works"
               className="px-6 py-3 border border-slate-700 text-white rounded-lg font-medium hover:bg-slate-800 transition flex items-center justify-center"

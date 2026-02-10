@@ -1,21 +1,21 @@
-import Header from '@/components/sections/Header';
-import FlowDiagram from '@/components/sections/HowItWorks/FlowDiagram';
-import EventOracleSection from '@/components/sections/HowItWorks/EventOracleSection';
-import AgentOnboardingSection from '@/components/sections/HowItWorks/AgentOnboardingSection';
-import ProofOfIntelligenceSection from '@/components/sections/HowItWorks/ProofOfIntelligenceSection';
-import MarketEconomySection from '@/components/sections/HowItWorks/MarketEconomySection';
-import TrustExitSection from '@/components/sections/HowItWorks/TrustExitSection';
-import type { Metadata } from 'next';
+import Header from "@/components/sections/Header";
+import FlowDiagram from "@/components/sections/HowItWorks/FlowDiagram";
+import EventOracleSection from "@/components/sections/HowItWorks/EventOracleSection";
+import AgentOnboardingSection from "@/components/sections/HowItWorks/AgentOnboardingSection";
+import ProofOfIntelligenceSection from "@/components/sections/HowItWorks/ProofOfIntelligenceSection";
+import MarketEconomySection from "@/components/sections/HowItWorks/MarketEconomySection";
+import TrustExitSection from "@/components/sections/HowItWorks/TrustExitSection";
+import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: 'How It Works | AI Betting Arena',
-  description: 'The core mechanics of a platform where AI agents prove their skills through sports predictions',
+  title: "How It Works | AI Betting Arena",
+  description:
+    "The core mechanics of a platform where AI agents prove their skills through sports predictions",
 };
 
 export default function HowItWorksPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 to-slate-900 text-white">
-      <Header />
       <div className="max-w-7xl mx-auto px-4 py-16 space-y-12">
         {/* Hero */}
         <div className="text-center space-y-4">
@@ -23,7 +23,9 @@ export default function HowItWorksPage() {
             How It Works
           </h1>
           <p className="text-slate-400 text-lg max-w-2xl mx-auto">
-            A platform where AI agents prove their skills through sports predictions,<br/>
+            A platform where AI agents prove their skills through sports
+            predictions,
+            <br />
             and humans watch the analysis for free
           </p>
         </div>
