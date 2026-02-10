@@ -4,7 +4,7 @@
  * Props-driven pure function for testability
  */
 
-import { Brain, TrendingUp, Target, Trophy, Sparkles } from 'lucide-react';
+import { Brain, FileText, Wallet, Trophy, Sparkles } from 'lucide-react'; // Changed TrendingUp to FileText, Target to Wallet
 import Link from 'next/link';
 import { PlatformStats } from '@/lib/types';
 
@@ -62,22 +62,22 @@ export default function Hero({ stats }: HeroProps) {
           <div className="bg-slate-900/50 backdrop-blur border border-slate-800 rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-slate-400 text-sm">Avg Win Rate</p>
-                <p className="text-3xl font-bold text-white mt-1">{stats.averageWinRate}%</p>
+                <p className="text-slate-400 text-sm">Total Reports</p> {/* Changed from Avg Win Rate */}
+                <p className="text-3xl font-bold text-white mt-1">{stats.reportsCount}</p> {/* Changed from stats.averageWinRate */}
               </div>
               <div className="bg-green-500/10 p-3 rounded-lg">
-                <TrendingUp className="w-6 h-6 text-green-400" />
+                <FileText className="w-6 h-6 text-green-400" /> {/* Changed icon */}
               </div>
             </div>
           </div>
           <div className="bg-slate-900/50 backdrop-blur border border-slate-800 rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-slate-400 text-sm">Ongoing Events</p>
-                <p className="text-3xl font-bold text-white mt-1">{stats.ongoingEvents}</p>
+                <p className="text-slate-400 text-sm">Total Bet Points</p> {/* Changed from Ongoing Events */}
+                <p className="text-3xl font-bold text-white mt-1">{stats.bettingPoints}</p> {/* Changed from stats.ongoingEvents */}
               </div>
               <div className="bg-purple-500/10 p-3 rounded-lg">
-                <Target className="w-6 h-6 text-purple-400" />
+                <Wallet className="w-6 h-6 text-purple-400" /> {/* Changed icon */}
               </div>
             </div>
           </div>

@@ -22,10 +22,13 @@ import Footer from "@/components/sections/Footer";
 import type {
   LeaderboardResponse,
   EventsResponse,
-  StatsResponse,
+  // StatsResponse is now PlatformStats, no need to import separately here
+  BackendDashboardStats, // New import for the raw backend response type
+  PlatformStats, // Import PlatformStats to use as return type for getStats
 } from "@/lib/types";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "";
+const BACKEND_API_BASE = process.env.NEXT_PUBLIC_BACKEND_URL || "";
 
 async function getLeaderboard(): Promise<LeaderboardResponse> {
   const res = await fetch(`${API_BASE}/api/leaderboard`, {
@@ -43,16 +46,34 @@ async function getEvents(): Promise<EventsResponse> {
   return res.json();
 }
 
-async function getStats(): Promise<StatsResponse> {
-  const res = await fetch(`${API_BASE}/api/stats`, {
+// Updated getStats to fetch from the new endpoint and map to PlatformStats
+async function getStats(): Promise<PlatformStats> {
+  // Changed return type to PlatformStats
+  const fetchUrl = `${BACKEND_API_BASE}/api/v1/dashboard/stats`;
+  const res = await fetch(fetchUrl, {
+    // Changed endpoint to use BACKEND_API_BASE
     cache: "no-store",
   });
-  if (!res.ok) throw new Error("Failed to fetch stats");
-  return res.json();
+  if (!res.ok) {
+    console.error(
+      `Failed to fetch dashboard stats from: ${fetchUrl}. Status: ${res.status} ${res.statusText}`,
+    );
+    throw new Error("Failed to fetch dashboard stats");
+  }
+  const backendStats: BackendDashboardStats = await res.json(); // Fetch and cast to BackendDashboardStats
+
+  // Map BackendDashboardStats to PlatformStats
+  return {
+    activeAgents: backendStats.totalAgents,
+    reportsCount: backendStats.totalReports,
+    bettingPoints: backendStats.totalBettingPoints,
+  };
 }
 
 export default async function Home() {
-  const [{ agents }, { events }, { stats }] = await Promise.all([
+  // Destructure directly to stats (which is now PlatformStats)
+  const [{ agents }, { events }, stats] = await Promise.all([
+    // Removed destructuring of { stats }
     getLeaderboard(),
     getEvents(),
     getStats(),

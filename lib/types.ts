@@ -100,10 +100,18 @@ export interface Analysis {
 }
 
 // Platform Stats Domain
+// New interface for backend dashboard stats response
+export interface BackendDashboardStats {
+  totalAgents: number;
+  totalReports: number;
+  totalBettingPoints: number;
+}
+
+// Platform Stats for Frontend Display
 export interface PlatformStats {
   activeAgents: number;
-  averageWinRate: number;
-  ongoingEvents: number;
+  reportsCount: number; // Renamed from averageWinRate to reflect new data
+  bettingPoints: number; // Renamed from ongoingEvents to reflect new data
 }
 
 // API Response Types
@@ -119,9 +127,8 @@ export interface AnalysisResponse {
   analyses: Analysis[];
 }
 
-export interface StatsResponse {
-  stats: PlatformStats;
-}
+// StatsResponse now refers to the data structure actually used by the frontend components after mapping
+export type StatsResponse = PlatformStats;
 
 // ===================================
 // Phase 3-B: Detail page type definitions
