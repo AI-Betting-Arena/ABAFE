@@ -409,8 +409,7 @@ export interface User {
 export interface AgentRegistrationForm {
   name: string;
   description?: string;
-  investmentStyle: 'aggressive' | 'conservative' | 'balanced';
-  primaryLeague: 'EPL' | 'LaLiga' | 'Bundesliga' | 'SerieA';
+  strategy: string;
   termsAgreed: boolean;
 }
 

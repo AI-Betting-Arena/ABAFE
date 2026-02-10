@@ -4,11 +4,11 @@
  * async Server Component with SSR support
  */
 
-import { notFound } from 'next/navigation';
-import Link from 'next/link';
-import { Metadata } from 'next';
-import Header from '@/components/sections/Header';
-import Footer from '@/components/sections/Footer';
+import { notFound } from "next/navigation";
+import Link from "next/link";
+import { Metadata } from "next";
+import Header from "@/components/sections/Header";
+import Footer from "@/components/sections/Footer";
 import {
   Brain,
   Trophy,
@@ -19,26 +19,26 @@ import {
   CheckCircle,
   XCircle,
   Clock,
-} from 'lucide-react';
-import type { AgentDetail, AgentDetailResponse, Prediction } from '@/lib/types';
+} from "lucide-react";
+import type { AgentDetail, AgentDetailResponse, Prediction } from "@/lib/types";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || '';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "";
 
 async function getAgentDetail(id: string): Promise<AgentDetail | null> {
   try {
     const res = await fetch(`${API_BASE}/api/agent/${id}`, {
-      cache: 'no-store',
+      cache: "no-store",
     });
 
     if (!res.ok) {
       if (res.status === 404) return null;
-      throw new Error('Failed to fetch agent');
+      throw new Error("Failed to fetch agent");
     }
 
     const data: AgentDetailResponse = await res.json();
     return data.agent;
   } catch {
-    throw new Error('Failed to fetch agent detail');
+    throw new Error("Failed to fetch agent detail");
   }
 }
 
@@ -52,7 +52,7 @@ export async function generateMetadata({
 
   if (!agent) {
     return {
-      title: 'Agent Not Found - AI Betting Arena',
+      title: "Agent Not Found - AI Betting Arena",
     };
   }
 
@@ -70,13 +70,13 @@ function StatCard({
 }: {
   label: string;
   value: number | string;
-  color: 'blue' | 'green' | 'cyan' | 'yellow';
+  color: "blue" | "green" | "cyan" | "yellow";
 }) {
   const colorClasses = {
-    blue: 'from-blue-500 to-blue-600',
-    green: 'from-green-500 to-green-600',
-    cyan: 'from-cyan-500 to-cyan-600',
-    yellow: 'from-yellow-500 to-yellow-600',
+    blue: "from-blue-500 to-blue-600",
+    green: "from-green-500 to-green-600",
+    cyan: "from-cyan-500 to-cyan-600",
+    yellow: "from-yellow-500 to-yellow-600",
   };
 
   return (
@@ -96,18 +96,18 @@ function PredictionCard({ prediction }: { prediction: Prediction }) {
   const resultConfig = {
     win: {
       icon: CheckCircle,
-      color: 'text-green-400 bg-green-400/10 border-green-400/20',
-      label: 'Win',
+      color: "text-green-400 bg-green-400/10 border-green-400/20",
+      label: "Win",
     },
     loss: {
       icon: XCircle,
-      color: 'text-red-400 bg-red-400/10 border-red-400/20',
-      label: 'Loss',
+      color: "text-red-400 bg-red-400/10 border-red-400/20",
+      label: "Loss",
     },
     pending: {
       icon: Clock,
-      color: 'text-yellow-400 bg-yellow-400/10 border-yellow-400/20',
-      label: 'Pending',
+      color: "text-yellow-400 bg-yellow-400/10 border-yellow-400/20",
+      label: "Pending",
     },
   };
 
@@ -143,17 +143,17 @@ function PredictionCard({ prediction }: { prediction: Prediction }) {
 
       <div className="flex items-center gap-4 text-sm">
         <span className="text-slate-500">
-          Odds:{' '}
+          Odds:{" "}
           <span className="text-cyan-400 font-medium">{prediction.odds}</span>
         </span>
         <span className="text-slate-500">
-          Confidence:{' '}
+          Confidence:{" "}
           <span className="text-cyan-400 font-medium">
             {prediction.confidence}%
           </span>
         </span>
         <span className="text-slate-500">
-          {new Date(prediction.predictedAt).toLocaleDateString('en-US')}
+          {new Date(prediction.predictedAt).toLocaleDateString("en-US")}
         </span>
       </div>
     </Link>
@@ -174,7 +174,6 @@ export default async function AgentPage({
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
-      <Header />
       {/* Back navigation */}
       <div className="max-w-7xl mx-auto px-4 pt-8">
         <Link
@@ -204,15 +203,15 @@ export default async function AgentPage({
                 {agent.badge && (
                   <span
                     className={`px-3 py-1 text-sm font-medium rounded-full ${
-                      agent.badge === 'Expert'
-                        ? 'bg-yellow-500/20 text-yellow-400'
-                        : 'bg-cyan-500/20 text-cyan-400'
+                      agent.badge === "Expert"
+                        ? "bg-yellow-500/20 text-yellow-400"
+                        : "bg-cyan-500/20 text-cyan-400"
                     }`}
                   >
                     {agent.badge}
                   </span>
                 )}
-                {agent.trend === 'up' && (
+                {agent.trend === "up" && (
                   <span className="flex items-center gap-1 text-green-400 text-sm">
                     <TrendingUp className="w-4 h-4" />
                     Trending Up
@@ -250,7 +249,8 @@ export default async function AgentPage({
                 </div>
                 <div>
                   <p className="text-slate-500 text-sm flex items-center gap-1">
-                    <Calendar className="w-4 h-4" />Total Predictions
+                    <Calendar className="w-4 h-4" />
+                    Total Predictions
                   </p>
                   <p className="text-2xl font-bold text-white">
                     {agent.totalPredictions}
@@ -291,15 +291,19 @@ export default async function AgentPage({
             value={agent.averageOdds.toFixed(2)}
             color="cyan"
           />
-          <StatCard label="Best Streak" value={agent.bestStreak} color="yellow" />
+          <StatCard
+            label="Best Streak"
+            value={agent.bestStreak}
+            color="yellow"
+          />
         </div>
       </section>
 
-
-
       {/* Recent prediction history */}
       <section className="max-w-7xl mx-auto px-4 py-4">
-        <h2 className="text-2xl font-bold text-white mb-4">Recent Predictions</h2>
+        <h2 className="text-2xl font-bold text-white mb-4">
+          Recent Predictions
+        </h2>
         {agent.recentPredictions.length > 0 ? (
           <div className="space-y-3">
             {agent.recentPredictions.map((pred) => (
@@ -312,9 +316,6 @@ export default async function AgentPage({
           </div>
         )}
       </section>
-
-
-      <Footer />
     </div>
   );
 }

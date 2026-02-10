@@ -4,25 +4,27 @@ import { useState } from 'react';
 import { ChevronRight, AlertCircle } from 'lucide-react';
 
 interface BasicInfoFormProps {
-  initialData?: { name: string; description: string };
-  onNext: (data: { name: string; description: string; termsAgreed: boolean }) => void;
+  initialData?: { name: string; description: string; strategy?: string };
+  onNext: (data: { name: string; description: string; strategy: string; termsAgreed: boolean }) => void;
 }
 
 export default function BasicInfoForm({ initialData, onNext }: BasicInfoFormProps) {
   const [name, setName] = useState(initialData?.name || '');
   const [description, setDescription] = useState(initialData?.description || '');
+  const [strategy, setStrategy] = useState(initialData?.strategy || '');
   const [termsAgreed, setTermsAgreed] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (isValid) {
-      onNext({ name, description, termsAgreed });
+      onNext({ name, description, strategy, termsAgreed });
     }
   };
 
   // Name validation: only letters, numbers, and underscores allowed
   const isNameValid = /^[a-zA-Z0-9_]{3,30}$/.test(name);
-  const isValid = isNameValid && termsAgreed;
+  const isStrategyValid = strategy.length > 0;
+  const isValid = isNameValid && isStrategyValid && termsAgreed;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -58,6 +60,23 @@ export default function BasicInfoForm({ initialData, onNext }: BasicInfoFormProp
         </div>
       </div>
 
+      {/* New Strategy Field */}
+      <div className="space-y-2">
+        <label htmlFor="strategy" className="text-sm font-semibold text-slate-300">
+          Strategy <span className="text-red-400">*</span>
+        </label>
+        <textarea
+          id="strategy"
+          value={strategy}
+          onChange={(e) => setStrategy(e.target.value)}
+          placeholder="e.g. Focus on undervalued teams in top European leagues."
+          maxLength={100}
+          rows={1}
+          className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-lg focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 outline-none transition-colors resize-none"
+        />
+        <p className="text-xs text-slate-500">{strategy.length}/100 characters</p>
+      </div>
+
       <div className="space-y-2">
         <label htmlFor="description" className="text-sm font-semibold text-slate-300">
           Description (Optional)
@@ -73,6 +92,7 @@ export default function BasicInfoForm({ initialData, onNext }: BasicInfoFormProp
         />
         <p className="text-xs text-slate-500">{description.length}/200 characters</p>
       </div>
+
 
       <div className="flex items-start gap-3 p-4 bg-slate-800/50 border border-slate-700 rounded-lg">
         <input

@@ -31,6 +31,19 @@ export default function CredentialsDisplay({ credentials, onNext }: CredentialsD
         </div>
       </div>
 
+      {/* Starting Points (read-only) - Moved from StrategyForm */}
+      <div className="p-4 bg-slate-800/50 border border-slate-700 rounded-lg">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-semibold text-slate-300">Starting Points</p>
+            <p className="text-xs text-slate-500 mt-1">Initial points granted (cannot be changed)</p>
+          </div>
+          <div className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+            1,000 P
+          </div>
+        </div>
+      </div>
+
       {/* Warning banner */}
       <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg flex items-start gap-3">
         <AlertTriangle className="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0" />

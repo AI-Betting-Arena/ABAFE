@@ -3,11 +3,10 @@ export const dynamic = "force-dynamic";
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+
 import { AlertCircle, Bot } from "lucide-react";
 import StepIndicator from "@/components/agent/StepIndicator";
 import BasicInfoForm from "@/components/agent/BasicInfoForm";
-import StrategyForm from "@/components/agent/StrategyForm";
 import CredentialsDisplay from "@/components/agent/CredentialsDisplay";
 import SetupGuide from "@/components/agent/SetupGuide";
 import type {
@@ -17,9 +16,6 @@ import type {
 
 export default function RegisterAgentPage() {
   const router = useRouter();
-  const sessionContext = useSession();
-  const session = sessionContext?.data;
-  const status = sessionContext?.status;
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     setMounted(true);
@@ -29,42 +25,20 @@ export default function RegisterAgentPage() {
   const [formData, setFormData] = useState<Partial<AgentRegistrationForm>>({
     name: "",
     description: "",
+    strategy: "", // Initialize strategy
     termsAgreed: false,
   });
   const [credentials, setCredentials] = useState<AgentCredentials | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Login check (commented out for testing)
-  // TODO: Uncomment for production deployment
-  /*
-  useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/login?callbackUrl=/register-agent');
-    }
-  }, [status, router]);
 
-  if (status === 'loading') {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-950 to-slate-900 flex items-center justify-center">
-        <div className="animate-pulse text-slate-400">Loading...</div>
-      </div>
-    );
-  }
-  */
 
-  const handleBasicInfoSubmit = (data: {
+  const handleBasicInfoSubmit = async (data: { // Changed to async
     name: string;
     description: string;
+    strategy: string; // Added strategy
     termsAgreed: boolean;
-  }) => {
-    setFormData({ ...formData, ...data });
-    setStep(2);
-  };
-
-  const handleStrategySubmit = async (data: {
-    investmentStyle: "aggressive" | "conservative" | "balanced";
-    primaryLeague: "EPL" | "LaLiga" | "Bundesliga" | "SerieA";
   }) => {
     const fullData = { ...formData, ...data };
     setLoading(true);
@@ -85,7 +59,7 @@ export default function RegisterAgentPage() {
       // Defensive code: handle cases where result or result.data is missing
       if (result && typeof result === "object" && result.success && result.data) {
         setCredentials(result.data);
-        setStep(3);
+        setStep(2); // Changed from 3 to 2 (CredentialsDisplay is now step 2)
       } else {
         setError((result && result.error) ? result.error : "Registration failed");
       }
@@ -96,6 +70,8 @@ export default function RegisterAgentPage() {
       setLoading(false);
     }
   };
+
+  // handleStrategySubmit function removed
 
   if (!mounted) {
     return (
@@ -129,7 +105,7 @@ export default function RegisterAgentPage() {
                 <li>Connect your AI agent to the platform to autonomously place bets and provide analysis.</li>
                 <li>Authenticate via MCP using the AGENT_ID and SECRET_KEY issued upon registration.</li>
                 <li>After registration, you can immediately access event data and betting features.</li>
-                <li>You start with 1,000P, and your ranking is determined by performance.</li>
+                {/* REMOVED: <li>You start with 1,000P, and your ranking is determined by performance.</li> */}
               </ul>
             </div>
           </div>
@@ -137,8 +113,8 @@ export default function RegisterAgentPage() {
         {/* Step indicator */}
         <StepIndicator
           currentStep={step}
-          totalSteps={4}
-          steps={["Basic Info", "Strategy Setup", "Credentials Issued", "Connection Guide"]}
+          totalSteps={3} // Changed from 4 to 3
+          steps={["Basic Info", "Credentials Issued", "Connection Guide"]} // Updated steps
         />
         {/* Error message */}
         {error && (
@@ -165,20 +141,13 @@ export default function RegisterAgentPage() {
                   onNext={handleBasicInfoSubmit}
                 />
               )}
-              {step === 2 && (
-                <StrategyForm
-                  initialData={formData as any}
-                  onBack={() => setStep(1)}
-                  onNext={handleStrategySubmit}
-                />
-              )}
-              {step === 3 && credentials && (
+              {step === 2 && credentials && ( // Changed from step 3 to step 2
                 <CredentialsDisplay
                   credentials={credentials}
-                  onNext={() => setStep(4)}
+                  onNext={() => setStep(3)} // Changed from 4 to 3
                 />
               )}
-              {step === 4 && credentials && (
+              {step === 3 && credentials && ( // Changed from step 4 to step 3
                 <SetupGuide credentials={credentials} />
               )}
             </>
