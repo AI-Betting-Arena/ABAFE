@@ -1,29 +1,26 @@
-import { EventStatus, type MatchListingItem } from "@/lib/types";
+import { EventStatus, BackendEventStatus, type MatchListingItem } from "@/lib/types";
 
 // Helper to map raw backend status strings to our harmonized EventStatus type
-function mapBackendStatusToEventStatus(backendStatus: EventStatus | string): EventStatus {
+function mapBackendStatusToEventStatus(backendStatus: BackendEventStatus): EventStatus {
   switch (backendStatus) {
     case 'UPCOMING':
-    case 'TIMED': // Assuming 'TIMED' is also upcoming as seen in components/sections/UpcomingEvents.tsx
+    case 'TIMED':
     case 'SCHEDULED':
       return 'UPCOMING';
     case 'OPEN':
     case 'BETTING_OPEN':
       return 'BETTING_OPEN';
     case 'BETTING_CLOSED':
+    case 'LIVE': // 사용자 요청에 따라 BETTING_CLOSED로 매핑
+    case 'IN_PLAY': // 사용자 요청에 따라 BETTING_CLOSED로 매핑
+    case 'PAUSED': // 사용자 요청에 따라 BETTING_CLOSED로 매핑
+    case 'POSTPONED': // 사용자 요청에 따라 BETTING_CLOSED로 매핑
+    case 'CANCELLED': // 사용자 요청에 따라 BETTING_CLOSED로 매핑
+    case 'SUSPENDED': // 사용자 요청에 따라 BETTING_CLOSED로 매핑
       return 'BETTING_CLOSED';
     case 'SETTLED':
     case 'FINISHED':
       return 'SETTLED';
-    case 'LIVE':
-    case 'IN_PLAY':
-    case 'PAUSED':
-      return 'LIVE';
-    case 'POSTPONED':
-      return 'POSTPONED';
-    case 'CANCELLED':
-    case 'SUSPENDED':
-      return 'CANCELLED';
     default:
       console.warn(`Unknown backend status: ${backendStatus}. Defaulting to UPCOMING.`);
       return 'UPCOMING';
@@ -36,7 +33,7 @@ function mapBackendStatusToEventStatus(backendStatus: EventStatus | string): Eve
  * @param currentUtcTime The current time in UTC, as a Date object.
  * @returns The harmonized EventStatus for display.
  */
-export function getDisplayEventStatus(startTime: string, status: EventStatus, currentUtcTime: Date): EventStatus {
+export function getDisplayEventStatus(startTime: string, status: BackendEventStatus, currentUtcTime: Date): EventStatus {
   const matchStartTimeUtc = new Date(startTime);
   const harmonizedBackendStatus = mapBackendStatusToEventStatus(status);
 
@@ -69,19 +66,14 @@ export function getEventStatusBadge(status: EventStatus) {
       return { label: '🟢 Betting Open', color: 'green' as const };
     case 'BETTING_CLOSED':
       return { label: '🔴 Betting Closed', color: 'red' as const };
-    case 'LIVE':
-      return { label: '🟠 Live', color: 'orange' as const };
     case 'UPCOMING':
       return { label: '🔵 Upcoming', color: 'blue' as const };
     case 'SETTLED':
       return { label: '✅ Settled', color: 'gray' as const };
-    case 'SCHEDULED':
-      return { label: '🗓️ Scheduled', color: 'blue' as const };
-    case 'POSTPONED':
-      return { label: 'Postponed', color: 'yellow' as const };
-    case 'CANCELLED':
-      return { label: 'Cancelled', color: 'red' as const };
     default:
+      // This default case should ideally not be reached if EventStatus is strictly enforced.
+      // However, it's good practice for robustness.
+      console.warn(`Unknown harmonized EventStatus: ${status}. Defaulting to gray badge.`);
       return { label: '⚪ Unknown', color: 'gray' as const };
   }
 }

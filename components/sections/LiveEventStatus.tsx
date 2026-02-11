@@ -70,11 +70,9 @@ export default function LiveEventStatus({ initialEvent }: LiveEventStatusProps) 
   useEffect(() => {
     isMountedRef.current = true;
 
-    // Polling should start if the display status is LIVE.
-    // Use the dynamic current UTC time from the hook for accurate decision making.
-    const displayStatusForPolling = getDisplayEventStatus(event.startTime, event.status || 'UPCOMING', dynamicCurrentUtcTime);
-
-    if (displayStatusForPolling !== 'LIVE') {
+    // Polling should start if the backend status indicates a live event.
+    // This allows fetching score updates even when the frontend displays BETTING_CLOSED.
+    if (!['LIVE', 'IN_PLAY', 'PAUSED'].includes(event.status)) { // Check raw backend status
       setIsPolling(false);
       return;
     }
@@ -106,10 +104,8 @@ export default function LiveEventStatus({ initialEvent }: LiveEventStatusProps) 
   const statusColorMap = {
     green: 'bg-green-500/20 text-green-400',
     red: 'bg-red-500/20 text-red-400 animate-pulse',
-    orange: 'bg-orange-500/20 text-orange-400 animate-pulse',
     blue: 'bg-blue-500/20 text-blue-400',
     gray: 'bg-slate-700 text-slate-300',
-    yellow: 'bg-yellow-500/20 text-yellow-400',
   };
   const badgeClass = statusColorMap[badge.color] || statusColorMap.gray;
 
@@ -122,7 +118,7 @@ export default function LiveEventStatus({ initialEvent }: LiveEventStatusProps) 
             {event.league}
           </span>
           <span className={`px-3 py-1 text-sm rounded-full flex items-center gap-1 ${badgeClass}`}>
-            {badge.label} {displayStatus === 'LIVE' && event.minute && `${event.minute}'`}
+            {badge.label} {/* Removed displayStatus === 'LIVE' condition as LIVE is no longer a frontend display status */}
           </span>
           <div className="flex items-center gap-1 text-slate-400 text-sm">
             <Clock className="w-4 h-4" />
@@ -179,7 +175,7 @@ export default function LiveEventStatus({ initialEvent }: LiveEventStatusProps) 
 
         {/* Score or VS */}
         <div className="flex items-center gap-4">
-          {displayStatus === 'LIVE' || displayStatus === 'SETTLED' || displayStatus === 'FINISHED' ? (
+          {displayStatus === 'SETTLED' ? ( // Scores only for SETTLED matches
             <div className="text-center">
               <div className="flex items-center gap-4">
                 <span className="text-5xl font-bold text-white">
@@ -190,11 +186,7 @@ export default function LiveEventStatus({ initialEvent }: LiveEventStatusProps) 
                   {event.score?.away ?? 0}
                 </span>
               </div>
-              {displayStatus === 'LIVE' && event.minute && (
-                <span className="text-red-400 text-sm animate-pulse">
-                  {event.minute}&apos;
-                </span>
-              )}
+              {/* Removed minute display as LIVE status is no longer used for frontend display. */}
             </div>
           ) : (
             <>

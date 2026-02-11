@@ -21,8 +21,8 @@ export type AgentBadge = 'Expert' | 'Rising';
 export type TrendDirection = 'up' | 'down' | 'same';
 
 // Event Status
-// New EventStatus for betting arena
-export type EventStatus =
+// Backend Event Status (raw status from API)
+export type BackendEventStatus =
   | 'UPCOMING'
   | 'BETTING_OPEN'
   | 'BETTING_CLOSED'
@@ -37,6 +37,13 @@ export type EventStatus =
   | 'SUSPENDED'
   | 'TIMED'
   | 'OPEN';
+
+// Frontend Harmonized Event Status
+export type EventStatus =
+  | 'UPCOMING'
+  | 'BETTING_OPEN'
+  | 'BETTING_CLOSED'
+  | 'SETTLED';
 
 // Event Domain
 export interface Event {
@@ -232,7 +239,7 @@ export interface ApiMatchDetail {
   id: number;
   apiId: number;
   utcDate: string;
-  status: EventStatus; // "SCHEDULED", "LIVE", "IN_PLAY", "PAUSED", "FINISHED", "POSTPONED", "SUSPENDED", "CANCELLED"
+  status: BackendEventStatus; // "SCHEDULED", "LIVE", "IN_PLAY", "PAUSED", "FINISHED", "POSTPONED", "SUSPENDED", "CANCELLED"
   matchday: number;
   stage: string;
   homeTeam: MatchTeam;
@@ -255,7 +262,7 @@ export interface ApiMatchListItem {
     homeTeam: string; // "Tottenham"
     awayTeam: string; // "Newcastle"
     startTime: string; // "2026-02-10T19:30:00.000Z"
-    status: EventStatus; // "OPEN"
+    status: BackendEventStatus; // "OPEN"
     oddsHome: number;
     oddsDraw: number;
     oddsAway: number;
@@ -280,7 +287,7 @@ export interface MatchListingItem {
   awayTeamName: string;
   awayTeamEmblemUrl: string;
   startTime: string;
-  status: EventStatus; // 'TIMED', etc.
+  status: BackendEventStatus; // 'TIMED', etc.
   oddsHome: number;
   oddsDraw: number;
   oddsAway: number;
@@ -365,7 +372,7 @@ export interface EventDetail {
   homeTeam: MatchTeam; // ApiMatch.homeTeam.name -> MatchTeam
   awayTeam: MatchTeam; // ApiMatch.awayTeam.name -> MatchTeam
   startTime: string; // ApiMatch.utcDate
-  status: EventStatus; // Mapping from ApiMatch.status string to EventStatus
+  status: BackendEventStatus; // Mapping from ApiMatch.status string to BackendEventStatus
   league?: string; // ApiMatch.season.league.name
   score?: { home: number | null; away: number | null }; // ApiMatch.homeScore, awayScore
   odds: EventOdds; // Mapping from ApiMatch.poolHome, poolDraw, poolAway

@@ -47,11 +47,20 @@ export default function UpcomingEvents({ matchesListing }: UpcomingEventsProps) 
           // Status filter
           let statusMatch = false;
           if (tab === 'live') {
-            statusMatch = displayStatus === 'LIVE';
+            // Show events that are currently live based on backend status (BackendEventStatus)
+            statusMatch = ['LIVE', 'IN_PLAY', 'PAUSED'].includes(match.status);
           } else if (tab === 'finished') {
-            statusMatch = displayStatus === 'SETTLED' || displayStatus === 'FINISHED';
+            // Show events that are settled based on frontend display status (EventStatus)
+            statusMatch = displayStatus === 'SETTLED';
           } else { // 'upcoming' tab
-            statusMatch = ['UPCOMING', 'BETTING_OPEN', 'BETTING_CLOSED', 'SCHEDULED'].includes(displayStatus);
+            // Show events that are UPCOMING or BETTING_OPEN on frontend (before 10-min mark),
+            // AND events that are BETTING_CLOSED on frontend but not yet truly live (backend status is not LIVE, IN_PLAY, PAUSED, FINISHED, or SETTLED).
+            if (displayStatus === 'UPCOMING' || displayStatus === 'BETTING_OPEN') {
+              statusMatch = true;
+            } else if (displayStatus === 'BETTING_CLOSED') {
+              // Include if BETTING_CLOSED and backend status is not live, finished, or settled
+              statusMatch = !['LIVE', 'IN_PLAY', 'PAUSED', 'FINISHED', 'SETTLED'].includes(match.status);
+            }
           }
 
           if (!statusMatch) return false;
