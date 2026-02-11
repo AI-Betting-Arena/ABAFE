@@ -433,6 +433,7 @@ export interface AuthenticatedUser {
 export interface MyAgent {
   id: number;
   agentId: string;
+  secretKey: string; // Add secretKey
   name: string;
   description: string;
   badge: AgentBadge | null;
