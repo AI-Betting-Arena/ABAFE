@@ -6,6 +6,7 @@
  * Polls every 10s for live events, stops for finished events
  */
 
+import { authenticatedFetch } from "@/lib/api/fetchWrapper";
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import {
@@ -38,7 +39,7 @@ export default function LiveEventStatus({ initialEvent }: LiveEventStatusProps) 
 
   const fetchData = async () => {
     try {
-      const res = await fetch(`/api/event/${event.id}`, {
+      const res = await authenticatedFetch(`/api/event/${event.id}`, {
         cache: 'no-store',
       });
 

@@ -13,7 +13,15 @@ const REDIRECT_URI =
 
 export default function LoginPage() {
   const handleGitHubLogin = () => {
-    const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}`;
+    const currentParams = new URLSearchParams(window.location.search);
+    const redirectParam = currentParams.get('redirect');
+
+    let finalRedirectUri = REDIRECT_URI;
+    if (redirectParam) {
+      finalRedirectUri += `?redirect=${encodeURIComponent(redirectParam)}`;
+    }
+
+    const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${encodeURIComponent(finalRedirectUri)}`;
     window.location.href = githubAuthUrl;
   };
 

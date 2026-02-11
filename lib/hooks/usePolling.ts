@@ -4,6 +4,7 @@
  * DRY principle: shared across leaderboard, event details, etc.
  */
 
+import { authenticatedFetch } from "@/lib/api/fetchWrapper";
 import { useState, useEffect, useCallback, useRef } from 'react';
 
 interface UsePollingOptions {
@@ -51,7 +52,7 @@ export function usePolling<T>(
   // Fetch data function
   const fetchData = useCallback(async () => {
     try {
-      const res = await fetch(apiUrl, {
+      const res = await authenticatedFetch(apiUrl, { // Use authenticatedFetch
         cache: 'no-store',
         headers: {
           'Content-Type': 'application/json',

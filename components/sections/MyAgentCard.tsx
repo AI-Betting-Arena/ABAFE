@@ -1,4 +1,5 @@
 'use client';
+import { authenticatedFetch } from "@/lib/api/fetchWrapper";
 import Link from 'next/link';
 import { useState } from 'react';
 import { Pencil, Trash2, TrendingUp, TrendingDown, RefreshCw } from 'lucide-react';
@@ -13,16 +14,16 @@ export default function MyAgentCard({ agent }: MyAgentCardProps) {
   const [deleting, setDeleting] = useState(false);
   const router = useRouter();
 
-  const handleDelete = async () => {
+  const handleDelete = async (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent Link click
     if (!confirm(`Are you sure you want to delete "${agent.name}"?`)) return;
 
     setDeleting(true);
     try {
-      const token = localStorage.getItem('auth_token');
       // Using relative path for mock API
-      const res = await fetch(`/api/agent/${agent.id}`, {
+      const res = await authenticatedFetch(`/api/agent/${agent.id}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` }
+        // Authorization header is handled by authenticatedFetch
       });
 
       if (!res.ok) throw new Error('Delete failed');
@@ -37,23 +38,28 @@ export default function MyAgentCard({ agent }: MyAgentCardProps) {
   };
 
   return (
-    <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-6 hover:border-cyan-500/50 transition-colors flex flex-col justify-between">
+    <Link 
+      href={`/agent/${agent.id}`}
+      className="bg-slate-900/50 border border-slate-800 rounded-xl p-6 hover:border-cyan-500/50 transition-colors flex flex-col justify-between cursor-pointer"
+    >
       <div>
         {/* Agent Name & Badge */}
         <div className="flex items-start justify-between mb-4">
           <div>
             <h3 className="text-xl font-bold text-white">{agent.name}</h3>
-            <span
-              className={`inline-block mt-1 px-2 py-1 text-xs font-semibold rounded ${
-                agent.status === 'active'
-                  ? 'bg-green-500/20 text-green-400'
-                  : 'bg-slate-700 text-slate-400'
-              }`}
-            >
-              {agent.status.charAt(0).toUpperCase() + agent.status.slice(1)}
-            </span>
+            {agent.badge && (
+              <span
+                className={`inline-block mt-1 px-2 py-1 text-xs font-semibold rounded ${
+                  agent.badge === 'Expert'
+                    ? 'bg-purple-500/20 text-purple-400'
+                    : 'bg-yellow-500/20 text-yellow-400'
+                }`}
+              >
+                {agent.badge}
+              </span>
+            )}
           </div>
-          <div className="text-2xl font-bold text-slate-500">#{agent.rank}</div>
+          {/* Rank removed as it's not provided by the backend */}
         </div>
 
         {/* Stats */}
@@ -76,8 +82,8 @@ export default function MyAgentCard({ agent }: MyAgentCardProps) {
             </div>
           </div>
           <div>
-            <p className="text-xs text-slate-500">Predictions</p>
-            <p className="text-lg font-bold text-white">{agent.totalPredictions}</p>
+            <p className="text-xs text-slate-500">Total Bets</p>
+            <p className="text-lg font-bold text-white">{agent.totalBets}</p>
           </div>
         </div>
 
@@ -87,13 +93,16 @@ export default function MyAgentCard({ agent }: MyAgentCardProps) {
 
       {/* Actions */}
       <div className="flex gap-2">
-        <Link
-          href={`/my-page/agent/${agent.id}/edit`}
+        <button
+          onClick={(e) => {
+            e.stopPropagation(); // Prevent Link click
+            router.push(`/my-page/agent/${agent.id}/edit`);
+          }}
           className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg font-semibold transition-colors"
         >
           <Pencil className="w-4 h-4" />
           Edit
-        </Link>
+        </button>
         <button
           onClick={handleDelete}
           disabled={deleting}
@@ -107,6 +116,6 @@ export default function MyAgentCard({ agent }: MyAgentCardProps) {
           {deleting ? 'Deleting...' : 'Delete'}
         </button>
       </div>
-    </div>
+    </Link>
   );
 }

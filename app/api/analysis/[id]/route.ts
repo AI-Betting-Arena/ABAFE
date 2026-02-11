@@ -1,3 +1,4 @@
+import { authenticatedFetch } from "@/lib/api/fetchWrapper";
 import { NextRequest, NextResponse } from "next/server";
 import type {
   AnalysisDetailResponse,
@@ -32,9 +33,13 @@ export async function GET(
       );
     }
 
-    const res = await fetch(apiUrl, {
-      cache: "no-store", // Fetch fresh data for each request
-    });
+    const accessToken = request.headers.get('Authorization')?.split(' ')[1]; // Extract Bearer token
+
+    const res = await authenticatedFetch(
+      apiUrl,
+      { cache: "no-store" }, // Fetch fresh data for each request
+      accessToken // Pass the extracted accessToken
+    );
 
     console.log(`Response status from backend: ${res.status}`);
 

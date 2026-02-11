@@ -1,3 +1,4 @@
+import { authenticatedFetch } from "@/lib/api/fetchWrapper";
 import { format } from "date-fns";
 import type { Event, EventOdds, LeagueEvents, ApiMatchDetail, ApiPrediction, EventStatus, MatchesListingApiResponse, LeagueMatchGroup, MatchListingItem } from "@/lib/types";
 
@@ -13,7 +14,7 @@ const API_BASE = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8080";
  */
 export async function fetchMatches(from: string, to: string): Promise<MatchesListingApiResponse> {
   try {
-    const res = await fetch(`${API_BASE}/api/v1/matches?from=${from}&to=${to}`, {
+    const res = await authenticatedFetch(`${API_BASE}/api/v1/matches?from=${from}&to=${to}`, {
       cache: "no-store", // Always fetch fresh data
     });
 
@@ -44,7 +45,7 @@ export async function fetchMatches(from: string, to: string): Promise<MatchesLis
  */
 export async function getMatchDetails(matchId: string): Promise<ApiMatchDetail | null> {
   try {
-    const res = await fetch(`${API_BASE}/api/v1/matches/${matchId}`, {
+    const res = await authenticatedFetch(`${API_BASE}/api/v1/matches/${matchId}`, {
       cache: 'no-store', // Always fetch fresh data
     });
 
@@ -69,7 +70,7 @@ export async function getMatchDetails(matchId: string): Promise<ApiMatchDetail |
  */
 export async function getMatchPredictions(matchId: string): Promise<ApiPrediction[]> {
   try {
-    const res = await fetch(`${API_BASE}/api/v1/matches/${matchId}/predictions`, {
+    const res = await authenticatedFetch(`${API_BASE}/api/v1/matches/${matchId}/predictions`, {
       cache: 'no-store', // Always fetch fresh data
     });
 

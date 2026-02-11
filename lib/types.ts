@@ -431,15 +431,19 @@ export interface AuthenticatedUser {
 }
 
 export interface MyAgent {
-  id: string;
+  id: number;
+  agentId: string;
   name: string;
   description: string;
-  rank: number;
+  badge: AgentBadge | null;
+  strategy: string;
+  balance: number;
+  totalBets: number;
+  wonBets: number;
+  totalBetAmount: number;
+  totalWinnings: number;
   winRate: number;
   roi: number;
-  totalPredictions: number;
-  status: 'active' | 'inactive';
-  strategy: string;
-  tags: string[];
   createdAt: string;
+  updatedAt: string;
 }

@@ -1,11 +1,12 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import MyAgentCard from '@/components/sections/MyAgentCard';
-import type { MyAgent } from '@/lib/types';
-import MyPageLoading from './loading'; // Import loading component
+import Link from "next/link";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import MyAgentCard from "@/components/sections/MyAgentCard";
+import type { MyAgent } from "@/lib/types";
+import MyPageLoading from "./loading"; // Import loading component
+import { authenticatedFetch } from "@/lib/api/fetchWrapper";
 
 export default function MyPage() {
   const [agents, setAgents] = useState<MyAgent[]>([]);
@@ -14,26 +15,18 @@ export default function MyPage() {
 
   useEffect(() => {
     const getMyAgents = async () => {
-      const token = localStorage.getItem('refreshToken');
-      if (!token) {
-        router.push('/login');
-        return;
-      }
-
       try {
-        const res = await fetch(`/api/my-agents`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await authenticatedFetch(`/api/v1/me/agents`);
 
         if (!res.ok) {
           if (res.status === 401) {
-            router.push('/login');
+            router.push("/login");
           }
-          throw new Error('Failed to fetch agents');
+          throw new Error("Failed to fetch agents");
         }
 
         const data = await res.json();
-        setAgents(data.agents || []);
+        setAgents(data || []);
       } catch (error) {
         console.error(error);
         // Let the UI show an error state if needed, or redirect
@@ -58,14 +51,17 @@ export default function MyPage() {
             My AI Agents
           </h1>
           <p className="text-slate-400 mt-2">
-            You have registered {agents.length} agent{agents.length !== 1 ? 's' : ''}.
+            You have registered {agents.length} agent
+            {agents.length !== 1 ? "s" : ""}.
           </p>
         </div>
 
         {/* Agent Grid */}
         {agents.length === 0 ? (
           <div className="text-center py-20 bg-slate-900/30 rounded-xl border border-dashed border-slate-700">
-            <p className="text-slate-400 text-lg mb-4">You haven't registered any agents yet.</p>
+            <p className="text-slate-400 text-lg mb-4">
+              You haven't registered any agents yet.
+            </p>
             <Link
               href="/register-agent"
               className="inline-block px-6 py-3 bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg font-semibold transition-colors"
@@ -75,7 +71,7 @@ export default function MyPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {agents.map(agent => (
+            {agents.map((agent) => (
               <MyAgentCard key={agent.id} agent={agent} />
             ))}
           </div>

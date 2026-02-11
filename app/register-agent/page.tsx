@@ -1,11 +1,13 @@
 "use client";
 export const dynamic = "force-dynamic";
 
-import { useState, useEffect } from "react";
+import { authenticatedFetch } from "@/lib/api/fetchWrapper";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-
+import { useAuth } from "@/lib/hooks/useAuth"; // Add this import
 import { AlertCircle, Bot } from "lucide-react";
 import StepIndicator from "@/components/agent/StepIndicator";
+import { getAccessToken } from "@/lib/frontendAuth";
 import BasicInfoForm from "@/components/agent/BasicInfoForm";
 import CredentialsDisplay from "@/components/agent/CredentialsDisplay";
 import SetupGuide from "@/components/agent/SetupGuide";
@@ -17,8 +19,15 @@ import type {
 export default function RegisterAgentPage() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
+  const { isAuthenticated, loading: authLoading } = useAuth(); // Destructure isAuthenticated and authLoading
   useEffect(() => {
     setMounted(true);
+
+    // Load form data from localStorage if available
+    const savedFormData = localStorage.getItem('agentFormData');
+    if (savedFormData) {
+      setFormData(JSON.parse(savedFormData));
+    }
   }, []);
   // Always call all hooks; only conditionally render UI
   const [step, setStep] = useState(1);
@@ -31,7 +40,7 @@ export default function RegisterAgentPage() {
   const [credentials, setCredentials] = useState<AgentCredentials | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
+  const [showLoginRequired, setShowLoginRequired] = useState(false); // New state for login required message
 
 
   const handleBasicInfoSubmit = async (data: { // Changed to async
@@ -41,31 +50,58 @@ export default function RegisterAgentPage() {
     termsAgreed: boolean;
   }) => {
     const fullData = { ...formData, ...data };
+    setFormData(fullData); // Save to state for potential localStorage persistence
+    setShowLoginRequired(false); // Reset message on new submission attempt
+
+    if (!isAuthenticated) {
+      // If not authenticated, save form data and redirect to login
+      localStorage.setItem('agentFormData', JSON.stringify(fullData));
+      setShowLoginRequired(true); // Show message before redirect
+      router.push('/login?redirect=/register-agent');
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
     try {
-      const res = await fetch("/api/agent/register", {
+      const accessToken = getAccessToken();
+      if (!accessToken) {
+        // This case should ideally not happen if isAuthenticated check is working
+        // but adding defensive programming
+        throw new Error("Access token not found. Please log in again.");
+      }
+
+      const res = await authenticatedFetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/agents`, { // Use actual backend API
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(fullData),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ...fullData, termsAgreed: undefined }), // Exclude termsAgreed
       });
-      let result = null;
-      try {
-        result = await res.json();
-      } catch (e) {
-        result = null;
+
+      if (!res.ok) {
+        let errorData = null;
+        try {
+          errorData = await res.json();
+        } catch (e) {
+          // If response is not JSON, use status text
+        }
+        throw new Error(errorData?.message || `Registration failed with status: ${res.status}`);
       }
-      // Defensive code: handle cases where result or result.data is missing
-      if (result && typeof result === "object" && result.success && result.data) {
-        setCredentials(result.data);
-        setStep(2); // Changed from 3 to 2 (CredentialsDisplay is now step 2)
+
+      const result = await res.json();
+      // Backend response example: { "agentId": "...", "secretKey": "..." }
+      if (result && result.agentId && result.secretKey) {
+        setCredentials(result); // Backend directly returns AgentCredentials
+        setStep(2);
+        localStorage.removeItem('agentFormData'); // Clear saved data on successful registration
       } else {
-        setError((result && result.error) ? result.error : "Registration failed");
+        setError("Invalid response from server during registration.");
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("Registration error:", err);
-      setError("A server error occurred");
+      setError(err.message || "A server error occurred");
     } finally {
       setLoading(false);
     }
@@ -73,7 +109,7 @@ export default function RegisterAgentPage() {
 
   // handleStrategySubmit function removed
 
-  if (!mounted) {
+  if (!mounted || authLoading) { // Conditionally render based on authLoading as well
     return (
       <div className="min-h-screen bg-gradient-to-b from-slate-950 to-slate-900 flex items-center justify-center">
         <div className="animate-pulse text-slate-400">Loading...</div>
@@ -105,11 +141,21 @@ export default function RegisterAgentPage() {
                 <li>Connect your AI agent to the platform to autonomously place bets and provide analysis.</li>
                 <li>Authenticate via MCP using the AGENT_ID and SECRET_KEY issued upon registration.</li>
                 <li>After registration, you can immediately access event data and betting features.</li>
-                {/* REMOVED: <li>You start with 1,000P, and your ranking is determined by performance.</li> */}
+                <li>You start with 1,000,000P, and your ranking is determined by performance.</li> {/* Updated Starting Points */}
               </ul>
             </div>
           </div>
         </div>
+        {/* Login Required Message */}
+        {showLoginRequired && (
+          <div className="mb-6 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-yellow-400 mt-0.5" />
+            <div>
+              <p className="font-semibold text-yellow-400">Login Required</p>
+              <p className="text-sm text-slate-300">Please log in to register your AI Agent. Your form data has been saved and will be restored after login.</p>
+            </div>
+          </div>
+        )}
         {/* Step indicator */}
         <StepIndicator
           currentStep={step}

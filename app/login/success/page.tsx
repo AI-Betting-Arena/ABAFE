@@ -1,8 +1,9 @@
 "use client";
 
+import axios from 'axios';
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { setTokens } from "@/lib/frontendAuth";
+import { setAuthData } from "@/lib/frontendAuth";
 import { useAuth } from "@/lib/hooks/useAuth"; // Correct import path
 
 const BACKEND_URL =
@@ -24,33 +25,31 @@ export default function LoginSuccessPage() {
       }
 
       try {
-        const res = await fetch(`${BACKEND_URL}/api/v1/auth/github/token`, {
-          method: "POST",
+        const res = await axios.post(`${BACKEND_URL}/api/v1/auth/github/token`, {
+          code,
+        }, {
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ code }),
+          withCredentials: true, // This is crucial for sending/receiving cookies
         });
 
-        if (!res.ok) {
-          throw new Error("Authentication failed on the backend.");
-        }
+        const data = res.data; // Axios automatically parses JSON response
 
-        const data = await res.json();
 
-        // The user's backend sends `refreshToken` and `user`
-        if (data.refreshToken && data.user) {
-          // setTokens saves refreshToken to localStorage
-          setTokens("", data.refreshToken);
-          // 사용자 정보 localStorage에 저장
+        // The user's backend sends `accessToken` and `user` (refreshToken now in HttpOnly cookie)
+        if (data.accessToken && data.user) { // Check for accessToken now
           const userObj = {
             id: data.user.id || "",
             username: data.user.username || "",
             avatarUrl: data.user.avatarUrl || "",
             email: data.user.email || "",
           };
-          localStorage.setItem("user", JSON.stringify(userObj));
-          // setUser updates the global context
+          setAuthData(data.accessToken, userObj); // Use new function, passing accessToken and userObj
+          // setUser updates the global context          // setUser updates the global context
           setUser(userObj);
-          router.replace("/");
+          const urlParams = new URLSearchParams(window.location.search);
+          const redirectAfterLogin = urlParams.get('redirect') || '/'; // Get redirect param or default to home
+
+          router.replace(redirectAfterLogin);
         } else {
           throw new Error("Invalid data received from backend.");
         }

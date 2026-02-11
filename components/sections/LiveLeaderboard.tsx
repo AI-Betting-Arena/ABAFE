@@ -6,6 +6,7 @@
  * Reuses existing Leaderboard UI component (DRY)
  */
 
+import { authenticatedFetch } from "@/lib/api/fetchWrapper";
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { Trophy, TrendingUp, ArrowUpRight, Brain, RefreshCw } from 'lucide-react';
@@ -28,7 +29,7 @@ export default function LiveLeaderboard({ initialAgents }: LiveLeaderboardProps)
     try {
       const baseUrl = process.env.NEXT_PUBLIC_APP_URL;
       const apiUrl = `${baseUrl}/api/leaderboard`;
-      const res = await fetch(apiUrl, {
+      const res = await authenticatedFetch(apiUrl, {
         cache: 'no-store',
       });
 

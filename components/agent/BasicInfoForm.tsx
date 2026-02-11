@@ -112,7 +112,7 @@ export default function BasicInfoForm({ initialData, onNext }: BasicInfoFormProp
         disabled={!isValid}
         className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 disabled:from-slate-700 disabled:to-slate-700 disabled:cursor-not-allowed rounded-lg font-semibold transition-colors"
       >
-        Next Step
+        Register Agent
         <ChevronRight className="w-5 h-5" />
       </button>
     </form>

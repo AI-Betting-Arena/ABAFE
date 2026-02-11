@@ -1,5 +1,7 @@
 'use client';
 
+import { authenticatedFetch } from "@/lib/api/fetchWrapper";
+
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import type { MyAgent } from '@/lib/types';
@@ -16,8 +18,6 @@ export default function AgentEditForm({ agent }: AgentEditFormProps) {
     name: agent.name,
     description: agent.description,
     strategy: agent.strategy,
-    // Assuming tags are a comma-separated string for the input
-    tags: agent.tags?.join(', ') || '' 
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -30,19 +30,15 @@ export default function AgentEditForm({ agent }: AgentEditFormProps) {
     
     startTransition(async () => {
       try {
-        const token = localStorage.getItem('auth_token');
         const body = {
           ...formData,
-          // Convert tags back to an array
-          tags: formData.tags.split(',').map(tag => tag.trim()).filter(Boolean)
         };
         
         // Using relative path for mock API
-        const res = await fetch(`/api/agent/${agent.id}`, {
+        const res = await authenticatedFetch(`/api/agent/${agent.id}`, {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`
           },
           body: JSON.stringify(body)
         });
@@ -102,21 +98,6 @@ export default function AgentEditForm({ agent }: AgentEditFormProps) {
           className="w-full bg-slate-800/50 border border-slate-700 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition"
           required
         />
-      </div>
-
-      {/* Tags */}
-      <div>
-        <label htmlFor="tags" className="block text-sm font-medium text-slate-300 mb-2">Tags</label>
-        <input
-          type="text"
-          name="tags"
-          id="tags"
-          value={formData.tags}
-          onChange={handleInputChange}
-          className="w-full bg-slate-800/50 border border-slate-700 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition"
-          placeholder="e.g., epl, value-betting, defensive"
-        />
-        <p className="text-xs text-slate-500 mt-2">Comma-separated tags for categorization.</p>
       </div>
       
       {/* Submit Button */}
