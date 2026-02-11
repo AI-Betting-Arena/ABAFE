@@ -27,50 +27,80 @@ export default function EventCardHorizontal({ event }: Props) {
   return (
     <Link
       href={`/event/${event.id}`}
-      className="block bg-slate-900/50 backdrop-blur border border-slate-800 rounded-lg p-4 md:p-6 hover:border-cyan-500/50 transition group"
+      className="block bg-slate-900/50 backdrop-blur border border-slate-800 rounded-lg p-4 md:p-6 hover:border-cyan-500/50 transition group h-auto md:h-32"
     >
-      {/* 데스크탑 레이아웃 */}
-      <div className="hidden md:flex items-center justify-between gap-6">
-        {/* 왼쪽: 리그 정보는 LeagueSection에서 처리되므로 여기서는 제거 */}
-        <div className="flex items-center gap-4 flex-1">
-          {/* event.league 제거 - LeagueSection에서 표시됨 */}
-          <div className="flex items-center gap-2 text-lg font-semibold text-white group-hover:text-cyan-400 transition">
-            {event.homeTeamEmblemUrl && (
-              <img src={event.homeTeamEmblemUrl} alt={event.homeTeamName} className="w-6 h-6 object-contain" />
-            )}
-            <span>{event.homeTeamName}</span>
-            <span className="text-slate-600">vs</span>
-            <span>{event.awayTeamName}</span>
-            {event.awayTeamEmblemUrl && (
-              <img src={event.awayTeamEmblemUrl} alt={event.awayTeamName} className="w-6 h-6 object-contain" />
-            )}
+      {/* 데스크탑 레이아웃 - 2행 구조 */}
+      <div className="hidden md:flex flex-col gap-6">
+        {/* Row 1: 상태 배지 + 매치 정보 */}
+        <div className="flex items-center">
+          {/* 상태 배지 - 왼쪽 (절대 위치) */}
+          <div className="flex-1 flex justify-start">
+            <span className={`px-3 py-1 rounded-full text-xs border whitespace-nowrap ${statusColorClass}`}>
+              {status.label}
+            </span>
           </div>
+
+          {/* 팀 매치업 - 중앙 (절대 중심) */}
+          <div className="flex items-center justify-center gap-6">
+            {/* 홈팀 - 오른쪽 정렬 */}
+            <div className="flex items-center justify-end gap-3">
+              <span className="text-xl font-bold text-white group-hover:text-cyan-400 transition">
+                {event.homeTeamName}
+              </span>
+              {event.homeTeamEmblemUrl && (
+                <img
+                  src={event.homeTeamEmblemUrl}
+                  alt={event.homeTeamName}
+                  className="w-10 h-10 object-contain flex-shrink-0"
+                />
+              )}
+            </div>
+
+            {/* vs 구분자 - 중앙 앵커 */}
+            <span className="text-2xl font-bold text-slate-500 flex-shrink-0">vs</span>
+
+            {/* 원정팀 - 왼쪽 정렬 */}
+            <div className="flex items-center justify-start gap-3">
+              {event.awayTeamEmblemUrl && (
+                <img
+                  src={event.awayTeamEmblemUrl}
+                  alt={event.awayTeamName}
+                  className="w-10 h-10 object-contain flex-shrink-0"
+                />
+              )}
+              <span className="text-xl font-bold text-white group-hover:text-cyan-400 transition">
+                {event.awayTeamName}
+              </span>
+            </div>
+          </div>
+
+          {/* 오른쪽 공간 (균형 맞추기) */}
+          <div className="flex-1"></div>
         </div>
 
-        {/* 중앙: 날짜/시간 (경기장 정보는 MatchListingItem에 없으므로 제거) */}
-        <div className="flex flex-col gap-1 text-sm text-slate-400">
-          <div className="flex items-center gap-2">
-            <Clock className="w-4 h-4" />
-            <span>{new Date(event.startTime).toLocaleString('en-US', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true })}</span>
+        {/* Row 2: 시간 + 배당 + 예측 수 */}
+        <div className="flex items-center justify-center gap-6 text-sm">
+          {/* 시간 */}
+          <div className="flex items-center gap-2 text-slate-400">
+            <Clock className="w-4 h-4 flex-shrink-0" />
+            <span className="whitespace-nowrap">
+              {new Date(event.startTime).toLocaleString('en-US', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true })}
+            </span>
           </div>
-          {/* venue (stadium) 정보는 MatchListingItem에 없으므로 제거 */}
-        </div>
 
-        {/* 오른쪽: 상태/에이전트/배당 */}
-        <div className="flex items-center gap-4">
-          <span className={`px-3 py-1 rounded-full text-xs border ${statusColorClass}`}>
-            {status.label}
-          </span>
-          <div className="flex items-center gap-1 text-sm text-slate-400">
-            <Users className="w-4 h-4" />
-            <span>{event.agentCount || 0} predictions</span> {/* aiPredictions -> agentCount */}
+          {/* 배당 */}
+          <div className="flex gap-2 text-slate-400">
+            <span className="text-green-400 whitespace-nowrap">H {event.oddsHome}</span>
+            <span>/</span>
+            <span className="whitespace-nowrap">D {event.oddsDraw}</span>
+            <span>/</span>
+            <span className="text-blue-400 whitespace-nowrap">A {event.oddsAway}</span>
           </div>
-          <div className="flex gap-2 text-sm">
-            <span className="text-green-400">Home {event.oddsHome}</span> {/* odds.home -> oddsHome */}
-            <span className="text-slate-500">/</span>
-            <span className="text-slate-400">Draw {event.oddsDraw}</span> {/* odds.draw -> oddsDraw */}
-            <span className="text-slate-500">/</span>
-            <span className="text-blue-400">Away {event.oddsAway}</span> {/* odds.away -> oddsAway */}
+
+          {/* 예측 수 */}
+          <div className="flex items-center gap-1 text-slate-400">
+            <Users className="w-4 h-4 flex-shrink-0" />
+            <span className="whitespace-nowrap">{event.agentCount || 0} predictions</span>
           </div>
         </div>
       </div>
@@ -78,41 +108,47 @@ export default function EventCardHorizontal({ event }: Props) {
       {/* 모바일 레이아웃 */}
       <div className="md:hidden space-y-3">
         <div className="flex items-center justify-between">
-          {/* event.league 제거 - LeagueSection에서 표시됨 */}
           <span className={`px-2 py-1 rounded-full text-xs border ${statusColorClass}`}>
             {status.label}
           </span>
         </div>
-        
+
         <div className="flex items-center gap-2 text-lg font-semibold text-white">
           {event.homeTeamEmblemUrl && (
-            <img src={event.homeTeamEmblemUrl} alt={event.homeTeamName} className="w-6 h-6 object-contain" />
+            <img
+              src={event.homeTeamEmblemUrl}
+              alt={event.homeTeamName}
+              className="w-8 h-8 object-contain flex-shrink-0"
+            />
           )}
-          <span>{event.homeTeamName}</span>
-          <span className="text-slate-600">vs</span>
-          <span>{event.awayTeamName}</span>
+          <span className="truncate" title={event.homeTeamName}>{event.homeTeamName}</span>
+          <span className="text-slate-600 flex-shrink-0">vs</span>
+          <span className="truncate" title={event.awayTeamName}>{event.awayTeamName}</span>
           {event.awayTeamEmblemUrl && (
-            <img src={event.awayTeamEmblemUrl} alt={event.awayTeamName} className="w-6 h-6 object-contain" />
+            <img
+              src={event.awayTeamEmblemUrl}
+              alt={event.awayTeamName}
+              className="w-8 h-8 object-contain flex-shrink-0"
+            />
           )}
         </div>
 
         <div className="flex items-center gap-4 text-sm text-slate-400">
           <div className="flex items-center gap-1">
-            <Clock className="w-4 h-4" />
-            <span>{new Date(event.startTime).toLocaleString('en-US', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true })}</span>
+            <Clock className="w-4 h-4 flex-shrink-0" />
+            <span className="whitespace-nowrap">{new Date(event.startTime).toLocaleString('en-US', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true })}</span>
           </div>
-          {/* venue (stadium) 정보는 MatchListingItem에 없으므로 제거 */}
         </div>
 
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1 text-sm text-slate-400">
-            <Users className="w-4 h-4" />
-            <span>{event.agentCount || 0} predictions</span> {/* aiPredictions -> agentCount */}
+            <Users className="w-4 h-4 flex-shrink-0" />
+            <span className="whitespace-nowrap">{event.agentCount || 0} predictions</span>
           </div>
           <div className="flex gap-3 text-sm">
-            <span className="text-green-400">Home {event.oddsHome}</span> {/* odds.home -> oddsHome */}
-            <span className="text-slate-400">Draw {event.oddsDraw}</span> {/* odds.draw -> oddsDraw */}
-            <span className="text-blue-400">Away {event.oddsAway}</span> {/* odds.away -> oddsAway */}
+            <span className="text-green-400 whitespace-nowrap">Home {event.oddsHome}</span>
+            <span className="text-slate-400 whitespace-nowrap">Draw {event.oddsDraw}</span>
+            <span className="text-blue-400 whitespace-nowrap">Away {event.oddsAway}</span>
           </div>
         </div>
       </div>

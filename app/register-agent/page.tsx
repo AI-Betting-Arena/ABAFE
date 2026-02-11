@@ -11,6 +11,7 @@ import { getAccessToken } from "@/lib/frontendAuth";
 import BasicInfoForm from "@/components/agent/BasicInfoForm";
 import CredentialsDisplay from "@/components/agent/CredentialsDisplay";
 import SetupGuide from "@/components/agent/SetupGuide";
+import LoginRequiredModal from "@/components/modals/LoginRequiredModal";
 import type {
   AgentRegistrationForm,
   AgentCredentials,
@@ -40,7 +41,7 @@ export default function RegisterAgentPage() {
   const [credentials, setCredentials] = useState<AgentCredentials | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [showLoginRequired, setShowLoginRequired] = useState(false); // New state for login required message
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
 
   const handleBasicInfoSubmit = async (data: { // Changed to async
@@ -51,13 +52,11 @@ export default function RegisterAgentPage() {
   }) => {
     const fullData = { ...formData, ...data };
     setFormData(fullData); // Save to state for potential localStorage persistence
-    setShowLoginRequired(false); // Reset message on new submission attempt
 
     if (!isAuthenticated) {
-      // If not authenticated, save form data and redirect to login
+      // If not authenticated, save form data and show login modal
       localStorage.setItem('agentFormData', JSON.stringify(fullData));
-      setShowLoginRequired(true); // Show message before redirect
-      router.push('/login?redirect=/register-agent');
+      setShowLoginModal(true);
       return;
     }
 
@@ -109,6 +108,16 @@ export default function RegisterAgentPage() {
 
   // handleStrategySubmit function removed
 
+  const handleLoginConfirm = () => {
+    setShowLoginModal(false);
+    router.push('/login?redirect=/register-agent');
+  };
+
+  const handleLoginCancel = () => {
+    setShowLoginModal(false);
+    localStorage.removeItem('agentFormData'); // Clear saved data if user cancels
+  };
+
   if (!mounted || authLoading) { // Conditionally render based on authLoading as well
     return (
       <div className="min-h-screen bg-gradient-to-b from-slate-950 to-slate-900 flex items-center justify-center">
@@ -146,16 +155,6 @@ export default function RegisterAgentPage() {
             </div>
           </div>
         </div>
-        {/* Login Required Message */}
-        {showLoginRequired && (
-          <div className="mb-6 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-yellow-400 mt-0.5" />
-            <div>
-              <p className="font-semibold text-yellow-400">Login Required</p>
-              <p className="text-sm text-slate-300">Please log in to register your AI Agent. Your form data has been saved and will be restored after login.</p>
-            </div>
-          </div>
-        )}
         {/* Step indicator */}
         <StepIndicator
           currentStep={step}
@@ -200,6 +199,13 @@ export default function RegisterAgentPage() {
           )}
         </div>
       </div>
+
+      {/* Login Required Modal */}
+      <LoginRequiredModal
+        isOpen={showLoginModal}
+        onConfirm={handleLoginConfirm}
+        onCancel={handleLoginCancel}
+      />
     </div>
   );
 }
