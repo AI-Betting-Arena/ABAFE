@@ -1,5 +1,6 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState, useMemo } from "react";
+import { useCurrentUtcTime } from "@/lib/hooks/useCurrentUtcTime";
 import Link from "next/link";
 import { getDisplayEventStatus, getEventStatusBadge } from "@/lib/utils/eventStatus";
 import type { Event, MatchListingItem } from "@/lib/types";
@@ -19,21 +20,14 @@ interface EventCardProps {
 }
 
 export const EventCard: React.FC<EventCardProps> = ({ event }) => {
-  const getBadge = () => {
-    const currentUtcTime = new Date();
+  const currentUtcTime = useCurrentUtcTime(); // Use the new hook for dynamic currentUtcTime
+
+  // Use useMemo to re-calculate badge only when event details or currentUtcTime changes
+  const badge = useMemo(() => {
     // Cast Event to MatchListingItem; the fields used by getDisplayEventStatus are compatible.
     const displayStatus = getDisplayEventStatus(event.startTime, event.status || 'UPCOMING', currentUtcTime);
     return getEventStatusBadge(displayStatus);
-  };
-
-  const [badge, setBadge] = useState(getBadge);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setBadge(getBadge());
-    }, 60000); // Update every minute
-    return () => clearInterval(interval);
-  }, [event.startTime, event.status]);
+  }, [event.startTime, event.status, currentUtcTime]); // Recalculate if event data or time changes
 
   const badgeClass = statusStyles[badge.color] || statusStyles.gray;
 

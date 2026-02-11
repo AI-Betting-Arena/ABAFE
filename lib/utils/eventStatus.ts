@@ -40,20 +40,22 @@ export function getDisplayEventStatus(startTime: string, status: EventStatus, cu
   const matchStartTimeUtc = new Date(startTime);
   const harmonizedBackendStatus = mapBackendStatusToEventStatus(status);
 
-  // Frontend override rule: If betting is open or upcoming, and within 10 minutes of match start,
-  // display as BETTING_CLOSED. This only applies *before* the match starts.
-  if (
-    (harmonizedBackendStatus === 'UPCOMING' || harmonizedBackendStatus === 'BETTING_OPEN') &&
-    currentUtcTime < matchStartTimeUtc // Only apply this override if the match hasn't started yet
-  ) {
-    const tenMinutesBeforeMatch = new Date(matchStartTimeUtc.getTime() - (10 * 60 * 1000));
-    if (currentUtcTime >= tenMinutesBeforeMatch) {
-      return 'BETTING_CLOSED';
-    }
+  // 1. harmonizedBackendStatus가 'SETTLED'인 경우, 가장 우선하여 'SETTLED'를 반환합니다.
+  //    Settled 상태의 경기는 항상 Settled로 표시되어야 합니다.
+  if (harmonizedBackendStatus === 'SETTLED') {
+    return 'SETTLED';
   }
 
-  // For all other cases (match has started, or not in the 10-min pre-match window),
-  // we rely on the harmonized backend status.
+  const tenMinutesBeforeMatch = new Date(matchStartTimeUtc.getTime() - (10 * 60 * 1000));
+
+  // 2. 현재 시각이 경기 시작 10분 전과 같거나 늦은 경우 (즉, 10분 전부터 경기 종료 시점까지)
+  //    SETTLED 상태가 아닌 모든 경기는 'BETTING_CLOSED'로 표시합니다.
+  //    이전에는 경기가 시작되면 이 오버라이드가 해제되었으나, 이제는 SETTLED 될 때까지 유지됩니다.
+  if (currentUtcTime >= tenMinutesBeforeMatch) {
+    return 'BETTING_CLOSED';
+  }
+
+  // 3. 그 외의 경우 (경기 시작 10분 전보다 훨씬 이전), 백엔드에서 온 조화된 상태를 그대로 반환합니다.
   return harmonizedBackendStatus;
 }
 

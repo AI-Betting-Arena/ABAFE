@@ -20,6 +20,7 @@ import {
 import Image from 'next/image';
 import type { EventDetail, EventDetailResponse, MatchListingItem } from '@/lib/types';
 import { getDisplayEventStatus, getEventStatusBadge } from '@/lib/utils/eventStatus';
+import { useCurrentUtcTime } from "@/lib/hooks/useCurrentUtcTime"; // New import
 
 interface LiveEventStatusProps {
   initialEvent: EventDetail;
@@ -33,6 +34,7 @@ export default function LiveEventStatus({ initialEvent }: LiveEventStatusProps) 
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const isMountedRef = useRef(true);
+  const dynamicCurrentUtcTime = useCurrentUtcTime(); // Use the new hook here
 
   const fetchData = async () => {
     try {
@@ -69,10 +71,10 @@ export default function LiveEventStatus({ initialEvent }: LiveEventStatusProps) 
     isMountedRef.current = true;
 
     // Polling should start if the display status is LIVE.
-    const currentUtcTime = new Date();
-    const displayStatus = getDisplayEventStatus(event.startTime, event.status || 'UPCOMING', currentUtcTime);
+    // Use the dynamic current UTC time from the hook for accurate decision making.
+    const displayStatusForPolling = getDisplayEventStatus(event.startTime, event.status || 'UPCOMING', dynamicCurrentUtcTime);
 
-    if (displayStatus !== 'LIVE') {
+    if (displayStatusForPolling !== 'LIVE') {
       setIsPolling(false);
       return;
     }
@@ -91,14 +93,14 @@ export default function LiveEventStatus({ initialEvent }: LiveEventStatusProps) 
       }
       setIsPolling(false);
     };
-  }, [event.id, event.status]);
+  }, [event.id, event.status, dynamicCurrentUtcTime]); // Add dynamicCurrentUtcTime to dependencies
 
   const handleRefresh = async () => {
     await fetchData();
   };
 
-  const currentUtcTime = new Date();
-  const displayStatus = getDisplayEventStatus(event.startTime, event.status || 'UPCOMING', currentUtcTime);
+  // Use the dynamicCurrentUtcTime for rendering as well
+  const displayStatus = getDisplayEventStatus(event.startTime, event.status || 'UPCOMING', dynamicCurrentUtcTime);
   const badge = getEventStatusBadge(displayStatus);
 
   const statusColorMap = {

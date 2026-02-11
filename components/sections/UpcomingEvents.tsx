@@ -11,9 +11,10 @@ import { Clock, Brain, Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import { MatchesListingApiResponse, LeagueMatchGroup, MatchListingItem } from '@/lib/types';
 import { usePagination } from '@/lib/hooks/usePagination';
 import { useI18n } from '@/lib/i18n';
-import { useState, useMemo } from 'react'; // Added useMemo
+import { useState, useMemo } from 'react';
 
 import { getDisplayEventStatus } from '@/lib/utils/eventStatus';
+import { useCurrentUtcTime } from "@/lib/hooks/useCurrentUtcTime"; // New import
 
 interface UpcomingEventsProps {
   matchesListing: MatchesListingApiResponse; // Updated prop name and type
@@ -25,6 +26,7 @@ export default function UpcomingEvents({ matchesListing }: UpcomingEventsProps) 
   const [leagueFilter, setLeagueFilter] = useState('All');
   const [teamFilter, setTeamFilter] = useState('');
   const [searchQuery, setSearchQuery] = useState(''); // Manual search query
+  const currentUtcTime = useCurrentUtcTime(); // Use the new hook
 
   // Derive unique league names for the filter dropdown
   const uniqueLeagueNames = useMemo(() => {
@@ -35,7 +37,7 @@ export default function UpcomingEvents({ matchesListing }: UpcomingEventsProps) 
   // Apply all filters and search to the grouped data
   const filteredLeagueGroups = useMemo(() => {
     if (!matchesListing) return [];
-    const currentUtcTime = new Date();
+    // currentUtcTime is now from the hook, so it's a dependency
     return matchesListing
       .map(leagueGroup => {
         // Filter matches within each league group

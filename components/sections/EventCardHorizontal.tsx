@@ -2,13 +2,14 @@ import Link from 'next/link';
 import { Clock, MapPin, Users } from 'lucide-react';
 import type { MatchListingItem } from '@/lib/types'; // Using MatchListingItem type
 import { getDisplayEventStatus, getEventStatusBadge } from "@/lib/utils/eventStatus";
+import { useCurrentUtcTime } from "@/lib/hooks/useCurrentUtcTime"; // New import
 
 interface Props {
   event: MatchListingItem;
 }
 
 export default function EventCardHorizontal({ event }: Props) {
-  const currentUtcTime = new Date();
+  const currentUtcTime = useCurrentUtcTime(); // Use the new hook for dynamic currentUtcTime
   const displayStatus = getDisplayEventStatus(event.startTime, event.status || 'UPCOMING', currentUtcTime);
   const status = getEventStatusBadge(displayStatus);
 
