@@ -9,7 +9,7 @@ interface Props {
 
 export default function EventCardHorizontal({ event }: Props) {
   const currentUtcTime = new Date();
-  const displayStatus = getDisplayEventStatus(event, currentUtcTime);
+  const displayStatus = getDisplayEventStatus(event.startTime, event.status || 'UPCOMING', currentUtcTime);
   const status = getEventStatusBadge(displayStatus);
 
   const statusColorMap = {

@@ -22,11 +22,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
   const getBadge = () => {
     const currentUtcTime = new Date();
     // Cast Event to MatchListingItem; the fields used by getDisplayEventStatus are compatible.
-    const pseudoMatchItem = {
-      ...event,
-      status: event.status || 'UPCOMING', // Provide default status if undefined
-    } as MatchListingItem;
-    const displayStatus = getDisplayEventStatus(pseudoMatchItem, currentUtcTime);
+    const displayStatus = getDisplayEventStatus(event.startTime, event.status || 'UPCOMING', currentUtcTime);
     return getEventStatusBadge(displayStatus);
   };
 
@@ -44,7 +40,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event }) => {
   return (
     <div className="group relative overflow-hidden rounded-xl bg-gradient-to-br from-slate-800/80 to-slate-900/80 border border-slate-700/50 hover:border-cyan-500/50 transition-all duration-300 hover:shadow-xl hover:shadow-cyan-500/10 hover:-translate-y-1">
       {/* Betting Status Badge (top-right) */}
-      <div className={`absolute top-4 right-4 px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 ${badgeClass} ${badge.color === 'red' || badge.color === 'live' ? 'animate-pulse' : ''}`}>
+      <div className={`absolute top-4 right-4 px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 ${badgeClass} ${badge.color === 'red' || badge.color === 'orange' ? 'animate-pulse' : ''}`}>
         {(badge.color === "green" || badge.color === "orange" || badge.color === "red") && (
           <div className={`w-1.5 h-1.5 rounded-full bg-${badge.color}-400`} />
         )}

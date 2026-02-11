@@ -14,7 +14,6 @@ import { useI18n } from '@/lib/i18n';
 import { useState, useMemo } from 'react'; // Added useMemo
 
 import { getDisplayEventStatus } from '@/lib/utils/eventStatus';
-import { useState, useMemo } from 'react'; // Added useMemo
 
 interface UpcomingEventsProps {
   matchesListing: MatchesListingApiResponse; // Updated prop name and type
@@ -41,7 +40,7 @@ export default function UpcomingEvents({ matchesListing }: UpcomingEventsProps) 
       .map(leagueGroup => {
         // Filter matches within each league group
         const filteredMatches = leagueGroup.matches.filter(match => {
-          const displayStatus = getDisplayEventStatus(match, currentUtcTime);
+          const displayStatus = getDisplayEventStatus(match.startTime, match.status || 'UPCOMING', currentUtcTime);
 
           // Status filter
           let statusMatch = false;

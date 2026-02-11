@@ -20,26 +20,25 @@ import {
   XCircle,
   Clock,
 } from "lucide-react";
-import type { AgentDetail, AgentDetailResponse, Prediction } from "@/lib/types";
+import type { AgentDetail, Prediction } from "@/lib/types";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "";
+const API_BASE = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8080";
 
 async function getAgentDetail(id: string): Promise<AgentDetail | null> {
-  try {
-    const res = await fetch(`${API_BASE}/api/agent/${id}`, {
-      cache: "no-store",
-    });
+  const res = await fetch(`${API_BASE}/api/v1/agents/${id}`, {
+    cache: "no-store",
+  });
 
-    if (!res.ok) {
-      if (res.status === 404) return null;
-      throw new Error("Failed to fetch agent");
-    }
-
-    const data: AgentDetailResponse = await res.json();
-    return data.agent;
-  } catch {
-    throw new Error("Failed to fetch agent detail");
+  if (!res.ok) {
+    if (res.status === 404) return null;
+    // 404 외의 다른 HTTP 오류 (예: 500)는 에러로 던져 error.tsx가 처리하도록 한다.
+    throw new Error(`Failed to fetch agent: ${res.status} ${res.statusText}`);
   }
+
+  const data: AgentDetail = await res.json();
+  // 백엔드에서 id가 number로 오더라도, 프론트엔드에서는 string으로 통일
+  data.id = data.id.toString();
+  return data;
 }
 
 export async function generateMetadata({
@@ -200,35 +199,13 @@ export default async function AgentPage({
                 <h1 className="text-3xl md:text-4xl font-bold text-white">
                   {agent.name}
                 </h1>
-                {agent.badge && (
-                  <span
-                    className={`px-3 py-1 text-sm font-medium rounded-full ${
-                      agent.badge === "Expert"
-                        ? "bg-yellow-500/20 text-yellow-400"
-                        : "bg-cyan-500/20 text-cyan-400"
-                    }`}
-                  >
-                    {agent.badge}
-                  </span>
-                )}
-                {agent.trend === "up" && (
-                  <span className="flex items-center gap-1 text-green-400 text-sm">
-                    <TrendingUp className="w-4 h-4" />
-                    Trending Up
-                  </span>
-                )}
+
+
               </div>
-              <p className="text-slate-400 mb-6">{agent.description}</p>
 
               {/* Key metrics */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                <div>
-                  <p className="text-slate-500 text-sm flex items-center gap-1">
-                    <Trophy className="w-4 h-4" />
-                    Rank
-                  </p>
-                  <p className="text-2xl font-bold text-white">#{agent.rank}</p>
-                </div>
+
                 <div>
                   <p className="text-slate-500 text-sm flex items-center gap-1">
                     <Target className="w-4 h-4" />
@@ -273,38 +250,25 @@ export default async function AgentPage({
         </div>
       </section>
 
-      {/* Stats cards */}
+      {/* Agent Description */}
       <section className="max-w-7xl mx-auto px-4 py-4">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-          <StatCard
-            label="Total Predictions"
-            value={agent.totalPredictions}
-            color="blue"
-          />
-          <StatCard
-            label="Successful Predictions"
-            value={agent.successfulPredictions}
-            color="green"
-          />
-          <StatCard
-            label="Average Odds"
-            value={agent.averageOdds.toFixed(2)}
-            color="cyan"
-          />
-          <StatCard
-            label="Best Streak"
-            value={agent.bestStreak}
-            color="yellow"
-          />
+        <div className="bg-slate-900/50 backdrop-blur border border-slate-800 rounded-lg p-6">
+          <h2 className="text-xl font-bold text-white mb-3 flex items-center gap-2">
+            <Brain className="w-5 h-5 text-cyan-400" />
+            Description
+          </h2>
+          <p className="text-slate-400">{agent.description}</p>
         </div>
       </section>
+
+
 
       {/* Recent prediction history */}
       <section className="max-w-7xl mx-auto px-4 py-4">
         <h2 className="text-2xl font-bold text-white mb-4">
           Recent Predictions
         </h2>
-        {agent.recentPredictions.length > 0 ? (
+        {agent.recentPredictions && agent.recentPredictions.length > 0 ? (
           <div className="space-y-3">
             {agent.recentPredictions.map((pred) => (
               <PredictionCard key={pred.id} prediction={pred} />

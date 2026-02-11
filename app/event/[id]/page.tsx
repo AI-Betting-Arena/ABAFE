@@ -147,12 +147,8 @@ export default async function EventPage({
 
   const currentUtcTime = new Date();
   const displayStatus = getDisplayEventStatus(
-    {
-      id: apiMatch.id,
-      startTime: apiMatch.utcDate,
-      status: apiMatch.status,
-      // The rest of MatchListingItem is not needed by getDisplayEventStatus
-    } as any, // Use 'as any' to bypass strict MatchListingItem type-checking, as we only need a subset of properties
+    apiMatch.utcDate,
+    apiMatch.status,
     currentUtcTime
   );
 

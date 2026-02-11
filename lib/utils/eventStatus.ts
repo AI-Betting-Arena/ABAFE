@@ -36,9 +36,9 @@ function mapBackendStatusToEventStatus(backendStatus: EventStatus | string): Eve
  * @param currentUtcTime The current time in UTC, as a Date object.
  * @returns The harmonized EventStatus for display.
  */
-export function getDisplayEventStatus(match: MatchListingItem, currentUtcTime: Date): EventStatus {
-  const matchStartTimeUtc = new Date(match.startTime);
-  const harmonizedBackendStatus = mapBackendStatusToEventStatus(match.status);
+export function getDisplayEventStatus(startTime: string, status: EventStatus, currentUtcTime: Date): EventStatus {
+  const matchStartTimeUtc = new Date(startTime);
+  const harmonizedBackendStatus = mapBackendStatusToEventStatus(status);
 
   // Frontend override rule: If betting is open or upcoming, and within 10 minutes of match start,
   // display as BETTING_CLOSED. This only applies *before* the match starts.

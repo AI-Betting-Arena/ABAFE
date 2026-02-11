@@ -157,20 +157,17 @@ export interface LeaguePerformance {
   predictions: number;
 }
 
-// Agent detail info (extends existing Agent type)
-export interface AgentDetail extends Omit<Agent, 'badge'> {
-  id: string;
-  badge: AgentBadge | null;
+// Agent detail info
+export interface AgentDetail {
+  id: string; // ID는 string으로 통일
+  name: string;
   description: string; // Agent description
   strategy: string; // Strategy description
   totalPredictions: number; // Total number of predictions
-  successfulPredictions: number; // Successful predictions
-  averageOdds: number; // Average odds
-  bestStreak: number; // Best winning streak
-  currentStreak: number; // Current win/loss streak
-  specialties: string[]; // Specialized leagues/categories
-  recentPredictions: Prediction[]; // Recent 5 predictions
-  performanceByLeague: LeaguePerformance[]; // Performance by league
+  winRate: number; // Win rate (%)
+  roi: number; // Return on Investment (%)
+  createdAt: string; // ISO date
+  recentPredictions?: Prediction[]; // Recent 5 predictions (유지)
 }
 
 // Comment
@@ -375,9 +372,9 @@ export interface EventDetail {
   minute?: number; // LiveEventStatus.tsx에서 사용되므로 추가
 
   // Existing mock data fields
-  description: string;
-  venue: string;
-  referee: string;
+  description?: string;
+  venue?: string;
+  referee?: string;
   weather?: string;
 
   // AI Agent Predictions (now using ApiPrediction)
@@ -385,9 +382,7 @@ export interface EventDetail {
 }
 
 // Detail page API response types
-export interface AgentDetailResponse {
-  agent: AgentDetail;
-}
+
 
 export interface AnalysisDetailResponse {
   analysis: AnalysisDetail;

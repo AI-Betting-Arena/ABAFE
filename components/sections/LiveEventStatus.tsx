@@ -52,10 +52,12 @@ export default function LiveEventStatus({ initialEvent }: LiveEventStatusProps) 
 
         // The display status logic will handle re-evaluation on re-render.
         // We just need to stop polling if the *backend* status is final.
-        if (data.event.status === 'FINISHED' || data.event.status === 'SETTLED' && intervalRef.current) {
-          clearInterval(intervalRef.current);
-          intervalRef.current = null;
-          setIsPolling(false);
+        if (data.event.status === 'FINISHED' || data.event.status === 'SETTLED') {
+          if (intervalRef.current) { // null 체크 추가
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
+            setIsPolling(false);
+          }
         }
       }
     } catch (error) {
@@ -68,7 +70,7 @@ export default function LiveEventStatus({ initialEvent }: LiveEventStatusProps) 
 
     // Polling should start if the display status is LIVE.
     const currentUtcTime = new Date();
-    const displayStatus = getDisplayEventStatus(event as any, currentUtcTime);
+    const displayStatus = getDisplayEventStatus(event.startTime, event.status || 'UPCOMING', currentUtcTime);
 
     if (displayStatus !== 'LIVE') {
       setIsPolling(false);
@@ -96,7 +98,7 @@ export default function LiveEventStatus({ initialEvent }: LiveEventStatusProps) 
   };
 
   const currentUtcTime = new Date();
-  const displayStatus = getDisplayEventStatus(event as any, currentUtcTime);
+  const displayStatus = getDisplayEventStatus(event.startTime, event.status || 'UPCOMING', currentUtcTime);
   const badge = getEventStatusBadge(displayStatus);
 
   const statusColorMap = {

@@ -32,12 +32,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const events = await fetchMatches(fromDate, toDate);
 
-  const eventPages = events.map((event) => ({
-    url: `${BASE_URL}/event/${event.id}`,
-    lastModified: new Date(event.startTime), // Use event start time as last modified
-    changeFrequency: 'daily' as 'daily', // Events change frequently
-    priority: 0.7,
-  }));
+  const eventPages = events.flatMap((leagueGroup) =>
+    leagueGroup.matches.map((match) => ({
+      url: `${BASE_URL}/event/${match.id}`,
+      lastModified: new Date(match.startTime), // Use match start time as last modified
+      changeFrequency: 'daily' as 'daily', // Events change frequently
+      priority: 0.7,
+    }))
+  );
 
   // TODO: Dynamic analysis pages - need an API to fetch all analysis IDs
   const analysisPages: MetadataRoute.Sitemap = [];
