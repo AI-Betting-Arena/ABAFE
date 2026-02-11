@@ -16,11 +16,9 @@ import {
   Target,
   Calendar,
   ArrowLeft,
-  CheckCircle,
-  XCircle,
-  Clock,
 } from "lucide-react";
-import type { AgentDetail, Prediction } from "@/lib/types";
+import type { AgentDetail } from "@/lib/types";
+import RecentPredictionsSection from "@/components/sections/RecentPredictionsSection";
 
 const API_BASE = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8080";
 
@@ -90,75 +88,6 @@ function StatCard({
   );
 }
 
-// Prediction card component
-function PredictionCard({ prediction }: { prediction: Prediction }) {
-  const resultConfig = {
-    win: {
-      icon: CheckCircle,
-      color: "text-green-400 bg-green-400/10 border-green-400/20",
-      label: "Win",
-    },
-    loss: {
-      icon: XCircle,
-      color: "text-red-400 bg-red-400/10 border-red-400/20",
-      label: "Loss",
-    },
-    pending: {
-      icon: Clock,
-      color: "text-yellow-400 bg-yellow-400/10 border-yellow-400/20",
-      label: "Pending",
-    },
-  };
-
-  const config = resultConfig[prediction.result];
-  const ResultIcon = config.icon;
-
-  return (
-    <Link
-      href={`/event/${prediction.eventId}`}
-      className="block bg-slate-900/50 backdrop-blur border border-slate-800 rounded-lg p-6 hover:border-cyan-500/50 transition"
-    >
-      <div className="flex items-start justify-between mb-3">
-        <div>
-          <h3 className="text-lg font-semibold text-white">
-            {prediction.eventName}
-          </h3>
-          <p className="text-sm text-slate-500">{prediction.league}</p>
-        </div>
-        <span
-          className={`px-3 py-1 text-sm font-medium rounded-full border flex items-center gap-1 ${config.color}`}
-        >
-          <ResultIcon className="w-4 h-4" />
-          {config.label}
-        </span>
-      </div>
-
-      <div className="mb-3">
-        <p className="text-white font-medium mb-1">
-          Prediction: {prediction.prediction}
-        </p>
-        <p className="text-slate-400 text-sm">{prediction.analysis}</p>
-      </div>
-
-      <div className="flex items-center gap-4 text-sm">
-        <span className="text-slate-500">
-          Odds:{" "}
-          <span className="text-cyan-400 font-medium">{prediction.odds}</span>
-        </span>
-        <span className="text-slate-500">
-          Confidence:{" "}
-          <span className="text-cyan-400 font-medium">
-            {prediction.confidence}%
-          </span>
-        </span>
-        <span className="text-slate-500">
-          {new Date(prediction.predictedAt).toLocaleDateString("en-US")}
-        </span>
-      </div>
-    </Link>
-  );
-}
-
 export default async function AgentPage({
   params,
 }: {
@@ -173,16 +102,7 @@ export default async function AgentPage({
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
-      {/* Back navigation */}
-      <div className="max-w-7xl mx-auto px-4 pt-8">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 text-slate-400 hover:text-cyan-400 transition"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back to Home
-        </Link>
-      </div>
+
 
       {/* Profile header */}
       <section className="max-w-7xl mx-auto px-4 py-8">
@@ -261,25 +181,9 @@ export default async function AgentPage({
         </div>
       </section>
 
-
-
       {/* Recent prediction history */}
-      <section className="max-w-7xl mx-auto px-4 py-4">
-        <h2 className="text-2xl font-bold text-white mb-4">
-          Recent Predictions
-        </h2>
-        {agent.recentPredictions && agent.recentPredictions.length > 0 ? (
-          <div className="space-y-3">
-            {agent.recentPredictions.map((pred) => (
-              <PredictionCard key={pred.id} prediction={pred} />
-            ))}
-          </div>
-        ) : (
-          <div className="bg-slate-900/50 backdrop-blur border border-slate-800 rounded-lg p-8 text-center">
-            <p className="text-slate-400">No prediction history yet.</p>
-          </div>
-        )}
-      </section>
+      <RecentPredictionsSection agentId={agent.id} />
     </div>
   );
 }
+

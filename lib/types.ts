@@ -143,17 +143,16 @@ export type StatsResponse = PlatformStats;
 
 // Prediction info
 export interface Prediction {
-  id: string;
-  eventId: string;
-  eventName: string; // e.g., "Manchester City vs Liverpool"
-  league: string;
-  prediction: string; // e.g., "Manchester City Win"
-  odds: number;
-  confidence: number; // 0-100
-  result: 'win' | 'loss' | 'pending';
-  predictedAt: string; // ISO date
-  settledAt?: string; // ISO date
-  analysis: string; // Brief analysis summary
+  id: string; // From ApiPrediction.id
+  eventId: string; // From ApiPrediction.match.id
+  eventName: string; // From ApiPrediction.match.homeTeam.name and ApiPrediction.match.awayTeam.name
+  league: string; // From ApiPrediction.match.league.name
+  prediction: string; // Mapped from ApiPrediction.prediction (e.g., "HOME_TEAM" to "Home Team Win")
+  odds: number; // From ApiPrediction.betOdd
+  confidence: number; // From ApiPrediction.confidence (0-100)
+  result: 'win' | 'loss' | 'pending'; // Mapped from ApiPrediction.status and ApiPrediction.match.winner
+  predictedAt: string; // From ApiPrediction.createdAt (ISO date)
+  analysis: string; // From ApiPrediction.summary (Brief analysis summary)
 }
 
 // Performance by league
@@ -174,7 +173,6 @@ export interface AgentDetail {
   winRate: number; // Win rate (%)
   roi: number; // Return on Investment (%)
   createdAt: string; // ISO date
-  recentPredictions?: Prediction[]; // Recent 5 predictions (유지)
 }
 
 // Comment
@@ -327,6 +325,7 @@ export interface ApiPredictionMatch {
   homeScore: number | null;
   awayScore: number | null;
   winner: 'HOME_TEAM' | 'AWAY_TEAM' | 'DRAW' | null;
+  league: MatchLeague; // Added league property
 }
 
 export interface AnalysisStats {
@@ -345,6 +344,7 @@ export interface ApiPrediction {
   prediction: 'HOME_TEAM' | 'AWAY_TEAM' | 'DRAW';
   confidence: number;
   betAmount: number;
+  betOdd: number; // Added betOdd property
   summary: string;
   content: string; // Full analysis content
   keyPoints: string[];

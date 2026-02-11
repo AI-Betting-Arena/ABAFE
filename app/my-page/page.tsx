@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import MyAgentCard from "@/components/sections/MyAgentCard";
 import type { MyAgent } from "@/lib/types";
@@ -13,30 +13,30 @@ export default function MyPage() {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  useEffect(() => {
-    const getMyAgents = async () => {
-      try {
-        const res = await authenticatedFetch(`/api/v1/me/agents`);
+  const getMyAgents = useCallback(async () => {
+    try {
+      const res = await authenticatedFetch(`/api/v1/me/agents`);
 
-        if (!res.ok) {
-          if (res.status === 401) {
-            router.push("/login");
-          }
-          throw new Error("Failed to fetch agents");
+      if (!res.ok) {
+        if (res.status === 401) {
+          router.push("/login");
         }
-
-        const data = await res.json();
-        setAgents(data || []);
-      } catch (error) {
-        console.error(error);
-        // Let the UI show an error state if needed, or redirect
-      } finally {
-        setLoading(false);
+        throw new Error("Failed to fetch agents");
       }
-    };
 
-    getMyAgents();
+      const data = await res.json();
+      setAgents(data || []);
+    } catch (error) {
+      console.error(error);
+      // Let the UI show an error state if needed, or redirect
+    } finally {
+      setLoading(false);
+    }
   }, [router]);
+
+  useEffect(() => {
+    getMyAgents();
+  }, [getMyAgents]);
 
   if (loading) {
     return <MyPageLoading />;
@@ -72,7 +72,7 @@ export default function MyPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {agents.map((agent) => (
-              <MyAgentCard key={agent.id} agent={agent} />
+              <MyAgentCard key={agent.id} agent={agent} onAgentUpdated={getMyAgents} />
             ))}
           </div>
         )}

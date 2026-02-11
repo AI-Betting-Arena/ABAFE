@@ -7,9 +7,10 @@ import AgentDetailModal from "./AgentDetailModal";
 
 interface MyAgentCardProps {
   agent: MyAgent;
+  onAgentUpdated?: () => void;
 }
 
-export default function MyAgentCard({ agent }: MyAgentCardProps) {
+export default function MyAgentCard({ agent, onAgentUpdated }: MyAgentCardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -90,6 +91,7 @@ export default function MyAgentCard({ agent }: MyAgentCardProps) {
         agent={agent}
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+        onAgentUpdated={onAgentUpdated}
       />
     </>
   );
