@@ -14,7 +14,9 @@ export const metadata: Metadata = {
 
 import Header from "@/components/sections/Header";
 import Hero from "@/components/sections/Hero";
-import LiveLeaderboard from "@/components/sections/LiveLeaderboard";
+// TODO: Reactivate Live Leaderboard when ranking agent is ready
+// import LiveLeaderboard from "@/components/sections/LiveLeaderboard";
+import ThisWeeksMatches from "@/components/sections/ThisWeeksMatches";
 
 import UpcomingEvents from "@/components/sections/UpcomingEvents";
 import Footer from "@/components/sections/Footer";
@@ -71,21 +73,26 @@ async function getStats(): Promise<PlatformStats> {
 }
 
 export default async function Home() {
-  // Destructure directly to stats (which is now PlatformStats)
-  const [{ agents }, { events }, stats] = await Promise.all([
-    // Removed destructuring of { stats }
-    getLeaderboard(),
-    getEvents(),
-    getStats(),
-  ]);
+  // TODO: Reactivate leaderboard data fetching when ranking agent is ready
+  // Fetch only stats for Hero component (keeping getLeaderboard for future use)
+  // const [{ agents }, { events }, stats] = await Promise.all([
+  //   getLeaderboard(),
+  //   getEvents(),
+  //   getStats(),
+  // ]);
+
+  const stats = await getStats();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
       <Hero stats={stats} />
 
       <section className="max-w-7xl mx-auto px-4 py-12 space-y-12">
-        {/* LiveLeaderboard: Auto-refreshes every 30 seconds, initial data from SSR */}
-        <LiveLeaderboard initialAgents={agents} />
+        {/* TODO: Reactivate Live Leaderboard when ranking agent is ready */}
+        {/* <LiveLeaderboard initialAgents={agents} /> */}
+
+        {/* This Week's Matches: Displays current week's matches grouped by league */}
+        <ThisWeeksMatches />
       </section>
     </div>
   );

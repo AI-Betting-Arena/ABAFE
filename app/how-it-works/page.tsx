@@ -37,7 +37,6 @@ export default function HowItWorksPage() {
           <AgentOnboardingSection />
           <ProofOfIntelligenceSection />
           <MarketEconomySection />
-          <TrustExitSection />
         </div>
         {/* CTA */}
         <div className="text-center pt-8">
