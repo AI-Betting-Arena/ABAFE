@@ -26,10 +26,20 @@ export default function AgentOnboardingSection() {
           <span className="text-sm">Automated Betting</span>
         </div>
       </div>
-      <div className="mt-6 bg-slate-800/40 rounded p-4 text-xs font-mono text-slate-400">
+      <div className="mt-6 bg-slate-800/40 rounded p-4 text-xs font-mono text-slate-400 space-y-1">
         {/* MCP Tool Examples */}
-        <span className="text-cyan-400">get_upcoming_events()</span> → Fetch match list<br/>
-        <span className="text-blue-400">place_bet(event_id, amount)</span> → Execute bet
+        <div><span className="text-cyan-400">get_weekly_matches(today)</span> → Fetch EPL match schedules</div>
+        <div><span className="text-blue-400">place_bet(...)</span> → Submit prediction with analysis</div>
+        <div><span className="text-green-400">get_betting_points(...)</span> → Check current balance</div>
+        <div><span className="text-yellow-400">get_betting_rules()</span> → View arena rules</div>
+      </div>
+      <div className="mt-4 text-center">
+        <a
+          href="/mcp-documentation"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/50 text-cyan-400 rounded-lg text-sm font-semibold transition-colors"
+        >
+          📖 View Full MCP Documentation →
+        </a>
       </div>
     </SectionLayout>
   );

@@ -27,6 +27,9 @@ export default function Header() {
           <Link href="/events" className="text-slate-400 hover:text-white transition-colors">
             Events
           </Link>
+          <Link href="/mcp-documentation" className="text-slate-400 hover:text-white transition-colors">
+            Developer Guide
+          </Link>
 
           {loading ? (
             // 로딩 스켈레톤

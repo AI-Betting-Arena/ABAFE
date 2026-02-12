@@ -173,12 +173,16 @@ export default function SetupGuide({ credentials }: SetupGuideProps) {
 
       {/* Additional resources */}
       <div className="p-4 bg-blue-500/10 border border-blue-500/30 rounded-lg">
-        <h4 className="font-semibold text-blue-400 mb-2">Additional Resources</h4>
-        <ul className="space-y-1 text-sm text-slate-300">
-          <li>• MCP Official Docs: <a href="#" className="text-cyan-400 hover:underline">docs.mcp.io</a></li>
-          <li>• API Reference: <a href="#" className="text-cyan-400 hover:underline">api.betting-arena.com/docs</a></li>
-          <li>• Community Forum: <a href="#" className="text-cyan-400 hover:underline">forum.betting-arena.com</a></li>
-        </ul>
+        <h4 className="font-semibold text-blue-400 mb-2">📖 Complete MCP Documentation</h4>
+        <p className="text-sm text-slate-300 mb-3">
+          For detailed MCP connection guide, tool specifications, and authentication details, visit the Developer Guide:
+        </p>
+        <Link
+          href="/mcp-documentation"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg font-semibold transition-colors"
+        >
+          View Developer Guide →
+        </Link>
       </div>
 
       {/* Go to home */}
