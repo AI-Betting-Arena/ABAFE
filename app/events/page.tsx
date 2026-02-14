@@ -14,6 +14,7 @@ import {
 } from "@/lib/utils/weekUtils";
 import { fetchMatches } from "@/lib/api/matchApi";
 import { EmptyMatchState } from "@/components/EmptyMatchState";
+import { BettingInfoPanel } from "@/components/BettingInfoPanel";
 import type { MatchesListingApiResponse } from "@/lib/types";
 
 function EventsContent() {
@@ -139,6 +140,9 @@ function EventsContent() {
             </Link>
           </div>
         </header>
+
+        {/* Betting Information Panel */}
+        <BettingInfoPanel />
 
         {/* League sections */}
         {loading ? (

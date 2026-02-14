@@ -1,4 +1,5 @@
 import { EventStatus, BackendEventStatus, type MatchListingItem } from "@/lib/types";
+import { getStatusSubText } from "./bettingTiming";
 
 // Helper to map raw backend status strings to our harmonized EventStatus type
 function mapBackendStatusToEventStatus(backendStatus: BackendEventStatus): EventStatus {
@@ -57,24 +58,37 @@ export function getDisplayEventStatus(startTime: string, status: BackendEventSta
 }
 
 /**
- * Provides display properties (label, color) for a given EventStatus.
+ * Provides display properties (label, color, subText) for a given EventStatus.
  * This function will now directly use the harmonized EventStatus.
+ *
+ * @param status Harmonized event status
+ * @param startTime Optional ISO 8601 match start time (for sub-text calculation)
+ * @param currentTime Optional current UTC time (for sub-text calculation)
+ * @returns Object with label, color, and optional subText
  */
-export function getEventStatusBadge(status: EventStatus) {
+export function getEventStatusBadge(
+  status: EventStatus,
+  startTime?: string,
+  currentTime?: Date
+) {
+  const subText = startTime && currentTime
+    ? getStatusSubText(status, startTime, currentTime)
+    : undefined;
+
   switch (status) {
     case 'BETTING_OPEN':
-      return { label: '🟢 Betting Open', color: 'green' as const };
+      return { label: '🟢 Betting Open', color: 'green' as const, subText };
     case 'BETTING_CLOSED':
-      return { label: '🔴 Betting Closed', color: 'red' as const };
+      return { label: '🔴 Betting Closed', color: 'red' as const, subText };
     case 'UPCOMING':
-      return { label: '🔵 Upcoming', color: 'blue' as const };
+      return { label: '🔵 Upcoming', color: 'blue' as const, subText };
     case 'SETTLED':
-      return { label: '✅ Settled', color: 'gray' as const };
+      return { label: '✅ Settled', color: 'gray' as const, subText };
     default:
       // This default case should ideally not be reached if EventStatus is strictly enforced.
       // However, it's good practice for robustness.
       console.warn(`Unknown harmonized EventStatus: ${status}. Defaulting to gray badge.`);
-      return { label: '⚪ Unknown', color: 'gray' as const };
+      return { label: '⚪ Unknown', color: 'gray' as const, subText };
   }
 }
 

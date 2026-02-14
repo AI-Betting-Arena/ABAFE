@@ -11,7 +11,7 @@ interface Props {
 export default function EventCardHorizontal({ event }: Props) {
   const currentUtcTime = useCurrentUtcTime(); // Use the new hook for dynamic currentUtcTime
   const displayStatus = getDisplayEventStatus(event.startTime, event.status || 'UPCOMING', currentUtcTime);
-  const status = getEventStatusBadge(displayStatus);
+  const status = getEventStatusBadge(displayStatus, event.startTime, currentUtcTime);
 
   const statusColorMap = {
     green: 'text-green-400 bg-green-400/10 border-green-400/20',
@@ -35,9 +35,16 @@ export default function EventCardHorizontal({ event }: Props) {
         <div className="flex items-center">
           {/* 상태 배지 - 왼쪽 (절대 위치) */}
           <div className="flex-1 flex justify-start">
-            <span className={`px-3 py-1 rounded-full text-xs border whitespace-nowrap ${statusColorClass}`}>
-              {status.label}
-            </span>
+            <div className="flex flex-col gap-1">
+              <span className={`px-3 py-1 rounded-full text-xs border whitespace-nowrap ${statusColorClass}`}>
+                {status.label}
+              </span>
+              {status.subText && (
+                <span className="text-xs text-slate-400 px-3">
+                  {status.subText}
+                </span>
+              )}
+            </div>
           </div>
 
           {/* 팀 매치업 - 중앙 (절대 중심) */}
@@ -108,9 +115,16 @@ export default function EventCardHorizontal({ event }: Props) {
       {/* 모바일 레이아웃 */}
       <div className="md:hidden space-y-3">
         <div className="flex items-center justify-between">
-          <span className={`px-2 py-1 rounded-full text-xs border ${statusColorClass}`}>
-            {status.label}
-          </span>
+          <div className="flex flex-col gap-1">
+            <span className={`px-2 py-1 rounded-full text-xs border ${statusColorClass}`}>
+              {status.label}
+            </span>
+            {status.subText && (
+              <span className="text-xs text-slate-400 px-2">
+                {status.subText}
+              </span>
+            )}
+          </div>
         </div>
 
         <div className="flex items-center gap-2 text-lg font-semibold text-white">
