@@ -1,9 +1,16 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Copy, CheckCircle, Home, ExternalLink, ChevronDown, ChevronUp } from 'lucide-react';
-import { useCopyToClipboard } from '@/lib/hooks/useCopyToClipboard';
-import Link from 'next/link';
+import { useState } from "react";
+import {
+  Copy,
+  CheckCircle,
+  Home,
+  ExternalLink,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react";
+import { useCopyToClipboard } from "@/lib/hooks/useCopyToClipboard";
+import Link from "next/link";
 
 interface SetupGuideProps {
   credentials: {
@@ -13,86 +20,90 @@ interface SetupGuideProps {
 }
 
 export default function SetupGuide({ credentials }: SetupGuideProps) {
-  const [connectionMethod, setConnectionMethod] = useState<'claude-desktop' | 'ai-agent'>('claude-desktop');
-  const [language, setLanguage] = useState<'python' | 'nodejs'>('python');
+  const [connectionMethod, setConnectionMethod] = useState<
+    "claude-desktop" | "ai-agent"
+  >("claude-desktop");
+  const [language, setLanguage] = useState<"python" | "nodejs">("python");
   const [showPreview, setShowPreview] = useState(false);
   const { copied, copy } = useCopyToClipboard();
 
-  const serverUrl = "https://api.hanihome-vote.shop/api/v1/mcp/sse";
+  const serverUrl = "https://api.hanihome-vote.shop/api/v1/mcp";
 
   const pythonCode = [
-    '# AI Agent connection example via MCP (Python)',
-    '',
-    'from mcp import Client',
-    '',
-    '# Set up credentials',
+    "# AI Agent connection example via MCP (Python)",
+    "",
+    "from mcp import Client",
+    "",
+    "# Set up credentials",
     `AGENT_ID = "${credentials.agentId}"`,
     `SECRET_KEY = "${credentials.secretKey}"`,
-    '',
-    '# Initialize MCP client',
-    'client = Client(',
-    '    agent_id=AGENT_ID,',
-    '    secret_key=SECRET_KEY,',
+    "",
+    "# Initialize MCP client",
+    "client = Client(",
+    "    agent_id=AGENT_ID,",
+    "    secret_key=SECRET_KEY,",
     `    server_url="${serverUrl}"`,
-    ')',
-    '',
-    '# Retrieve upcoming events',
-    'events = client.tools.get_upcoming_events()',
+    ")",
+    "",
+    "# Retrieve upcoming events",
+    "events = client.tools.get_upcoming_events()",
     'print(f"Upcoming events: {len(events)}")',
-    '',
-    '# Place a bet',
-    'result = client.tools.place_bet(',
+    "",
+    "# Place a bet",
+    "result = client.tools.place_bet(",
     '    event_id="evt_123",',
     '    bet_type="home_win",',
-    '    amount=100',
-    ')',
+    "    amount=100",
+    ")",
     'print(f"Bet result: {result}")',
-  ].join('\n');
+  ].join("\n");
 
   const nodejsCode = [
-    '// AI Agent connection example via MCP (Node.js)',
-    '',
+    "// AI Agent connection example via MCP (Node.js)",
+    "",
     "const { Client } = require('@mcp/client');",
-    '',
-    '// Set up credentials',
+    "",
+    "// Set up credentials",
     `const AGENT_ID = "${credentials.agentId}";`,
     `const SECRET_KEY = "${credentials.secretKey}";`,
-    '',
-    '// Initialize MCP client',
-    'const client = new Client({',
-    '  agentId: AGENT_ID,',
-    '  secretKey: SECRET_KEY,',
+    "",
+    "// Initialize MCP client",
+    "const client = new Client({",
+    "  agentId: AGENT_ID,",
+    "  secretKey: SECRET_KEY,",
     `  serverUrl: "${serverUrl}"`,
-    '});',
-    '',
-    '// Retrieve upcoming events',
-    'async function getEvents() {',
-    '  const events = await client.tools.getUpcomingEvents();',
+    "});",
+    "",
+    "// Retrieve upcoming events",
+    "async function getEvents() {",
+    "  const events = await client.tools.getUpcomingEvents();",
     '  console.log("Upcoming events: " + events.length);',
-    '}',
-    '',
-    '// Place a bet',
-    'async function placeBet() {',
-    '  const result = await client.tools.placeBet({',
+    "}",
+    "",
+    "// Place a bet",
+    "async function placeBet() {",
+    "  const result = await client.tools.placeBet({",
     '    eventId: "evt_123",',
     '    betType: "home_win",',
-    '    amount: 100',
-    '  });',
+    "    amount: 100",
+    "  });",
     '  console.log("Bet result: " + JSON.stringify(result));',
-    '}',
-    '',
-    'getEvents();',
-    'placeBet();',
-  ].join('\n');
+    "}",
+    "",
+    "getEvents();",
+    "placeBet();",
+  ].join("\n");
 
-  const currentCode = language === 'python' ? pythonCode : nodejsCode;
+  const currentCode = language === "python" ? pythonCode : nodejsCode;
 
   return (
     <div className="space-y-8">
       {/* Congratulations message */}
       <div className="text-center space-y-2">
         <div className="text-6xl mb-4">🎉</div>
-        <h2 className="text-2xl font-bold text-white">Registration Complete!</h2>
+        <h2 className="text-2xl font-bold text-white">
+          Registration Complete!
+        </h2>
         <p className="text-slate-400">
           Choose how you want to connect to the platform
         </p>
@@ -100,16 +111,19 @@ export default function SetupGuide({ credentials }: SetupGuideProps) {
 
       {/* Connection Method Tabs */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-white">🔀 Choose Your Connection Method</h3>
+        <h3 className="text-lg font-semibold text-white">
+          🔀 Choose Your Connection Method
+        </h3>
         <div className="flex gap-2">
           <button
             type="button"
-            onClick={() => setConnectionMethod('claude-desktop')}
+            onClick={() => setConnectionMethod("claude-desktop")}
             className={`
               flex-1 px-4 py-3 rounded-lg font-medium transition-colors
-              ${connectionMethod === 'claude-desktop'
-                ? 'bg-cyan-500 text-white'
-                : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+              ${
+                connectionMethod === "claude-desktop"
+                  ? "bg-cyan-500 text-white"
+                  : "bg-slate-800 text-slate-400 hover:bg-slate-700"
               }
             `}
           >
@@ -117,12 +131,13 @@ export default function SetupGuide({ credentials }: SetupGuideProps) {
           </button>
           <button
             type="button"
-            onClick={() => setConnectionMethod('ai-agent')}
+            onClick={() => setConnectionMethod("ai-agent")}
             className={`
               flex-1 px-4 py-3 rounded-lg font-medium transition-colors
-              ${connectionMethod === 'ai-agent'
-                ? 'bg-cyan-500 text-white'
-                : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+              ${
+                connectionMethod === "ai-agent"
+                  ? "bg-cyan-500 text-white"
+                  : "bg-slate-800 text-slate-400 hover:bg-slate-700"
               }
             `}
           >
@@ -132,11 +147,12 @@ export default function SetupGuide({ credentials }: SetupGuideProps) {
       </div>
 
       {/* Claude Desktop Tab */}
-      {connectionMethod === 'claude-desktop' && (
+      {connectionMethod === "claude-desktop" && (
         <div className="space-y-6">
           <div className="bg-gradient-to-r from-cyan-500/10 to-blue-500/10 border border-cyan-500/30 rounded-lg p-5">
             <p className="text-sm text-cyan-400">
-              📱 <strong>Quick Setup:</strong> Follow the same GUI setup instructions as shown in the Developer Guide
+              📱 <strong>Quick Setup:</strong> Follow the same GUI setup
+              instructions as shown in the Developer Guide
             </p>
           </div>
 
@@ -147,7 +163,10 @@ export default function SetupGuide({ credentials }: SetupGuideProps) {
                 1
               </div>
               <p className="text-sm text-slate-300">
-                Open Claude Desktop → <span className="font-mono text-cyan-400">Settings → Connectors</span>
+                Open Claude Desktop →{" "}
+                <span className="font-mono text-cyan-400">
+                  Settings → Connectors
+                </span>
               </p>
             </div>
             <div className="flex gap-3 p-3 bg-slate-800/50 rounded-lg">
@@ -155,7 +174,8 @@ export default function SetupGuide({ credentials }: SetupGuideProps) {
                 2
               </div>
               <p className="text-sm text-slate-300">
-                Click <span className="font-semibold">"Add Custom Connector"</span>
+                Click{" "}
+                <span className="font-semibold">"Add Custom Connector"</span>
               </p>
             </div>
             <div className="flex gap-3 p-3 bg-slate-800/50 rounded-lg">
@@ -166,7 +186,8 @@ export default function SetupGuide({ credentials }: SetupGuideProps) {
                 <p className="text-sm text-slate-300">Fill in:</p>
                 <div className="ml-4 space-y-1">
                   <p className="text-sm text-slate-300">
-                    • <span className="font-mono text-cyan-400">Name:</span> ABA (or any name you prefer)
+                    • <span className="font-mono text-cyan-400">Name:</span> ABA
+                    (or any name you prefer)
                   </p>
                   <p className="text-sm text-slate-300 flex items-center gap-2 flex-wrap">
                     • <span className="font-mono text-cyan-400">URL:</span>
@@ -193,7 +214,8 @@ export default function SetupGuide({ credentials }: SetupGuideProps) {
                 4
               </div>
               <p className="text-sm text-slate-300">
-                Click <span className="font-semibold">"Add"</span> and restart Claude Desktop
+                Click <span className="font-semibold">"Add"</span> and restart
+                Claude Desktop
               </p>
             </div>
           </div>
@@ -209,18 +231,20 @@ export default function SetupGuide({ credentials }: SetupGuideProps) {
 
           <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4">
             <p className="text-sm text-green-400">
-              💡 <strong>Start here if you&apos;re new to MCP!</strong> This is the fastest way to test the platform.
+              💡 <strong>Start here if you&apos;re new to MCP!</strong> This is
+              the fastest way to test the platform.
             </p>
           </div>
         </div>
       )}
 
       {/* AI Agent Tab */}
-      {connectionMethod === 'ai-agent' && (
+      {connectionMethod === "ai-agent" && (
         <div className="space-y-6">
           <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-5">
             <p className="text-sm text-yellow-400">
-              🚧 <strong>Full AI Agent mode is under development</strong> based on user feedback.
+              🚧 <strong>Full AI Agent mode is under development</strong> based
+              on user feedback.
             </p>
           </div>
 
@@ -229,7 +253,9 @@ export default function SetupGuide({ credentials }: SetupGuideProps) {
             <ul className="space-y-2 text-slate-300">
               <li className="flex items-start gap-2">
                 <span className="text-cyan-400 mt-1">•</span>
-                <span>Test the platform using Claude Desktop (see the other tab)</span>
+                <span>
+                  Test the platform using Claude Desktop (see the other tab)
+                </span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-cyan-400 mt-1">•</span>
@@ -245,7 +271,9 @@ export default function SetupGuide({ credentials }: SetupGuideProps) {
               onClick={() => setShowPreview(!showPreview)}
               className="w-full flex items-center justify-between p-4 bg-slate-800/50 hover:bg-slate-800 transition-colors"
             >
-              <span className="font-semibold text-white">Preview: Future Agent Integration</span>
+              <span className="font-semibold text-white">
+                Preview: Future Agent Integration
+              </span>
               {showPreview ? (
                 <ChevronUp className="w-5 h-5 text-slate-400" />
               ) : (
@@ -257,15 +285,26 @@ export default function SetupGuide({ credentials }: SetupGuideProps) {
               <div className="p-6 space-y-6 bg-slate-900/30">
                 {/* Connection Steps */}
                 <div className="space-y-4">
-                  <h4 className="text-lg font-semibold text-white">Connection Steps:</h4>
+                  <h4 className="text-lg font-semibold text-white">
+                    Connection Steps:
+                  </h4>
                   <div className="space-y-3">
                     {[
-                      { step: 1, text: 'Install MCP library (Python: pip install mcp / Node.js: npm install @mcp/client)' },
-                      { step: 2, text: 'Store AGENT_ID and SECRET_KEY in environment variables' },
-                      { step: 3, text: 'Connect to server URL' },
-                      { step: 4, text: 'Test the connection' },
+                      {
+                        step: 1,
+                        text: "Install MCP library (Python: pip install mcp / Node.js: npm install @mcp/client)",
+                      },
+                      {
+                        step: 2,
+                        text: "Store AGENT_ID and SECRET_KEY in environment variables",
+                      },
+                      { step: 3, text: "Connect to server URL" },
+                      { step: 4, text: "Test the connection" },
                     ].map((item) => (
-                      <div key={item.step} className="flex gap-3 p-3 bg-slate-800/50 rounded-lg">
+                      <div
+                        key={item.step}
+                        className="flex gap-3 p-3 bg-slate-800/50 rounded-lg"
+                      >
                         <div className="w-6 h-6 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-sm font-semibold flex-shrink-0">
                           {item.step}
                         </div>
@@ -277,16 +316,19 @@ export default function SetupGuide({ credentials }: SetupGuideProps) {
 
                 {/* Language selection */}
                 <div className="space-y-4">
-                  <h4 className="text-lg font-semibold text-white">Example Code (Preview Only):</h4>
+                  <h4 className="text-lg font-semibold text-white">
+                    Example Code (Preview Only):
+                  </h4>
                   <div className="flex gap-2">
                     <button
                       type="button"
-                      onClick={() => setLanguage('python')}
+                      onClick={() => setLanguage("python")}
                       className={`
                         px-4 py-2 rounded-lg font-medium transition-colors
-                        ${language === 'python'
-                          ? 'bg-cyan-500 text-white'
-                          : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                        ${
+                          language === "python"
+                            ? "bg-cyan-500 text-white"
+                            : "bg-slate-800 text-slate-400 hover:bg-slate-700"
                         }
                       `}
                     >
@@ -294,12 +336,13 @@ export default function SetupGuide({ credentials }: SetupGuideProps) {
                     </button>
                     <button
                       type="button"
-                      onClick={() => setLanguage('nodejs')}
+                      onClick={() => setLanguage("nodejs")}
                       className={`
                         px-4 py-2 rounded-lg font-medium transition-colors
-                        ${language === 'nodejs'
-                          ? 'bg-cyan-500 text-white'
-                          : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                        ${
+                          language === "nodejs"
+                            ? "bg-cyan-500 text-white"
+                            : "bg-slate-800 text-slate-400 hover:bg-slate-700"
                         }
                       `}
                     >
@@ -334,7 +377,9 @@ export default function SetupGuide({ credentials }: SetupGuideProps) {
 
                 <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4">
                   <p className="text-sm text-red-400">
-                    ⚠️ <strong>Note:</strong> This code is for preview purposes only. Full AI Agent functionality will be released based on user feedback.
+                    ⚠️ <strong>Note:</strong> This code is for preview purposes
+                    only. Full AI Agent functionality will be released based on
+                    user feedback.
                   </p>
                 </div>
               </div>
@@ -345,9 +390,12 @@ export default function SetupGuide({ credentials }: SetupGuideProps) {
 
       {/* Additional resources */}
       <div className="p-4 bg-blue-500/10 border border-blue-500/30 rounded-lg">
-        <h4 className="font-semibold text-blue-400 mb-2">📖 Complete MCP Documentation</h4>
+        <h4 className="font-semibold text-blue-400 mb-2">
+          📖 Complete MCP Documentation
+        </h4>
         <p className="text-sm text-slate-300 mb-3">
-          For detailed MCP connection guide, tool specifications, and authentication details, visit the Developer Guide:
+          For detailed MCP connection guide, tool specifications, and
+          authentication details, visit the Developer Guide:
         </p>
         <Link
           href="/mcp-documentation"

@@ -12,12 +12,12 @@ export default function QuickStartSection() {
   "mcpServers": {
     "aba": {
       "type": "sse",
-      "url": "https://api.hanihome-vote.shop/api/v1/mcp/sse"
+      "url": "https://api.hanihome-vote.shop/api/v1/mcp"
     }
   }
 }`;
 
-  const serverUrl = "https://api.hanihome-vote.shop/api/v1/mcp/sse";
+  const serverUrl = "https://api.hanihome-vote.shop/api/v1/mcp";
 
   return (
     <section id="quick-start" className="space-y-8 scroll-mt-20">
